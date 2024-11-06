@@ -7,7 +7,7 @@ const env = require("dotenv").config();
 const db = require("./config/db");
 const userRouter = require("./routes/userRouter");
 const passport = require("./config/passport")
-
+const adminRouter = require("./routes/adminRouter")
 // Connect to the database
 db();
 
@@ -47,7 +47,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Routes
 app.use('/', userRouter);
-
+app.use('/admin',adminRouter)
 
 // Start the server
 app.listen(PORT, () => {
