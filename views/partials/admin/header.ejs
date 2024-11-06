@@ -42,6 +42,16 @@ body {
     background-color: #000000;
     color: #ffffff;
 }
+.sticky-header {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 1000; /* Keeps it above other elements when scrolling */
+    background-color: #fff; /* Background color for readability */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for style */
+    height: 10px;
+}
+
 
 </style>
 </head>
@@ -49,6 +59,7 @@ body {
     <div class="screen-overlay"></div>
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
+         
             <a href="#" class="brand-wrap">
                 <img src="/img/logo.png"  class="logo" alt="Nike Admin Dashboard">
             </a>
@@ -75,10 +86,10 @@ body {
                     </a>
 
                 </li>
-                <li class="menu-item">
+                <!-- <li class="menu-item">
                     <a class="menu-link" href="/admin/brands"> <i class="icon material-icons md-stars"></i>
                         <span class="text">Brands</span> </a>
-                </li>
+                </li> -->
                 <li class="menu-item">
                     <a class="menu-link" href="/admin/addProducts"> <i class="icon material-icons md-add_box"></i>
                         <span class="text">Add product</span>
@@ -108,13 +119,15 @@ body {
         </nav>
     </aside>
     <main class="main-wrap">
-        <header class="main-header navbar">
+        <header class="main-header navbar sticky-header">
             <div class="col-search">
             </div>
             <div class="col-nav">
+                <a href="#"> Admin</a>
                 <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
                 <ul class="nav">
                     <li class="dropdown nav-item">
+                        
                         <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/admin-assets/imgs/people/admin.png" alt="User"></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
                             <div class="dropdown-divider"></div>
