@@ -1,9 +1,12 @@
 const express = require("express");
 const app = express();
 const path = require("path");
+const session = require("express-session");
+const nocache = require("nocache");
 const env = require("dotenv").config();
 const db = require("./config/db");
 const userRouter = require("./routes/userRouter");
+const passport = require("./config/passport")
 
 // Connect to the database
 db();
@@ -14,6 +17,23 @@ const PORT = process.env.PORT || 7777;
 // Middleware
 app.use(express.json()); // For parsing JSON data
 app.use(express.urlencoded({ extended: true })); // For parsing URL-encoded data (form submissions)
+
+
+app.use(session({
+  secret:process.env.SESSION_SECRET,
+  resave:false,
+  saveUninitialized:true,
+  cookie:{
+      secure:false,
+      httpOnly:true,
+      maxAge:72*60*60*1000
+  }
+}))
+
+app.use(nocache())
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 // View engine setup
 app.set("view engine", "ejs");
@@ -27,6 +47,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Routes
 app.use('/', userRouter);
+
 
 // Start the server
 app.listen(PORT, () => {
