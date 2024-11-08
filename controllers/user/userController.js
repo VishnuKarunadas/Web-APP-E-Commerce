@@ -4,12 +4,11 @@ const User =require("../../models/userSchema")
 const Wallet = require("../../models/walletSchema");
 const Cart = require("../../models/cartSchema")
 const ReferralOffer = require("../../models/referralOfferSchema");
+const Category = require("../../models/categorySchema");
+const Product = require("../../models/productSchema");
 
 
-// const {
-//     applyReferralOffer,
-//     creditWallet,
-//   } = require("../../controllers/user/userReferralController");
+
 
 const pageNotFound = async (req,res)=>{
     try {
@@ -32,42 +31,7 @@ const loadSignUp = async (req,res) => {
     }
 }
 
-// const SignUp = async (req,res) => {
-//     const  {name,email,password,cPassword,phone,refCode} = req.body;
-//     if (password !== cPassword) {
-//         return res.render("signup", { message: "Passwords are not matching" });
-//       }
-//       const findUser = await User.findOne({ email: email });
 
-//       if (findUser) {
-//         return res.render("signup", {
-//           message: "User with this email already exists",
-//         });
-//       }
-
-//       const findUserPhone = await User.findOne({ phone: phone });
-//       if (findUserPhone) {
-//         return res.render("signup", {
-//           message: "User with this phone Number already exists",
-//         });
-//       }
-
-//     try {
-//        const newUser = new User({name,email,password,phone,refCode})
-
-//        await newUser.save();
-//        console.log("user-signup- registered (DB)");
-
-//         return res.redirect("/signup")
- 
-
-//     } catch (error) {
-//         console.error("Error due to save user",error);
-//         res.status(500).send("Server error :- Signup-post:- Error");
-
-        
-//     }
-// }
 function generateOtp() {
     return Math.floor(100000 + Math.random() * 900000).toString();
   }
@@ -242,87 +206,36 @@ const SignUp = async (req, res, next) => {
   };
 
 
-const loadHomepage = async (req, res, next) => {
-  try {
-    const searchQuery = req.query.searchQuery || "";
-    const { sortBy } = req.query;
-
-    const page = parseInt(req.query.page) || 1;
-    const limit = 8;
-    const skip = (page - 1) * limit;
-
-    let searchCondition = { isBlocked: false };
-
-    if (searchQuery) {
-      const regex = new RegExp(searchQuery, "i");
-      searchCondition.$or = [{ productName: regex }];
-    }
-
-    // const listedCategories = await Category.find({ isListed: true })
-    //   .select("_id")
-    //   .exec();
-    // const listedCategoryIds = listedCategories.map((cat) => cat._id);
-    // searchCondition.category = { $in: listedCategoryIds };
-
-    // const listedBrands = await Brand.find({ isListed: true })
-    //   .select("_id")
-    //   .exec();
-    // const listedBrandIds = listedBrands.map((brand) => brand._id);
-    // searchCondition.brand = { $in: listedBrandIds };
-
-    let sortCriteria = {};
-    switch (sortBy) {
-      case "popularity":
-        sortCriteria = { popularity: -1 };
-        break;
-      case "priceLowToHigh":
-        sortCriteria = { salePrice: 1 };
-        break;
-      case "priceHighToLow":
-        sortCriteria = { salePrice: -1 };
-        break;
-      case "averageRatings":
-        sortCriteria = { averageRating: -1 };
-        break;
-      case "featured":
-        sortCriteria = { isFeatured: -1 };
-        break;
-      case "newArrivals":
-        sortCriteria = { createdAt: -1 };
-        break;
-      case "aToZ":
-        sortCriteria = { productName: 1 };
-        break;
-      case "zToA":
-        sortCriteria = { productName: -1 };
-        break;
-      default:
-        sortCriteria = {};
-    }
-
-    // const products = await Product.find(searchCondition)
-    //   .populate("category")
-    //   .populate("brand")
-    //   .sort(sortCriteria)
-    //   .skip(skip)
-    //   .limit(limit)
-    //   .lean() 
-    //   .exec();
-
-    //   const productIds = products.map(product => product._id);
-    //   const averageRatings = await calculateAverageRatings(productIds);
-  
+  const loadHomepage = async (req, res, next) => {
+    try {
     
-    //   const productsWithRatings = products.map(product => ({
-    //     ...product,
-    //     averageRating: averageRatings[product._id.toString()]?.averageRating || 0,
-    //     totalRatings: averageRatings[product._id.toString()]?.totalRatings || 0
-    //   }));
+  
+     
+      const currentPage = parseInt(req.query.page) || 1;
+      const productsPerPage = 8; 
+  
+     
+      const categories = await Category.find({ isListed: true });
+  
+      let productData = await Product.find({
+        isBlocked: false,
+        category: { $in: categories.map(category => category._id) },
+        quantity: { $gte: 0 }
+      });
+  
+      
+      const totalProducts = productData.length;
+  
 
-    // const totalProducts = await Product.countDocuments(searchCondition);
-    // const totalPages = Math.ceil(totalProducts / limit);
-
-    let userId = req.user || req.session.user;
+      const totalPages = Math.ceil(totalProducts / productsPerPage);
+  
+      // Slice the product data to only include the products for the current page
+      const startIndex = (currentPage - 1) * productsPerPage;
+      productData = productData.slice(startIndex, startIndex + productsPerPage);
+  
+      // Log product image data to ensure it's correct
+      console.log("Product Images:", productData.map(product => product.productImage));
+      let userId = req.user || req.session.user;
     let userData = userId
       ? await User.findById(userId).populate("cart").exec()
       : null;
@@ -331,48 +244,27 @@ const loadHomepage = async (req, res, next) => {
     }
 
     res.locals.user = userData;
-
-    // const offer = await Offer.find({ status: "active" })
-    //   .populate("category")
-    //   .populate("product")
-    //   .sort({ createdAt: -1 })
-    //   .limit(1)
-    //   .exec();
-
-    //   const bannerImages = await Image.find({
-    //     imageType: 'banner',
-    //     page: 'home'
-    //   }).sort({ altText: 1 }).limit(3); 
-
-    //   const backgroundImage1 = await Image.findOne({
-    //     imageType: 'background',
-    //     page: 'home',
-    //     altText: 'midbanner'
-    //   });
-      
-    //   const backgroundImage2 = await Image.findOne({
-    //     imageType: 'background',
-    //     page: 'home',
-    //     altText: 'midbanner1'
-    //   });
-
-    return res.render("home", {
-      user: userData,
-      // products: productsWithRatings, 
-      // sortBy: sortBy || "",
-      // currentPage: page,
-      // totalPages: totalPages,
-      // totalProducts: totalProducts,
-      // offer: offer.length ? offer[0] : null,
-      // bannerImages: bannerImages,
-      // backgroundImage1: backgroundImage1,
-      // backgroundImage2: backgroundImage2
-    });
-  } catch (error) {
-    console.log("Home page not found:", error);
-    next(error);
-  }
-};
+  
+      // If the user is logged in, retrieve the user's cart items
+     
+        
+        // Render homepage with user, cart items, product data
+        return res.render("home", {
+          user: userData,
+          // cartItems,
+          products: productData,
+          currentPage,
+          totalPages,
+          sortBy: req.query.sortBy || 'name' // Example: you may want to handle sorting
+        })
+    } catch (error) {
+      console.log("Error loading homepage:", error);
+      next(error);
+    }
+  };
+  
+  
+  
 
 const loadLogin = async(req,res)=>{
     try {

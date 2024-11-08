@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/user/userController")
 const passport = require('../config/passport')
+const productViewController = require('../controllers/user/productViewController');
+
 
 router.get("/pageNotFound",userController.pageNotFound)
 
@@ -22,6 +24,9 @@ router.get('/auth/google',passport.authenticate('google',{scope:['profile','emai
 router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/signup'}),(req,res)=>{
     res.redirect('/')
 });
+
+// user product view 
+router.get('/product/:productId', productViewController.loadSingleProduct);
 
 
 

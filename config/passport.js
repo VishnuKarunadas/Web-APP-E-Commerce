@@ -9,28 +9,56 @@ passport.use(new GoogleStrategy({
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL:'/auth/google/callback'
 },
-async (accessToken,refreshToken,profile,done)=>{
-    try {
-        let user = await User.findOne({googleId:profile.id})
-        if(user){
-            return done(null,user);
+// async (accessToken,refreshToken,profile,done)=>{
+//     try {
+//         let user = await User.findOne({googleId:profile.id})
+//         if(user){
+//             return done(null,user);
 
-        }else{
+//         }else{
+//             user = new User({
+//                 name: profile.displayName, // Corrected here
+//                 email: profile.emails[0].value,
+//                 googleId: profile.id,
+//             });
+            
+//             await user.save();
+//             return done(null,user);
+//         }
+//     } catch (error) {
+//         return done(error,null)
+//     }   
+// }
+async (accessToken, refreshToken, profile, done) => {
+    try {
+        // Check if a user with the same email exists
+        let user = await User.findOne({ email: profile.emails[0].value });
+
+        if (user) {
+            // If the user exists but doesn't have a Google ID, add it
+            if (!user.googleId) {
+                user.googleId = profile.id;
+                await user.save();
+            }
+            return done(null, user);
+        } else {
+            // If no user found, create a new one
             user = new User({
-                name: profile.displayName, // Corrected here
+                name: profile.displayName,
                 email: profile.emails[0].value,
                 googleId: profile.id,
             });
             
             await user.save();
-            return done(null,user);
+            return done(null, user);
         }
     } catch (error) {
-        return done(error,null)
-    }   
-}
+        return done(error, null);
+    }
+}));
 
-));
+
+
 
 //serialize assign user data to mongodb
 passport.serializeUser((user,done)=>{

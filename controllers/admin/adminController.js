@@ -36,73 +36,17 @@ const login = async (req, res)=>{
 
         console.log("login error", error);
         return res.redirect('/pageerror')
-        // next(error)
+       
     }
 }
 const loadDashboard = async (req, res) => {
     if (req.session.admin) {
         try {
-            // const filter = req.query.filter || 'yearly';
-            // const customStartDate = req.query.startDate;
-            // const customEndDate = req.query.endDate;
-
-            // let startDate, endDate;
-            // const now = new Date();
-
-            // switch (filter) {
-            //     case 'yearly':
-            //         startDate = new Date(now.getFullYear(), 0, 1);
-            //         endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
-            //         break;
-            //     case 'monthly':
-            //         startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-            //         endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
-            //         break;
-            //     case 'weekly':
-            //         startDate = new Date(now.setDate(now.getDate() - now.getDay()));
-            //         endDate = new Date(now.setDate(now.getDate() - now.getDay() + 6));
-            //         endDate.setHours(23, 59, 59);
-            //         break;
-            //     case 'daily':
-            //         startDate = new Date(now.setHours(0, 0, 0, 0));
-            //         endDate = new Date(now.setHours(23, 59, 59, 999));
-            //         break;
-            //     case 'custom':
-            //         startDate = new Date(customStartDate);
-            //         endDate = new Date(customEndDate);
-            //         endDate.setHours(23, 59, 59, 999);
-            //         break;
-            //     default:
-            //         startDate = new Date(now.getFullYear(), 0, 1);
-            //         endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
-            // }
-
-            // const formatDate = (date) => {
-            //     return date.toISOString().split('T')[0];
-            // };
-
-            // const categorySalesData = await getCategorySalesData(startDate, endDate);
-            // const paymentMethodsData = await getPaymentMethodsData(startDate, endDate);
-
-            // const topProducts = await getTopSellingItems('product', 10, startDate, endDate);
-            // const topCategories = await getTopSellingItems('category', 10, startDate, endDate);
-            // const topBrands = await getTopSellingItems('brand', 10, startDate, endDate);
-
-            // const chartData = {
-            //     categorySalesData: categorySalesData.length ? categorySalesData : [{ category: 'No Data', totalSales: 0 }],
-            //     paymentMethodsData: paymentMethodsData.length ? paymentMethodsData : [{ _id: 'No Data', count: 0 }],
-            // };
+           
             console.log('admin  dashboard rendering...');
             res.render("dashboard"
-            //     , {
-            //     ...chartData,
-            //     topProducts,
-            //     topCategories,
-            //     topBrands,
-            //     filter,
-            //     customStartDate: formatDate(startDate),
-            //     customEndDate: formatDate(endDate)
-            // }
+          
+          
         );
         } catch (error) {
             console.log("Unexpected error during loading dashboard", error);
