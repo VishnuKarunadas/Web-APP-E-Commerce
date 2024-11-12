@@ -248,7 +248,10 @@ img.img-fluid {
                           <!-- Check if product.productImage exists and has at least one image -->
                           <% if (product.productImage && product.productImage.length > 0) { %>
                               <!-- Display the first image -->
-                              <img src="/uploads/product-images/<%= product.productImage[0] %>" class="img-fluid" alt="<%= product.productName %>">
+                              <a href="/product/<%= product._id %>">
+                                <img src="/uploads/product-images/<%= product.productImage[0] %>" class="img-fluid" alt="<%= product.productName %>">
+                              </a>
+                              
                           <% } else { %>
                               <!-- Fallback image if no image is available -->
                               <img src="/uploads/product-images/default.jpg" class="img-fluid" alt="<%= product.productName %>">

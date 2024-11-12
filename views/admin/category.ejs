@@ -76,11 +76,14 @@
     </div>
     <header class="card-header text-center mb-20">
       <form action="/admin/category/" method="get" class="d-inline" id="search-form">
-        <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 500px; margin-left: 230px">
-          <input type="text" class="form-control border-0 rounded-pill mt-3" placeholder="Search categories" name="search"/>
-          <button class="btn" type="submit">Search</button>
+        <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="display: flex; align-items: center; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto;">
+          <input type="text" class="form-control border-0 rounded-pill mt-3" placeholder="Search categories" name="search" id="search-input" style="flex-grow: 1;"/>
+          <button class="btn btn-primary" type="submit" style="margin-left: 8px; border-radius: 25px;">Search</button>
+          <a class="btn btn-secondary" href="/admin/category/" id="clear-btn" style="margin-left: 8px; border-radius: 25px;">Clear</a>
         </div>
       </form>
+      
+      
     </header>
     <div class="card">
       <div class="card-body">
@@ -179,10 +182,10 @@
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
   <script>
-    
-  let existingCategoryNames = [];
+   
 
-document.addEventListener("DOMContentLoaded", function() {
+  let existingCategoryNames = [];
+  document.addEventListener("DOMContentLoaded", function() {
   const categoryForm = document.getElementById('category-form');
   const searchForm = document.getElementById('search-form');
 
@@ -194,19 +197,43 @@ document.addEventListener("DOMContentLoaded", function() {
     searchForm.addEventListener('submit', handleSearchFormSubmit);
   }
 
+  // Fetch existing category names and display them when the page loads
   fetchExistingCategoryNames();
 });
 
+// Store the existing category names
+
+
+// Fetch the existing category names from the server
 async function fetchExistingCategoryNames() {
   try {
     const response = await fetch("/admin/getCategories");
     const data = await response.json();
     existingCategoryNames = data.categoryNames.map(name => name.toLowerCase());
+
+    updateCategoryList(data.categoryNames); // Update the category list UI
   } catch (error) {
     console.error('Error fetching category names:', error);
   }
 }
 
+// Update the category list displayed on the page
+function updateCategoryList(categoryNames) {
+  const categoryList = document.getElementById('category-list');
+  if (!categoryList) return;
+
+  // Clear the existing category list
+  categoryList.innerHTML = '';
+
+  // Append the new categories to the list
+  categoryNames.forEach(name => {
+    const categoryItem = document.createElement('li');
+    categoryItem.textContent = name;
+    categoryList.appendChild(categoryItem);
+  });
+}
+
+// Handle the form submission for adding a new category
 async function handleCategoryFormSubmit(event) {
   event.preventDefault();
 
@@ -218,6 +245,7 @@ async function handleCategoryFormSubmit(event) {
   const data = Object.fromEntries(formData.entries());
 
   try {
+    // Send POST request to add the new category
     const response = await fetch("/admin/addCategory", {
       method: "POST",
       headers: {
@@ -238,9 +266,12 @@ async function handleCategoryFormSubmit(event) {
       text: result.message
     });
 
+    // Reset the form after successful submission
     document.getElementById('category-form').reset();
-    updateCategoryList();
+
+    // Update the category list (fetching new categories from the server)
     await fetchExistingCategoryNames();
+
   } catch (error) {
     Swal.fire({
       icon: 'error',
@@ -250,8 +281,9 @@ async function handleCategoryFormSubmit(event) {
   }
 }
 
+// Validate the form before submission
 async function validateForm() {
-  clearErrorMessages();
+  clearErrorMessages();  // Clear any previous error messages
   
   const name = document.getElementsByName("name")[0].value.trim();
   const description = document.getElementById("descriptionId").value.trim();
@@ -259,6 +291,7 @@ async function validateForm() {
 
   const lowerCaseName = name.toLowerCase();
 
+  // Validate category name
   if (name === "") {
     displayErrorMessage("name-error", "Please enter a name");
     isValid = false;
@@ -270,6 +303,7 @@ async function validateForm() {
     isValid = false;
   }
 
+  // Validate category description
   if (description === "") {
     displayErrorMessage("description-error", "Please enter a description");
     isValid = false;
@@ -277,7 +311,6 @@ async function validateForm() {
 
   return isValid;
 }
-
 // ... rest of your code (displayErrorMessage, clearErrorMessages, updateCategoryList) remains the same
 
     function displayErrorMessage(elementId, message) {

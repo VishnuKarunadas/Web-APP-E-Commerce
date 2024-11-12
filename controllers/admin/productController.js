@@ -28,9 +28,7 @@ const getProductAddPage = async (req,res) => {
         res.redirect("/admin/pageerror")
         
     }
-}
-
-
+};
 
 const addProducts = async (req, res) => {
     try {
@@ -131,8 +129,6 @@ const addProducts = async (req, res) => {
     }
 };
 
-
-
 const getAllProducts = async (req, res) => {
     try {
         const search = req.query.search || "";
@@ -177,7 +173,6 @@ const getAllProducts = async (req, res) => {
     }
 };
 
-
 const blockProduct = async (req,res) => {
     try {
         
@@ -188,7 +183,7 @@ const blockProduct = async (req,res) => {
     } catch (error) {
         res.redirect("/admin/pageerror")
     }
-}
+};
 
 const unblockProduct = async (req, res) => {
     try {
@@ -236,8 +231,7 @@ const getEditProduct = async (req, res)=>{
         res.redirect("/admin/pageerror")
         
     }
-}
-
+};
 
 const editProduct = async (req, res) => {
     try {
@@ -310,7 +304,6 @@ const editProduct = async (req, res) => {
     }
 };
 
-
 const deleteSingleImage = async (req, res) => {
     try {
         const { imageNameToServer, productIdToServer } = req.body;
@@ -347,7 +340,7 @@ const deleteProduct = async (req, res) => {
     } catch (error) {
       res.status(500).json({ status: false, message: 'Internal server error' });
     }
-  }
+};
 
 module.exports = {
     getProductAddPage,

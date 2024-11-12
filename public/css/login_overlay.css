@@ -1,0 +1,51 @@
+/* Adjustments for the form container */
+.login {
+    background-color: #343a40; /* Dark background for form */
+    padding: 2rem;
+    border-radius: .5rem;
+}
+
+/* Sign up button styling */
+.btn-signup {
+    background-color: #ff5613; /* Red color */
+    color: #fff;
+    border: none;
+}
+
+.btn-signup:hover {
+    background-color: #cc4e2d; /* Darker red for hover */
+}
+
+/* Social icon button styling */
+.btn-outline-dark {
+    border: 1px solid #343a40;
+    color: #343a40;
+    background-color: #fff; /* Ensure the background is white for visibility */
+}
+
+.btn-outline-dark i {
+    font-size: 1.25rem; /* Size of the icons */
+    color: #343a40; /* Icon color */
+}
+
+.btn-outline-dark:hover {
+    background-color: #fff; /* No change on hover */
+    color: #343a40; /* Icon color remains consistent */
+}
+
+.btn-outline-dark:focus, .btn-outline-dark:active {
+    box-shadow: none; /* Remove focus shadow for better appearance */
+}
+
+/* Center the content vertically and horizontally */
+body {
+    background-color: #212529; /* Dark background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.min-vh-100 {
+    min-height: 100vh;
+}

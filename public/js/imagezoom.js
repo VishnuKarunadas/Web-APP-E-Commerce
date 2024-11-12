@@ -1,3 +1,4 @@
+
 (function($){
   var defaults = {
     cursorcolor:'255,255,255',

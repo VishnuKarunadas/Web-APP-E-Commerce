@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require("../controllers/user/userController")
 const passport = require('../config/passport')
 const productViewController = require('../controllers/user/productViewController');
+const userProfileController = require('../controllers/user/userProfileController');
 
 
 router.get("/pageNotFound",userController.pageNotFound)
@@ -28,6 +29,16 @@ router.get('/auth/google/callback',passport.authenticate('google',{failureRedire
 // user product view 
 router.get('/product/:productId', productViewController.loadSingleProduct);
 
+
+
+//user profile mgnt
+router.get('/login/forget-password',userProfileController.forgetPasswordPage)
+router.post("/login/forget-password/forget-email-valid",userProfileController.forgetEmailValidation);
+router.post("/verify-passForget-otp",userProfileController.verifyForgetPassOtp)
+router.get("/reset-password",userProfileController.getResetPassPage);
+router.post("/resend-forget-otp",userProfileController.resendOtp);
+router.post("/reset-password",userProfileController.postNewPassword);
+router.get("/userProfile",userProfileController.userProfile);
 
 
 

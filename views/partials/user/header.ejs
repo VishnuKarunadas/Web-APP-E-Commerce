@@ -6,111 +6,154 @@
    <meta name="keywords" content="Male_Fashion, unica, creative, html">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-   <title>Male-Fashion</title>
-   <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
-   rel="stylesheet">
-   <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
-   <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
-   <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
-   <link rel="stylesheet" href="css/magnific-popup.css" type="text/css">
-   <link rel="stylesheet" href="css/nice-select.css" type="text/css">
-   <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
-   <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
-   <link rel="stylesheet" href="css/style.css" type="text/css">
-   <link rel="stylesheet" href="./user/css/maind134.css">
+   <title>Nike</title>
+   <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+   <link rel="stylesheet" href="/public/css/font-awesome.min.css" type="text/css">
+   <link rel="stylesheet" href="/css/elegant-icons.css" type="text/css">
+   <link rel="stylesheet" href="/css/magnific-popup.css" type="text/css">
+   <link rel="stylesheet" href="/css/nice-select.css" type="text/css">
+   <link rel="stylesheet" href="/css/owl.carousel.min.css" type="text/css">
+   <link rel="stylesheet" href="/css/slicknav.min.css" type="text/css">
+   <link rel="stylesheet" href="/css/style.css" type="text/css">
+   <link rel="stylesheet" href="/public/user/css/maind134.css"> <!-- Updated CSS path -->
    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
    <style>
        .header__nav__option .sign-in-link {
-   font-size: 16px;
-   color: #333;
-   margin-right: 15px;
-   text-decoration: none;
-   font-weight: 600;
-}
-.header__nav__option .sign-in-link:hover {
-   color: #ff7f50;
-}
+           font-size: 16px;
+           color: #333;
+           margin-right: 15px;
+           text-decoration: none;
+           font-weight: 600;
+       }
+       .header__nav__option .sign-in-link:hover {
+           color: #ff7f50;
+       }
 
+       .dropdown {
+           position:relative;
+           display:inline-block;
+       }
 
-.dropdown {
-   position:relative;
-   display:inline-block;
-}
-.dropdown-content {
-   display: none;
-   position:absolute;
-   background-color: white;
-   min-width: 160px;
-   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-   z-index:1000;
-   right:0;
-}
+       .dropdown-content {
+           display: none;
+           position: absolute;
+           background-color: white;
+           min-width: 160px;
+           box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+           z-index: 1000;
+           right: 0;
+           opacity: 0;
+           transition: opacity 0.3s ease;
+       }
 
+       .dropdown-content a {
+           color: black;
+           padding: 12px 16px;
+           text-decoration: none;
+           display: block;
+       }
 
-.dropdown-content a {
-   color: black;
-   padding: 12px 16px;
-   text-decoration: none;
-   display: block;
-   width: 100%;
+       .dropdown-content a:hover {
+           background-color: #f1f1f1;
+       }
 
+       .dropdown:hover .dropdown-content {
+           display: block;
+           opacity: 1;
+       }
 
-}
-.dropdown-content a:hover{
-   background-color: #f1f1f1;
-}
-.dropdown:hover .dropdown-content{
-   display: block;
-}
-.header {
-   position: relative;
-   z-index: 500;
-}
+       .header {
+           position: relative;
+           z-index: 500;
+       }
 
+       .canvas__open {
+           display: none;
+           cursor: pointer;
+       }
 
-
-
+       @media (max-width: 991px) {
+           .canvas__open {
+               display: block;
+           }
+           .header__menu {
+               display: none;
+           }
+           .header__menu.active {
+               display: block;
+           }
+       }
    </style>
 </head>
 <body>
+
+   <!-- Header Section -->
    <header class="header">
        <div class="container">
            <div class="row">
+               <!-- Logo -->
                <div class="col-lg-3 col-md-3">
                    <div class="header__logo">
-                       <a href="#"><img src="img/logo.png" alt=""></a>
+                       <a href="/">
+                           <img src="/img/logo.png" alt="Nike Logo" class="img-fluid">
+                       </a>
                    </div>
                </div>
+
+               <!-- Main Navigation -->
                <div class="col-lg-6 col-md-6">
                    <nav class="header__menu mobile-menu">
                        <ul>
                            <li class="active"><a href="/">Home</a></li>
                            <li><a href="/shop">Shop</a></li>
+                           <!-- Add more links as needed -->
                        </ul>
                    </nav>
                </div>
+
+               <!-- User Account & Actions -->
                <div class="col-lg-3 col-md-3">
                    <div class="header__nav__option">
-                       <%if(locals.user){%>
+                       <!-- If the user is logged in, show their name with a dropdown -->
+                       <% if (locals.user) { %>
                            <div class="dropdown">
-                               <a href="#" class="sign-in-link"><%=locals.user.name%></a>
+                               <a href="#" class="sign-in-link" aria-label="User menu"><%= locals.user.name %></a>
                                <div class="dropdown-content">
-                                   <a href="/userProfile">Profile</a>
-                                   <a href="/logout">Logout</a>
+                                   <a href="/userProfile" aria-label="Go to profile">Profile</a>
+                                   <a href="/logout" aria-label="Log out">Logout</a>
                                </div>
                            </div>
-                       <%}else {%>
+                       <% } else { %>
+                           <a href="/signup" class="sign-in-link" aria-label="Sign up">Sign Up</a>
+                           <a href="/login" class="sign-in-link" aria-label="Log in">Log in</a>
+                       <% } %>
 
-
-                       <a href="/signup" class="sign-in-link">Sign Up</a>
-                       <a href="/login" class="sign-in-link">Log in</a>
-                       <%}%>
-                       <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
-                       <a href="#"><img src="img/icon/heart.png" alt=""></a>
-                       <a href="./shopping-cart.html"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
+                       <!-- Other icons -->
+                       <a href="#" class="search-switch" aria-label="Search"><img src="/img/icon/search.png" alt="Search icon"></a>
+                       <a href="#" aria-label="Wishlist"><img src="/img/icon/heart.png" alt="Wishlist icon"></a>
+                       <a href="/shopping-cart.html" aria-label="View cart"><img src="/img/icon/cart.png" alt="Cart icon"> <span>0</span></a>
                    </div>
                </div>
            </div>
-           <div class="canvas__open"><i class="fa fa-bars"></i></div>
+
+           <!-- Mobile Menu Toggle Button -->
+           <div class="canvas__open" aria-label="Toggle menu">
+               <i class="fa fa-bars"></i>
+           </div>
        </div>
    </header>
+
+   <!-- JavaScript for Mobile Menu Toggle -->
+   <script>
+       // Mobile menu toggle functionality
+       const mobileMenuButton = document.querySelector('.canvas__open');
+       const mobileMenu = document.querySelector('.header__menu');
+
+       mobileMenuButton.addEventListener('click', function() {
+           mobileMenu.classList.toggle('active');
+       });
+   </script>
+
+</body>
+</html>

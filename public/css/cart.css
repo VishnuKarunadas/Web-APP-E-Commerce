@@ -1,0 +1,100 @@
+
+/* Container styling */
+.product-info {
+display: flex;
+align-items: center; /* Align items vertically in the center */
+border: 1px solid #ccc;
+padding: 10px;
+margin-bottom: 15px;
+border-radius: 8px;
+}
+
+/* Image container styling */
+.image-container {
+flex-shrink: 0; /* Prevents the image from shrinking */
+margin-right: 15px;
+}
+
+.product-image {
+width: 100px; /* Adjust the image size for a standard listing */
+height: auto;
+border-radius: 5px;
+}
+
+/* Details container styling */
+.details-container {
+display: flex;
+flex-direction: column;
+}
+.container {
+    background-color: white;
+}
+/* Text styling */
+.product-name {
+font-size: 1.2em; /* Larger font size for the product name */
+font-weight: bold;
+margin: 0;
+}
+
+.product-description {
+font-size: 1em; /* Slightly smaller than the product name */
+color: #555;
+margin: 5px 0;
+}
+
+.product-price {
+font-size: 1.1em; /* Similar to product name but bold */
+font-weight: bold;
+color: #333;
+margin-top: 10px;
+}
+
+/* Container for the forms */
+.button-container {
+display: flex;
+align-items: center; /* Align items vertically center */
+justify-content: space-between; /* Align items horizontally with space between */
+gap: 10px; /* Space between forms */
+}
+
+/* Form and button styling */
+form {
+margin: 0; /* Remove default margin */
+}
+
+.quantity-buttons {
+display: flex;
+gap: 5px; /* Space between quantity buttons */
+}
+
+.btn {
+padding: 6px 12px; /* Standard button size */
+font-size: 0.9em; /* Slightly smaller font size */
+border-radius: 4px; /* Slightly rounded corners */
+}
+
+.btn-primary {
+background-color: #007bff;
+color: #fff;
+border: none;
+cursor: pointer;
+}
+
+.btn-primary:hover {
+background-color: #0056b3;
+}
+
+.btn-danger {
+background-color: #dc3545;
+color: #fff;
+border: none;
+cursor: pointer;
+}
+
+.btn-danger:hover {
+background-color: #c82333;
+}
+
+
+
+

@@ -78,6 +78,13 @@ const SignUp = async (req, res, next) => {
           message: "User with this email already exists",
         });
       }
+      const findUserPhone = await User.findOne({ phone });
+      console.log(findUserPhone);
+      if (findUserPhone) {
+        return res.render("signup", {
+          message: "User with this phone no: already exists",
+        });
+      }
   
       const otp = generateOtp();
   
@@ -232,9 +239,7 @@ const SignUp = async (req, res, next) => {
       // Slice the product data to only include the products for the current page
       const startIndex = (currentPage - 1) * productsPerPage;
       productData = productData.slice(startIndex, startIndex + productsPerPage);
-  
-      // Log product image data to ensure it's correct
-      console.log("Product Images:", productData.map(product => product.productImage));
+      // console.log("Product Images:", productData.map(product => product.productImage));
       let userId = req.user || req.session.user;
     let userData = userId
       ? await User.findById(userId).populate("cart").exec()
@@ -245,7 +250,7 @@ const SignUp = async (req, res, next) => {
 
     res.locals.user = userData;
   
-      // If the user is logged in, retrieve the user's cart items
+     console.log("home page rendering...");
      
         
         // Render homepage with user, cart items, product data
