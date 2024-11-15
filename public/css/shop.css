@@ -130,7 +130,7 @@ div#my-cart-modal .close:hover,
 
 /*-- cart-button --*/
 
-button.top_googles_cart {
+button.top_nike_cart {
     text-align: center;
     background: none;
     letter-spacing: 2px;
@@ -403,7 +403,7 @@ p.sbmincart-empty-text {
 	margin-top: 0.5em;
 }
 
-.googles-cart {
+.nike-cart {
 	font-size: 1em;
 	color: #fff;
 	margin: 0;
@@ -417,7 +417,7 @@ p.sbmincart-empty-text {
 	transition: .5s all;
 }
 
-.googles-cart:hover,
+.nike-cart:hover,
 .back a:hover {
 	box-shadow: none;
 }
@@ -604,7 +604,7 @@ ul.stars li a i:hover {
     color: #ff4e00;
 }
 
-.product-googles-info {
+.product-nike-info {
 	padding: 15px;
 	border: 1px solid #e4e4e4;
 }
@@ -1010,7 +1010,7 @@ span.item_price {
 	text-align: left;
 }
 
-button.googles-cart {
+button.nike-cart {
 	font-size: 1.4em;
 	color: #333;
 	border: none;
@@ -1020,7 +1020,7 @@ button.googles-cart {
 	margin-top: 0.5em;
 	cursor: pointer;
 }
-.product-googles-info:hover button.googles-cart{
+.product-nike-info:hover button.nike-cart{
 	color:#ff4e00;
 }
 ul.footer_list_icons.single_in li {
@@ -1037,17 +1037,18 @@ ul.footer_list_icons.single_in li a {
 ul.footer_list_icons.single_in li a:hover {
 	color: #333;
 }
-.product-googles-info.slide-img {
+.product-nike-info.slide-img {
     border: none;
 }
-.product-googles-info.slide-img .product-new-top {
+.product-nike-info.slide-img .product-new-top {
     background: #989494;
 }
 /*-- single-page --*/
 
 .single-right-left h3 {
     font-size: 23px;
-    color: #ff4e00;
+    color: #000000;
+	
     margin: 0;
     letter-spacing: 1px;
 }
@@ -1285,7 +1286,7 @@ ul.footer_list_icons.single_in li a:hover {
 	margin-top: 3em;
 }
 
-.googles.single-item {
+.nike.single-item {
 	float: right;
 }
 
@@ -1312,7 +1313,7 @@ span.item_price {
 	font-weight: 600;
 }
 
-.singlepage button.googles-cart.pgoogles-cart {
+.singlepage button.nike-cart.pnike-cart {
 	font-size: 13px;
 	color: #fff;
 	background: #1d1d1d;
@@ -1342,7 +1343,7 @@ span.item_price {
 	margin: 3em 0 1em 0;
 }
 
-.googles.single-item.single_page_b {
+.nike.single-item.single_page_b {
 	float: left;
 	margin-bottom: 2em;
 	width: 100%;
@@ -1354,7 +1355,7 @@ span.item_price {
 	.item-info-product h4 a {
 		font-size: 13px;
 	}
-	.googles.single-item {
+	.nike.single-item {
 		float: right;
 		width: 15%;
 	}
@@ -1382,7 +1383,7 @@ span.item_price {
 		top: 16.9%;
 		width: 420px;
 	}
-    button.googles-cart {
+    button.nike-cart {
        font-size: 1em;
     }
 }
@@ -1398,7 +1399,7 @@ span.item_price {
         max-width: 50%;
         margin-bottom: 1em;
     }
-    .googles.single-item {
+    .nike.single-item {
         float: right;
         width: 40%;
     }
@@ -1473,7 +1474,7 @@ span.item_price {
 		top: 16.9%;
 		width: 343px;
 	}
-    button.top_googles_cart {
+    button.top_nike_cart {
         padding: 0.5em 0.5em;
         letter-spacing: 1px;
     }
@@ -1495,12 +1496,12 @@ span.item_price {
         width: 100%;
         text-align: center;
     }
-    .googles.single-item {
+    .nike.single-item {
         float: none;
         width: 100%;
         text-align: center;
     }
-    .googles.single-item.singlepage {
+    .nike.single-item.singlepage {
         text-align: left;
     }
 

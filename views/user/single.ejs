@@ -44,7 +44,7 @@
 	
 						<ul class="short">
 							<li>
-								<a href="/home">Home</a>
+								<a href="/">Home</a>
 								<i>|</i>
 							</li>
 							<li>Single Page</li>
@@ -86,19 +86,19 @@
 								<p>
 									<% if (product.offerPrice && product.offerPrice < product.salePrice) { %>
 									  
-									  <span class="item_price">₹<%= product.offerPrice %></span>
-									  <del>₹<%= product.regularPrice %></del>
+									  <span class="item_price">$<%= product.offerPrice %></span>
+									  <del>$<%= product.regularPrice %></del>
 									<% } else if (product.salePrice < product.regularPrice) { %>
 									
-									  <span class="item_price">₹<%= product.salePrice %></span>
-									  <del>₹<%= product.regularPrice %></del>
+									  <span class="item_price">$<%= product.salePrice %></span>
+									  <del>$<%= product.regularPrice %></del>
 									<% } else if (product.salePrice === product.regularPrice && product.offerPrice && product.offerPrice < product.salePrice) { %>
 									  
-									  <span class="item_price">₹<%= product.offerPrice %></span>
-									  <del>₹<%= product.regularPrice %></del>
+									  <span class="item_price">$<%= product.offerPrice %></span>
+									  <del>$<%= product.regularPrice %></del>
 									<% } else { %>
 									  
-									  <span class="item_price">₹<%= product.regularPrice %></span>
+									  <span class="item_price">$<%= product.regularPrice %></span>
 									<% } %>
 								  </p>
 								  
@@ -133,12 +133,7 @@
 									</div>
 	
 	
-									<!-- <div style="display: flex; align-items: center;">
-										<h5 style="margin-right: 10px;">Brand:</h5>
-										<p style="margin: 0;">
-											<%= product.brand ? product.brand.name : 'No Brand' %>
-										</p>
-									</div> -->
+
 	
 								</div>
 								
@@ -147,24 +142,24 @@
 								
 								</div>
 								<div class="occasion-cart">
-									<div class="googles single-item singlepage" style="display: flex; gap: 10px;">
+									<div class="nike single-item singlepage" style="display: flex; gap: 10px;">
 										<form id="addToCartForm-<%= product._id %>" onsubmit="return false;">
 											<input type="hidden" name="productId" value="<%= product._id %>">
 											<input type="hidden" name="quantity" value="1">
-											<button type="button" class="googles-cart pgoogles-cart" onclick="addToCart('<%= product._id %>')">
+											<button type="button" class="nike-cart pnike-cart" onclick="addToCart('<%= product._id %>')">
 												Add to Cart
 											</button>
 										</form>
 										<form id="addToWishlistForm-<%= product._id %>" onsubmit="return false;">
 											<input type="hidden" name="productId" value="<%= product._id %>">
-											<button type="button" class="googles-cart pgoogles-cart" onclick="addToWishlist('<%= product._id %>')">
+											<button type="button" class="nike-cart pnike-cart" onclick="addToWishlist('<%= product._id %>')">
 												<i class="fas fa-heart"></i>
 											</button>
 										</form>
 									</div>
 								</div>
 								
-								<ul class="footer-social text-left mt-lg-4 mt-3">
+								<!-- <ul class="footer-social text-left mt-lg-4 mt-3">
 									<li>Share On : </li>
 									<li class="mx-2">
 										<a href="#">
@@ -191,7 +186,7 @@
 											<span class="fas fa-rss"></span>
 										</a>
 									</li>
-								</ul>
+								</ul> -->
 							</div>
 							<div class="clearfix"> </div>
 							<!--/tabs-->
@@ -230,7 +225,7 @@
 			<% if (relatedProducts.length > 0) { %>
 				<% relatedProducts.forEach(relatedProduct => { %>
 					<div class="col-md-3 product-men women_two shop-gd">
-						<div class="product-googles-info googles">
+						<div class="product-nike-info nike">
 							<div class="men-pro-item">
 								<div class="men-thumb-item">
 									<img src="/uploads/product-images/<%= relatedProduct.productImage[0] %>" class="img-fluid" alt="<%= relatedProduct.productName %>">
@@ -277,17 +272,17 @@
 												<span class="rating-count">(<%= relatedProduct.totalRatings %> reviews)</span>
 											  <% } %>
 										</div>
-										<div class="googles single-item hvr-outline-out">
+										<div class="nike single-item hvr-outline-out">
 											<form id="addToCartForm-<%= relatedProduct._id %>" onsubmit="return false;">
 												<input type="hidden" name="productId" value="<%= relatedProduct._id %>">
 												<input type="hidden" name="quantity" value="1">
-												<button type="button" class="googles-cart pgoogles-cart" onclick="addToCart('<%= relatedProduct._id %>')">
+												<button type="button" class="nike-cart pnike-cart" onclick="addToCart('<%= relatedProduct._id %>')">
 													<i class="fas fa-cart-plus"></i>
 												</button>
 											</form>
 											<form id="addToWishlistForm-<%= relatedProduct._id %>" onsubmit="return false;">
 												<input type="hidden" name="productId" value="<%= relatedProduct._id %>">
-												<button type="button" class="googles-cart pgoogles-cart" onclick="addToWishlist('<%= relatedProduct._id %>')">
+												<button type="button" class="nike-cart pnike-cart" onclick="addToWishlist('<%= relatedProduct._id %>')">
 													<i class="fas fa-heart"></i>
 												</button>
 											</form>
@@ -321,9 +316,9 @@
 			<!-- cart-js -->
 			<script src="/js/minicart.js"></script>
 			<script>
-				googles.render();
+				nike.render();
 	
-				googles.cart.on('googles_checkout', function (evt) {
+				nike.cart.on('nike_checkout', function (evt) {
 					var items, len, i;
 	
 					if (this.subtotal() > 0) {

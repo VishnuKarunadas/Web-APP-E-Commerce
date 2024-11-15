@@ -28,7 +28,7 @@ p {
 .resp-tabs-container {
   padding: 2em;
   clear: left;
-  border: 1px solid #ddd;
+  /* border: 1px solid #ddd; */
 }
 
 ul.resp-tabs-list li i {
@@ -49,7 +49,7 @@ h2.resp-accordion {
 }
 
 .resp-tab-active {
-  border-bottom: 4px solid #ff4e00;
+  border-bottom: 4px solid #000000;
   margin-bottom: -1px !important;
   position: relative;
   background: #ff4e00;

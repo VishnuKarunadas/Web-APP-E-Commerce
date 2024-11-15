@@ -1,0 +1,189 @@
+<style>
+    /* Centering the entire address list */
+    .address-list {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        padding: 20px;
+    }
+  
+    /* Centering individual addresses */
+    .address {
+        width: 50%; /* Default width for larger screens */
+        background-color: #f9f9f9;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        text-align: center;
+    }
+  
+    /* Styling the text */
+    .address p {
+        font-size: 18px; /* Standard size for readability */
+        margin: 10px 0;
+    }
+  
+    .address span {
+        font-weight: bold;
+    }
+  
+    /* Styling the buttons */
+    .edit-btn, .delete-btn {
+        background-color: #007bff;
+        color: #ffffff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px; /* Increased font size for readability */
+        cursor: pointer;
+        border-radius: 5px;
+        margin: 10px;
+    }
+  
+    .edit-btn {
+        background-color: #4CAF50; /* Green for edit */
+    }
+  
+    .delete-btn {
+        background-color: #ff0000; /* Red for delete */
+    }
+  
+    /* Styling for when no addresses are found */
+    .address-list p {
+        font-size: 18px;
+        text-align: center;
+        color: #666;
+    }
+
+    /* Media Query for Tablets and Smaller Screens */
+    @media (max-width: 768px) {
+        .address {
+            width: 80%; /* Adjust the width to take up more screen space */
+        }
+
+        .address p {
+            font-size: 16px; /* Smaller font size for readability on small screens */
+        }
+
+        .edit-btn, .delete-btn {
+            font-size: 14px; /* Smaller font size for buttons */
+            padding: 8px 16px;
+        }
+    }
+
+    /* Media Query for Mobile Screens */
+    @media (max-width: 480px) {
+        .address {
+            width: 100%; /* Full width for small mobile screens */
+            padding: 15px;
+        }
+
+        .address p {
+            font-size: 14px; /* Smaller font size for mobile screens */
+            margin: 8px 0;
+        }
+
+        .edit-btn, .delete-btn {
+            font-size: 12px; /* Adjust font size */
+            padding: 6px 12px; /* Adjust padding for mobile */
+            width: 100%; /* Full width for better accessibility */
+            margin: 5px 0;
+        }
+
+        /* Add a bit more spacing for buttons */
+        .edit-btn {
+            margin-top: 10px;
+        }
+    }
+</style>
+
+  
+  <div class="container-fluid" style="background-color: #f1f3f6;">
+      <%- include("../../views/partials/user/header") %>
+      <%- include("../../views/partials/user/breadcrumb") %>
+      
+      <div class="dashboard-container">
+        <%- include("../../views/partials/user/sidebar") %>
+  
+        <div class="dashboard-content" id="dashboardContent">
+          <h1>Address List</h1>
+          <a href="/user/add-new-address"><button class="add-btn" style="float: left;">Add New Address</button></a> 
+          <br><br>
+          <div class="address-list" id="address-list">
+              <% if (address && address.length > 0) { %>
+                  <% address.forEach((address, index) => { %>
+                      <div class="address">
+                          <h1>Address <%= index + 1 %></h1>
+                          <p>House: <span id="house"><%= address.house %></span></p>
+                          <p>Place: <span id="place"><%= address.place %></span></p>
+                          <p>City: <span id="city"><%= address.city %></span></p>
+                          <p>State: <span id="state"><%= address.state %></span></p>
+                          <p>Pin: <span id="pin"><%= address.pin %></span></p>
+                          <p>Land Mark: <span id="landMark"><%= address.landMark %></span></p>
+                          <p>Contact No: <span id="contactNo"><%= address.contactNo %></span></p>
+                          <a href="/user/edit-address/<%= address._id %>"><button class="edit-btn">Edit</button></a>
+                          <button class="btn btn-danger" onclick="confirmDelete('<%= address._id %>')">Delete</button>
+                      </div>
+                  <% }) %>
+              <% } else { %>
+                  <p>No addresses found.</p>
+              <% } %>
+          </div>
+        </div>
+      </div>
+      
+      <%- include("../../views/partials/user/footer") %>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+      function confirmDelete(addressId) {
+          Swal.fire({
+              title: 'Are you sure?',
+              text: "If you press confirm, you won't be able to revert this!",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, delete it!'
+          }).then((result) => {
+              if (result.isConfirmed) {
+                  deleteAddress(addressId);
+              }
+          });
+      }
+      
+      async function deleteAddress(addressId) {
+          try {
+              const response = await fetch(`/user/deleteAddress?id=${addressId}`, {
+                  method: 'DELETE',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  }
+              });
+              const data = await response.json();
+              
+              if (response.ok && data.status === true) {
+                  Swal.fire(
+                      'Deleted!',
+                      'The Address has been deleted.',
+                      'success'
+                  ).then(() => {
+                      location.reload();
+                  });
+              } else {
+                  Swal.fire('Failed', data.message || 'Deleting address failed', 'error');
+              }
+          } catch (error) {
+              Swal.fire(
+                  'Error',
+                  'An error occurred while deleting the address',
+                  'error'
+              );
+              console.error('Error deleting address', error);
+          }
+      }
+  </script>
+  

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Page</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .order-item {
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+    .order-image img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    .status-icon {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.delivered {
+    background-color: blue; 
+}
+
+.pending {
+    background-color: orange; 
+}
+
+.processing {
+    background-color: green; 
+}
+
+.cancelled {
+    background-color: red;
+}
+
+.default {
+    background-color: gray; 
+}
+
+  </style>
+</head>
+<body>
+
+<%- include("../../views/partials/user/header") %>
+
+<div class="container-fluid">
+  <%- include("../../views/partials/user/breadcrumb") %>
+
+  <div class="row">
+    <%- include("../../views/partials/user/sidebar") %>
+
+    <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Your Orders</h1>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col">
+          <form action="/user/my-order" method="GET">
+            <div class="input-group">
+              <input 
+                type="text" 
+                name="searchQuery"
+                class="form-control" 
+                placeholder="Search your orders here"
+                value="<%= searchQuery %>"
+              >
+              <div class="input-group-append">
+                <button class="btn btn-success" type="submit">Search Orders</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <% if (orders && orders.length > 0) { %>
+        <% orders.forEach((order) => { %>
+          <% if (order.items && order.items.length > 0) { %>
+            <% order.items.forEach((item) => { %>
+              <div class="order-item p-3">
+                <div class="row align-items-center">
+                  <div class="col-md-2">
+                    <div class="order-image">
+                      <% if (item.product && item.product.productImage && item.product.productImage.length > 0) { %>
+                        <img src="/uploads/product-images/<%= item.product.productImage[0] %>" alt="Order Image" class="img-fluid">
+                      <% } else { %>
+                        <img src="/uploads/product-images/placeholder.jpeg" alt="Product Deleted" class="img-fluid">
+                      <% } %>
+                    </div>
+                    <br>
+                    <br>
+                    <p class="mb-0 mt-2">Order ID: <%= order.orderId %></p>
+                  </div>
+                  <div class="col-md-3">
+                    <h5>
+                      <%= item.product.brand ? item.product.brand.name : '' %> 
+                      <%= item.product.productName %>
+                  </h5>
+                  
+                    <p class="mb-0">SKU: <%= item.product.skuNumber %></p>
+                    <p class="mb-0"><%= item.product.description %></p>
+                    <p class="mb-0">Color: <%= item.product.color %></p>
+                  </div>
+                  <div class="col-md-2">
+                    <p class="font-weight-bold mb-0">Price: $<%= item.regularPrice %></p>
+                    <p class="mb-0">Quantity: <%= item.quantity %></p>
+                    <p class="mb-0">Total: $<%= (item.regularPrice * item.quantity).toFixed(2) %></p>
+                    
+                    <!-- SaledPrice section underneath -->
+                    <div class="mt-2" style="background-color: #f8d7da; padding: 8px; border-radius: 5px;">
+                      <p class="font-weight-bold text-success mb-0">Sale Price: $<%= item.saledPrice.toFixed(2) %></p>
+                      <p class="text-success mb-0"> Total Discount: $<%= ((item.regularPrice * item.quantity) -  (item.saledPrice * item.quantity)).toFixed(2) %></p>
+                      <p class="text-success mb-0">Saled Total: $<%= (item.saledPrice * item.quantity).toFixed(2) %></p>
+                     
+                    </div>
+                  </div>
+
+                  <div class="col-md-2">
+                    <div class="order-status">
+                        <% if (item.itemOrderStatus === 'Delivered') { %>
+                            <div class="status-icon delivered"></div>
+                        <% } else if (item.itemOrderStatus === 'Pending') { %>
+                            <div class="status-icon pending"></div>
+                        <% } else if (item.itemOrderStatus === 'Processing') { %>
+                       
+                            <div class="status-icon processing"></div>
+                        <% } else if (item.itemOrderStatus === 'Cancelled') { %>
+                        
+                            <div class="status-icon cancelled"></div>
+                        <% } else { %>
+                         
+                            <div class="status-icon default"></div>
+                        <% } %>
+                        <span><%= item.itemOrderStatus %></span>
+                    </div>
+                </div>
+                
+                
+                <div class="col-md-3 text-right">
+                  <p class="mb-2"><%= order.date.toLocaleString() %></p>
+                  <br>
+                  <% if (item.itemOrderStatus === 'Pending' || item.itemOrderStatus === 'Processing') { %>
+                      <button class="btn btn-sm btn-danger cancel-order-btn" data-item-order-id="<%= item.itemOrderId %>">Cancel Item</button>
+                  <% } else if (item.itemOrderStatus === 'Delivered') { %>
+                      <% 
+                          const deliveryDate = item.deliveryDate || order.date;
+                          const currentDate = new Date();
+                          const daysSinceDelivery = Math.floor((currentDate - deliveryDate) / (1000 * 60 * 60 * 24));
+                      %>
+                      <% if (daysSinceDelivery <= 7) { %>
+                          <button class="btn btn-sm btn-warning return-order-btn" data-item-order-id="<%= item.itemOrderId %>">Return</button>
+                      <% } else { %>
+                          <small class="text-muted">Return period expired</small>
+                      <% } %>
+                  <% } %>
+                  <div>
+                    <br>
+                  <form action="/user/my-order/order-details" method="POST">
+                    <input type="hidden" name="orderId" value="<%= order.orderId %>">
+                    <input type="hidden" name="productId" value="<%= item.product._id %>">
+                    <button type="submit" class="btn btn-warning">View Order</button>
+                  </form>
+                </div>
+              </div>
+                
+                </div>
+              </div>
+            <% }) %>
+          <% } %>
+        <% }) %>
+      <% } else { %>
+        <p>No orders found.</p>
+      <% } %>
+
+      <% if (totalPages > 1) { %>
+        <nav aria-label="Page navigation">
+          <ul class="pagination">
+            <% if (currentPage > 1) { %>
+              <li class="page-item">
+                <a class="page-link" href="/user/my-order?page=<%= currentPage - 1 %>&searchQuery=<%= searchQuery %>">Previous</a>
+              </li>
+            <% } %>
+            
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                <a class="page-link" href="/user/my-order?page=<%= i %>&searchQuery=<%= searchQuery %>"><%= i %></a>
+              </li>
+            <% } %>
+            
+            <% if (currentPage < totalPages) { %>
+              <li class="page-item">
+                <a class="page-link" href="/user/my-order?page=<%= currentPage + 1 %>&searchQuery=<%= searchQuery %>">Next</a>
+              </li>
+            <% } %>
+          </ul>
+        </nav>
+      <% } %>
+    </main>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<%- include("../../views/partials/user/footer") %>
+
+<script>
+  document.querySelectorAll('.cancel-order-btn').forEach(button => {
+    button.addEventListener('click', function (event) {
+        event.preventDefault();
+        const itemOrderId = this.getAttribute('data-item-order-id');
+
+        
+        Swal.fire({
+            title: 'Cancel Reason',
+            input: 'text',
+            inputPlaceholder: 'Enter your reason for cancellation...',
+            showCancelButton: true,
+            confirmButtonText: 'Cancel Item',
+            cancelButtonText: 'Cancel',
+            preConfirm: (cancelReason) => {
+                if (!cancelReason) {
+                    Swal.showValidationMessage('You need to enter a reason for cancellation!');
+                }
+                return cancelReason; 
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const cancelReason = result.value; 
+
+                fetch(`/user/my-order/cancel/${itemOrderId}/${encodeURIComponent(cancelReason)}`, {
+                    method: 'POST'
+                }).then(() => {
+                    Swal.fire(
+                        'Cancelled!',
+                        'Your item has been cancelled.',
+                        'success'
+                    ).then(() => {
+                        location.reload();
+                    });
+                }).catch(error => {
+                    console.error('Error cancelling the item:', error);
+                    Swal.fire('Error!', 'There was an error cancelling your item.', 'error');
+                });
+            }
+        });
+    });
+  });
+</script>
+
+<script>
+
+document.querySelectorAll('.return-order-btn').forEach(button => {
+  button.addEventListener('click', function (event) {
+    event.preventDefault();
+    const itemOrderId = this.getAttribute('data-item-order-id');
+
+    Swal.fire({
+      title: 'Return Reason',
+      input: 'text',
+      inputPlaceholder: 'Enter your reason for returning...',
+      showCancelButton: true,
+      confirmButtonText: 'Submit Return Request',
+      cancelButtonText: 'Cancel',
+      preConfirm: (returnReason) => {
+        if (!returnReason) {
+          Swal.showValidationMessage('You need to enter a reason for returning!');
+        }
+        return returnReason;
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const returnReason = result.value;
+
+        fetch('/user/my-order/return-order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ itemOrderId, returnReason }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.message === 'Return request submitted successfully') {
+            Swal.fire(
+              'Submitted!',
+              'Your return request has been submitted.',
+              'success'
+            ).then(() => {
+              location.reload();
+            });
+          } else {
+            Swal.fire('Error!', data.message, 'error');
+          }
+        })
+        .catch(error => {
+          console.error('Error submitting return request:', error);
+          Swal.fire('Error!', 'There was an error submitting your return request.', 'error');
+        });
+      }
+    });
+  });
+});
+
+</script>
+
+
+</body>
+</html>

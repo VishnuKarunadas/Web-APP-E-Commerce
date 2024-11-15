@@ -1,10 +1,15 @@
+
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
-const crypto = require("crypto");
+const mongoose = require("mongoose");
+const crypto = require("crypto")
+
 const env = require("dotenv").config();
 const User = require("../../models/userSchema");
-const { builtinModules } = require("module");
-// const Order = require("../../models/orderSchema")
+const Product = require("../../models/productSchema")
+const address = require("../../models/addressSchema");
+const Address = require("../../models/addressSchema");
+const Order = require("../../models/orderSchema")
 
 
 function generateOtp() {
@@ -22,6 +27,12 @@ const forgetPasswordPage = async (req, res, next) => {
     }
 
 
+}
+
+
+
+function generateOtp() {
+    return crypto.randomInt(100000, 1000000).toString(); 
 }
 
 const sendVerificationEmail = async (email, otp) => {
@@ -63,6 +74,7 @@ const securePassword = async (passsword) => {
         
     }
 }
+
 
 const forgetEmailValidation = async (req, res, next) => {
     try {
@@ -159,28 +171,55 @@ const postNewPassword = async (req, res, next) =>{
     }
 }
 
-const userProfile =async (req,res)=>{
+
+const userProfile = async (req, res, next) => {
     try {
-        const userId = req.session.user;
-        const userData = await User.findById(userId);
-        res.render('user-profile',{
-            user:userData,        })
+        const userId = req.session.user || req.user;
+
+       
+        const userData = await User.findById(userId)
+            .populate('address')  
+            .exec();
+
+        
+        const firstAddress = userData.address.length > 0 ? userData.address[0] : null;
+
+        
+        const orders = await Order.find({ user: userId }).exec();
+
+       
+        const pendingOrders = orders.filter(order => order.status === 'Pending');
+        const completedOrders = orders.filter(order => order.status === 'Delivered');
+        const pendingCount = pendingOrders.length;
+        const completedCount = completedOrders.length;
+        const totalOrders = orders.length; 
+
+       
+        if (res.locals.user) {
+            return res.render("user-profile", {
+                user: res.locals.user,
+                firstAddress,
+                pendingCount,
+                completedCount,
+                totalOrders
+            });
+        } else {
+            return res.render("login");
+        }
     } catch (error) {
-        console.error("error profile data",error)
-        res.redirect("/pageNotFound");
+        console.log("Profile page not found:", error);
+        next(error);
     }
-}
+};
 
 
-
-
-module.exports ={
+module.exports = {
+    userProfile,
     forgetPasswordPage,
     forgetEmailValidation,
     verifyForgetPassOtp,
     getResetPassPage,
     resendOtp,
     postNewPassword,
-    userProfile,
 
 }

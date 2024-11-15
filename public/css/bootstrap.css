@@ -594,14 +594,75 @@ pre code {
 }
 
 .row {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -ms-flex-wrap: wrap;
   flex-wrap: wrap;
-  margin-right: -15px;
-  margin-left: -15px;
+
+
 }
+
+.row {
+  display: flex;
+  justify-content: space-between; /* Distribute space between the left and right items */
+  align-items: center; /* Vertically center items */
+  padding-left: 15px;
+
+}
+.col-lg-3, .col-md-3 {
+  display: flex;
+  align-items: center; /* Vertically center items in the column */
+}
+
+.header__logo {
+  flex-shrink: 0; /* Prevent logo from shrinking */
+}
+
+.top-info-cart {
+  text-align: right; /* Align the cart and sign-in links to the right */
+}
+
+.cart-inner-info {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 10px;
+}
+
+.cart-inner-info li {
+  margin-left: 20px; /* Space between list items */
+}
+
+.sign-in-link {
+  margin-left: 10px; /* Space between the links */
+  color: #333;
+  font-weight: 500;
+}
+
+.nikecart {
+  display: inline-block;
+  position: relative;
+}
+
+.cart-count {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+
+  color: white;
+  border-radius: 50%;
+  padding: 10px -2px;
+  font-size: 12px;
+  
+}
+
+.hidden {
+  display: none;
+}
+
+.visible {
+  display: inline-block;
+}
+
+
 
 .no-gutters {
   margin-right: 0;

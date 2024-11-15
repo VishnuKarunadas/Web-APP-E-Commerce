@@ -1,0 +1,367 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+              body {
+            font-family: sans-serif;
+        }
+
+        .container {
+            margin-top: 20px;
+            background-color: white;
+        }
+
+        .order-summary {
+            padding: 20px 20px 20px 0px;
+            background-color: rgb(88, 189, 192);
+        }
+
+        .product-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .product-details {
+            margin-left: 20px;
+        }
+
+        .product-details h6 {
+            margin-bottom: 5px;
+        }
+
+        .product-details .price {
+            font-weight: bold;
+        }
+
+        .product-details .discount {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .product-details .offer {
+            color: #008000;
+            font-size: 12px;
+        }
+
+        .product-item {
+            padding: 10px;
+        }
+
+        .product-details .delivery {
+            font-size: 12px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .button-group button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            background-color: #eee;
+            border: none;
+            cursor: pointer;
+        }
+
+        .price-details {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-left: auto;
+            float: right;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .price-details .item {
+            margin-bottom: 10px;
+        }
+
+        .price-details .price {
+            font-weight: bold;
+        }
+
+        .price-details .free {
+            color: #008000;
+        }
+
+        .total-payable {
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        .total-savings {
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 10px;
+            color: #008000;
+        }
+
+        .secure-payment {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .secure-payment .icon {
+            margin-right: 10px;
+        }
+
+        .secure-payment .text {
+            font-size: 14px;
+        }
+
+        .login, .delivery-address {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+
+        .login-details, .delivery-address-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .login-details button, .delivery-address-details button {
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .login-details button:hover, .delivery-address-details button:hover {
+            background-color: #0069d9;
+        }
+       
+    </style>
+</head>
+<body>
+    <%-include("../../views/partials/user/header")%>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                
+
+                <div>
+                    <br>
+                    <div class="login">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <span class="badge badge-primary">1</span>
+                            </div>
+                            <div class="col-md-11">
+                                <div class="login-details">
+                                    <h6>LOGIN</h6>
+                                </div>
+                                <p><%= user.name %></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="delivery-address">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <span class="badge badge-primary">2</span>
+                            </div>
+                            <div class="col-md-11">
+                                <div class="delivery-address-details">
+                                    <form id="addressForm">
+                                        <div class="form-group">
+                                            <label for="existingAddress">Select Address:</label>
+                                            <select id="existingAddress" name="address" class="form-control">
+                                                <% if (addresses && addresses.length > 0) { %>
+                                                    <% addresses.forEach(address => { %>
+                                                        <option value="<%= address._id %>">
+                                                            <%= address.house %>, <%= address.place %>, <%= address.city %>, <%= address.state %>, <%= address.pin %>, <%= address.contactNo %>
+                                                        </option>
+                                                    <% }) %>
+                                                <% } else { %>
+                                                    <option value="">No addresses available</option>
+                                                <% } %>
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+             
+
+                <div class="order-summary">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <span class="badge badge-primary" style="margin-left: 15px;">3</span>
+                        </div>
+                        <div class="col-md-11">
+                            <h6>ORDER SUMMARY</h6>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row product-item">
+                    <% if (cart && cart.items.length > 0) { %>
+                        <% cart.items.forEach((item, index) => { %>
+                            <div class="col-md-3">
+                                <a href="#">
+                                    <img src="/uploads/product-images/<%= item.product.productImage[0] %>" alt=" " class="img-responsive" style="width: 100px; height: 100px; object-fit: cover;">
+                                </a>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="product-details">
+                                            <h6>
+                                                <%= item.product.brand ? item.product.brand.name : '' %> 
+                                                <%= item.product.productName %> 
+
+                                             </h6>
+                                              
+                                            <p>Quantity: <%= item.quantity %></p>
+                
+                                            
+                                            <p class="product-price">
+                                              
+                                                $<% if (item.product.offerPrice && item.product.offerPrice < item.product.regularPrice) { %>
+                                                    <del><%= item.product.regularPrice %></del> $<%= item.product.offerPrice %>
+                                                <% } else if (item.product.salePrice < item.product.regularPrice) { %>
+                                                    <del><%= item.product.regularPrice %></del> $<%= item.product.salePrice %>
+                                                <% } else { %>
+                                                    <%= item.product.regularPrice %>
+                                                <% } %>
+                                            </p>
+                                        </div>
+                                    </div>
+                
+                                    
+                                    <div class="col-md-6 text-right">
+                                        <p>
+                                            
+                                            Actual Total: $<%= item.product.regularPrice * item.quantity %> 
+                                        </p>
+                                        <p>
+                                           
+                                            Discount: $<%= (item.product.offerPrice && item.product.offerPrice < item.product.regularPrice) 
+                                                ? (item.product.regularPrice - item.product.offerPrice) * item.quantity 
+                                                : (item.product.salePrice && item.product.salePrice < item.product.regularPrice)
+                                                ? (item.product.regularPrice - item.product.salePrice) * item.quantity 
+                                                : 0 %>
+                                        </p>
+                                        <p>
+                                            <!-- Net Total (Actual Total - Discount) -->
+                                            Net Total: $<%= (item.product.regularPrice * item.quantity) - 
+                                                ((item.product.offerPrice && item.product.offerPrice < item.product.regularPrice) 
+                                                ? (item.product.regularPrice - item.product.offerPrice) * item.quantity 
+                                                : (item.product.salePrice && item.product.salePrice < item.product.regularPrice)
+                                                ? (item.product.regularPrice - item.product.salePrice) * item.quantity 
+                                                : 0) %>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-100"></div>
+                        <% }); %>
+                    <% } %>
+                </div>
+                
+                
+                <br>
+            </div>
+
+
+            </div>
+
+            <div class="col-md-4">
+                <br>
+                <div class="price-details">
+                    <h4>PRICE DETAILS</h4>
+                    <dl>
+                        <dt>Price (<%= distinctProductCount %> items)</dt>
+                        <dd id="totalPrice">$<%= totalPrice %></dd>
+                    </dl>
+                    <dl>
+                        <dt>Discount</dt>
+                        <dd id="discount">- $<%= discount %></dd>
+                    </dl>
+                    <dl>
+                        <dt>Platform Fee</dt>
+                        <dd id="platformFee">$<%= platformFee %></dd>
+                    </dl>
+                    <dl>
+                        <dt>Delivery Charges</dt>
+                        <dd id="deliveryCharges">$<%= deliveryCharges %></dd>
+                    </dl>
+                    <hr>
+                    <dl>
+                        <dt>Total Amount</dt>
+                        <dd id="finalTotal">$<%= finalTotal %></dd>
+                    </dl>
+                    <p class="text-success" id="savingsMessage">You will save $<%= discount %> on this order</p>
+                    <div class="col-md-12">
+                        <form action="/cart/place-order/make-payment" method="POST" id="paymentForm">
+                            <input type="hidden" name="address" id="selectedAddress">
+                            <input type="hidden" name="userId" value="<%= user._id %>">
+                            <input type="hidden" name="finalTotal" value="<%= finalTotal %>">
+                            <button class="btn btn-success btn-block" type="submit">Make a Payment</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <br>
+    <%-include("../../views/partials/user/footer")%>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+       
+
+
+        document.getElementById('existingAddress').addEventListener('change', function () {
+            document.getElementById('selectedAddress').value = this.value;
+        });
+
+     
+        document.getElementById('selectedAddress').value = document.getElementById('existingAddress').value;
+
+        document.getElementById('paymentForm').addEventListener('submit', function (e) {
+    const selectedAddress = document.getElementById('selectedAddress').value;
+    if (!selectedAddress) {
+        e.preventDefault();
+        Swal.fire({
+        title: 'Address Required',
+        text: 'Please select an address, if not added yet  add it from your profile.',
+        icon: 'warning',
+        confirmButtonText: 'OK'
+    });
+    }
+});
+
+
+    </script>
+    
+
+    
+    
+
+</body>
+</html>
+
+

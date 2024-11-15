@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .order-status {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .coin-icon {
+            color: gold;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <%- include("../../views/partials/user/header") %>
+        <%- include("../../views/partials/user/breadcrumb") %>
+        
+        <div class="dashboard-container">
+            <%- include("../../views/partials/user/sidebar") %>
+            
+            <div class="dashboard-content" id="dashboardContent">
+                <div class="container mt-5">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h5>Delivery Address</h5>
+                            <p><%= order.user.name %></p>
+                            <p><%= order.address.house %>, <%= order.address.place %>, <%= order.address.city %>, <%= order.address.state %> - <%= order.address.pin %></p>
+                            <p>+91 <%= order.address.contactNo %></p>
+                            <p class="text-muted">This item is tracked by <%= selectedItem.itemOrderId %></p>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <h5>Your Rewards in this item</h5>
+                            <p  class="text-success" style="font-size: large;" ><span  class="coin-icon">&#9733;</span>  $<%= ((selectedItem.regularPrice - selectedItem.saledPrice)*selectedItem.quantity).toFixed() %> Saved </p>
+                            <h6>Payment Method</h6> 
+                            <% if (order.payment && order.payment.length > 0) { %>
+                              <p><span><%= order.payment[0].method %></span></p>
+                            <% } else { %>
+                              <p>No payment method found</p>
+                            <% } %>
+                            
+                            <h6>Payment Status</h6> 
+                            <% if (order.payment && order.payment.length > 0) { %>
+                              <p>
+                                <span><%= order.payment[0].status %></span>
+                                <% if (order.payment[0].status === 'pending' && order.payment[0].method !== 'Cash On Delivery' && selectedItem.itemOrderStatus !== 'Cancelled') { %>
+                                  <button id="payNowBtn" class="btn btn-success" style="margin-left: 10px;" data-order-id="<%= order._id %>" data-razorpay-order-id="<%= order.payment[0].razorpayOrderId %>">
+                                    Pay Now
+                                  </button>
+                                <% } %>
+                              </p>
+                            <% } else { %>
+                              <p>No payment status found</p>
+                            <% } %>
+                            
+                        </div>
+
+                        
+            
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <% if (selectedItem.product.productImage && selectedItem.product.productImage.length > 0) { %>
+                                        <img src="/uploads/product-images/<%= selectedItem.product.productImage[0] %>" 
+                                        alt="<%= selectedItem.product.productName %>" 
+                                        class="img-fluid"
+                                        onerror="this.src='/images/placeholder-image.jpg'; this.onerror=null;">
+                                    <% } else { %>
+                                        <img src="/path/to/placeholder-image.jpg" 
+                                             alt="Product image not available" 
+                                             class="img-fluid">
+                                    <% } %>
+                                </div>
+                                <div class="col-md-6">
+                                  <h5>
+                            
+                                    <%= selectedItem.product.productName %>
+                                  </h5>
+                                  
+                                    <p>Color: <%= selectedItem.product.color %> | SKU: <%= selectedItem.product.skuNumber %></p>
+                                
+                                    <p style="font-size: large;">Actual price: $<%= selectedItem.regularPrice %> <span class="coin-icon">&#9733;</span><%= selectedItem.quantity %></p>
+                                    <p style="font-size: large;" class="text-success">Offer price: $<%= selectedItem.price %>
+                                </div>
+                                <div class="col-md-6"  style="font-size: large;">
+                                    <% if (selectedItem.price !== selectedItem.saledPrice) { %>
+                                        <p style="font-size: large;" class="text-success">
+                                            Other discount: $<%= selectedItem.price - selectedItem.saledPrice %>
+                                        </p>
+                                    <% } %>
+                                    
+                                    <% if (selectedItem && selectedItem.saledPrice) { %>
+                                      <div class="mb-2">
+                                        <p class="text-success">Saled Price: $<%= selectedItem.saledPrice.toFixed(2) %></p>
+                                      </div>
+                                      <div class="mb-2">
+                                        <p>Quantity: <span class="coin-icon">&#9733;</span> <%= selectedItem.quantity %></p>
+                                      </div>
+                                      <div class="mb-2">
+                                        <p class="text-success">Total: $<%= (selectedItem.saledPrice * selectedItem.quantity).toFixed(2) %></p>
+                                      </div>
+                                    <% } else { %>
+                                      <div class="mb-2">
+                                        <p>No saled price available for this item.</p>
+                                      </div>
+                                    <% } %>
+                                </div>
+                                <div class="col-md-4">
+                                  <div class="order-status">
+                                      <p class="text-success"><%= selectedItem.itemOrderStatus %></p>
+                                  </div>
+                                  <div class="rating">
+                                    <% if (selectedItem.itemOrderStatus === 'Delivered') { %>
+                                      <button id="rateButton" style="background-color: #007bff; border: none; padding: 10px 10px; color: white; border-radius: 5px;">
+                                        Rate this product
+                                      </button>
+                                    <% } %>
+                                  </div>   
+                              </div>
+                               
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <% if (order.items.length > 1) { %>
+
+                        <h5>Other items in this order</h5>
+
+                    <% order.items.forEach(function(item) { %>
+                      <% if (item.product._id.toString() !== selectedItem.product._id.toString()) { %>
+                        <div class="card mb-4">
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="col-md-2">
+                                <% if (item.product.productImage && item.product.productImage.length > 0) { %>
+                                  <img src="/uploads/product-images/<%= item.product.productImage[0] %>" 
+                                       alt="<%= item.product.productName %>" 
+                                       class="img-fluid"
+                                       onerror="this.src='/images/placeholder-image.jpg'; this.onerror=null;">
+                                <% } else { %>
+                                  <img src="/path/to/placeholder-image.jpg" 
+                                       alt="Product image not available" 
+                                       class="img-fluid">
+                                <% } %>
+                              </div>
+                              <div class="col-md-6">
+                                <h5>
+                      
+                                  <%= item.product.productName %>
+                                </h5>
+                                
+                                <p>Color: <%= item.product.color %> | SKU: <%= item.product.skuNumber %></p>
+                                <p style="font-size: large;">Actual price: $<%= item.regularPrice %> 
+                                <span class="coin-icon">&#9733;</span><%= item.quantity %></p>
+                                <p style="font-size: large;" class="text-success">Offer price: $<%= item.price %></p>
+                              </div>
+                              <div class="col-md-6" style="font-size: large;">
+                                <% if (item.price !== item.saledPrice) { %>
+                                  <p style="font-size: large;" class="text-success">
+                                    Other discount: $<%= (item.price - item.saledPrice).toFixed(2) %>
+                                  </p>
+                                <% } %>
+                                <% if (item && item.saledPrice) { %>
+                                  <div class="mb-2">
+                                    <p class="text-success">Saled Price: $<%= item.saledPrice.toFixed(2) %></p>
+                                  </div>
+                                  <div class="mb-2">
+                                    <p>Quantity: <span class="coin-icon">&#9733;</span> <%= item.quantity %></p>
+                                  </div>
+                                  <div class="mb-2">
+                                    <p class="text-success">Total: $<%= (item.saledPrice * item.quantity).toFixed(2) %></p>
+                                  </div>
+                                <% } else { %>
+                                  <div class="mb-2">
+                                    <p>No saled price available for this item.</p>
+                                  </div>
+                                <% } %>
+                              </div>
+                              <div class="col-md-4">
+                                <div class="order-status">
+                                  <p class="text-success"><%= item.itemOrderStatus %></p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      <% } %>
+                    <% }); %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <%- include("../../views/partials/user/footer") %>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+    document.getElementById('payNowBtn').addEventListener('click', function() {
+      const orderId = this.getAttribute('data-order-id');
+      const razorpayOrderId = this.getAttribute('data-razorpay-order-id');
+      
+      fetch(`/user/my-order/order-details/re-checkout/${orderId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ razorpayOrderId: razorpayOrderId }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          var options = {
+            "key": "<%= process.env.RAZOR_PAY_KEY_ID %>",
+            "amount": data.amount,
+            "currency": "INR",
+            "name": "nike SHOP",
+            "description": "Re-payment for Order",
+            "order_id": data.razorpayOrderId,
+            "handler": function (response){
+              verifyPayment(response, orderId);
+            },
+            "prefill": {
+              "name": "<%= order.user.name %>",
+              "email": "<%= order.user.email %>",
+              "contact": "<%= order.user.phone %>"
+            },
+            "theme": {
+              "color": "#3399cc"
+            }
+          };
+          var rzp1 = new Razorpay(options);
+          rzp1.open();
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+      });
+    });
+    
+    function verifyPayment(response, orderId) {
+      fetch('/verify-razorpay-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_signature: response.razorpay_signature,
+          orderId: orderId
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          window.location.href = '/user/order-confirmation';
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('An error occurred during payment verification. Please contact support.');
+      });
+    }
+    </script>
+
+<script>
+  document.getElementById('downloadInvoiceBtn').addEventListener('click', function() {
+      const orderId = this.getAttribute('data-order-id');
+      const itemId = this.getAttribute('data-item-id');
+      
+      fetch(`/user/my-order/${orderId}/download-invoice/${itemId}`, {
+          method: 'GET',
+          headers: {
+              'Accept': 'application/pdf',
+          },
+      })
+      .then(response => response.blob())
+      .then(blob => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = url;
+          a.download = `Invoice-${orderId}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+      })
+      .catch(error => console.error('Error:', error));
+  });
+  </script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  document.getElementById('rateButton').addEventListener('click', async function () {
+    try {
+      const response = await fetch('/user/my-order/order-details/rate-product/<%= selectedItem.product._id %>', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log("hii");
+      
+
+      if (response.ok) {
+        window.location.href = response.url; 
+      } else {
+        const result = await response.json();
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: result.error || result.message || 'Something went wrong!',
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to communicate with the server. Please try again later.',
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

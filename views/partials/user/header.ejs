@@ -1,159 +1,230 @@
 <!DOCTYPE html>
 <html lang="zxx">
+
 <head>
-   <meta charset="UTF-8">
-   <meta name="description" content="Male_Fashion Template">
-   <meta name="keywords" content="Male_Fashion, unica, creative, html">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-   <title>Nike</title>
-   <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
-   <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
-   <link rel="stylesheet" href="/public/css/font-awesome.min.css" type="text/css">
-   <link rel="stylesheet" href="/css/elegant-icons.css" type="text/css">
-   <link rel="stylesheet" href="/css/magnific-popup.css" type="text/css">
-   <link rel="stylesheet" href="/css/nice-select.css" type="text/css">
-   <link rel="stylesheet" href="/css/owl.carousel.min.css" type="text/css">
-   <link rel="stylesheet" href="/css/slicknav.min.css" type="text/css">
-   <link rel="stylesheet" href="/css/style.css" type="text/css">
-   <link rel="stylesheet" href="/public/user/css/maind134.css"> <!-- Updated CSS path -->
-   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-   <style>
-       .header__nav__option .sign-in-link {
-           font-size: 16px;
-           color: #333;
-           margin-right: 15px;
-           text-decoration: none;
-           font-weight: 600;
-       }
-       .header__nav__option .sign-in-link:hover {
-           color: #ff7f50;
-       }
+	<title>Nike. Just Do It.Nike IN</title>
+    <link rel="icon" href="/img/favicon.ico" type="image/png" sizes="32x32">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="utf-8">
+	<meta name="keywords"  />
+	<script>
+		addEventListener("load", function () {
+			setTimeout(hideURLbar, 0);
+		}, false);
 
-       .dropdown {
-           position:relative;
-           display:inline-block;
-       }
-
-       .dropdown-content {
-           display: none;
-           position: absolute;
-           background-color: white;
-           min-width: 160px;
-           box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-           z-index: 1000;
-           right: 0;
-           opacity: 0;
-           transition: opacity 0.3s ease;
-       }
-
-       .dropdown-content a {
-           color: black;
-           padding: 12px 16px;
-           text-decoration: none;
-           display: block;
-       }
-
-       .dropdown-content a:hover {
-           background-color: #f1f1f1;
-       }
-
-       .dropdown:hover .dropdown-content {
-           display: block;
-           opacity: 1;
-       }
-
-       .header {
-           position: relative;
-           z-index: 500;
-       }
-
-       .canvas__open {
-           display: none;
-           cursor: pointer;
-       }
-
-       @media (max-width: 991px) {
-           .canvas__open {
-               display: block;
-           }
-           .header__menu {
-               display: none;
-           }
-           .header__menu.active {
-               display: block;
-           }
-       }
-   </style>
+		function hideURLbar() {
+			window.scrollTo(0, 1);
+		}
+	</script>
+	<link href="/css/bootstrap.css" rel='stylesheet' type='text/css' />
+	<link rel="stylesheet" href="/css/loginIcon.css">
+	<link href="/css/style6.css" rel='stylesheet' type='text/css' />
+	<link rel="stylesheet" href="/css/shop.css" type="text/css" />
+	<link rel="stylesheet" href="/css/owl.carousel.css" type="text/css" media="all">
+	<link rel="stylesheet" href="/css/owl.theme.css" type="text/css" media="all">
+	<link href="/css/style.css" rel='stylesheet' type='text/css' />
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+	<link href="/css/fontawesome-all.css" rel="stylesheet">
+	<link href="//fonts.googleapis.com/css?family=Inconsolata:400,700" rel="stylesheet">
+	<link href="//fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800"
+	    rel="stylesheet">
+        
 </head>
-<body>
+<style>
 
-   <!-- Header Section -->
-   <header class="header">
-       <div class="container">
-           <div class="row">
-               <!-- Logo -->
-               <div class="col-lg-3 col-md-3">
-                   <div class="header__logo">
-                       <a href="/">
-                           <img src="/img/logo.png" alt="Nike Logo" class="img-fluid">
-                       </a>
-                   </div>
-               </div>
 
-               <!-- Main Navigation -->
-               <div class="col-lg-6 col-md-6">
-                   <nav class="header__menu mobile-menu">
-                       <ul>
-                           <li class="active"><a href="/">Home</a></li>
-                           <li><a href="/shop">Shop</a></li>
-                           <!-- Add more links as needed -->
-                       </ul>
-                   </nav>
-               </div>
+.cart-count {
+    color: orangered;
+}
 
-               <!-- User Account & Actions -->
-               <div class="col-lg-3 col-md-3">
-                   <div class="header__nav__option">
-                       <!-- If the user is logged in, show their name with a dropdown -->
-                       <% if (locals.user) { %>
-                           <div class="dropdown">
-                               <a href="#" class="sign-in-link" aria-label="User menu"><%= locals.user.name %></a>
-                               <div class="dropdown-content">
-                                   <a href="/userProfile" aria-label="Go to profile">Profile</a>
-                                   <a href="/logout" aria-label="Log out">Logout</a>
-                               </div>
-                           </div>
-                       <% } else { %>
-                           <a href="/signup" class="sign-in-link" aria-label="Sign up">Sign Up</a>
-                           <a href="/login" class="sign-in-link" aria-label="Log in">Log in</a>
-                       <% } %>
+.cart-count.hidden {
+    display: none;
+}
 
-                       <!-- Other icons -->
-                       <a href="#" class="search-switch" aria-label="Search"><img src="/img/icon/search.png" alt="Search icon"></a>
-                       <a href="#" aria-label="Wishlist"><img src="/img/icon/heart.png" alt="Wishlist icon"></a>
-                       <a href="/shopping-cart.html" aria-label="View cart"><img src="/img/icon/cart.png" alt="Cart icon"> <span>0</span></a>
-                   </div>
-               </div>
-           </div>
+.cart-count.visible {
+    display: inline;
+}
+.img-fluids {
+    max-width: 100%;
+    height: auto;  /* Maintain aspect ratio */
+} 
+.logos {
+    height: 60px; /* Adjust to desired height */
+    width: auto; /* Maintain aspect ratio */
+}  
+</style>
+<!-- header -->
+<header>
+    <div class="row">
+        <div class="col-lg-3 col-md-3">
+            <div class="header__logo">
+                <a href="/">
+                    <img src="/img/nike top logo.svg" alt="Nike logos" class="img-fluids">
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6 top-info-cart text-right mt-lg-6">
+            <ul class="cart-inner-info">
+                <li class="nikecart nikecart2 cart cart box_1"> 
+                   
+                    <a href="/findastore" class="top_nike_cart" style="color: black;">
+                        Find a Store   
+                    </a>
+                
+            </li>
+            <li class="nikecart nikecart2 cart cart box_1 " > 
+                   
+                <a href="/help" class="top_nike_cart" style="color: black;">
+                    Help </a>
+            
+        </li>
+                <li class="nikecart nikecart2 cart cart box_1" > 
+                   
+                    <a href="/join" class="nav-link" style="color: black;">
+                        Join US 
+                    </a>
+                
+            </li>
+             
+                <% if (locals.user) { %>
+                    <li class="button-log">
+                        <div class="dropdown">
+                            <a href="#" class="sign-in-link"><%= locals.user.name %></a>
+                            <div class="dropdown-content">
+                                <a href="/userProfile">Profile</a>
+                                <a href="/wishlist">Wishlist</a>
+                                <a href="/logout">Logout</a>
+                            </div>
+                        </div>
+                    </li>
+                <% } else { %>
+                    <li class="button-log">
+                        <a href="/signup" class="sign-in-link">Sign Up</a>
+                        <a href="/login" class="sign-in-link">Log In</a>
+                    </li>
+                <% } %>
+                 
 
-           <!-- Mobile Menu Toggle Button -->
-           <div class="canvas__open" aria-label="Toggle menu">
-               <i class="fa fa-bars"></i>
-           </div>
-       </div>
-   </header>
+                
+                
+                
+            </ul>
+        </div>
+        
+    </div>
+    <div class="row">
+        <div class="col-lg-3 col-md-3">
+            <div class="header__logo">
+                <a href="/">
+                    <img src="/img/favicon.ico" alt="Nike logos" class="img-fluids">
+                </a>
+            </div>
+        </div>
+        <div class="col-md-2 top-info-cart text-right mt-lg-1">
+            <ul class="cart-inner-info">
+             
 
-   <!-- JavaScript for Mobile Menu Toggle -->
-   <script>
-       // Mobile menu toggle functionality
-       const mobileMenuButton = document.querySelector('.canvas__open');
-       const mobileMenu = document.querySelector('.header__menu');
+                 
+                <li class="nikecart nikecart2 cart cart box_1"> 
+                    <% if (locals.user) { %>
+                        <a href="/cart" class="top_nike_cart">
+                            My Cart 
+                            <i class="fas fa-cart-arrow-down"></i>
+                            <span class="cart-count <%= (locals.user.cart && locals.user.cart.items && locals.user.cart.items.length > 0) ? 'visible' : 'hidden' %>">
+                                <%= locals.user.cart?.items?.length || 0 %>
+                            </span>
+                        </a>
+                    <% } else { %>
+                        <a href="/cart" class="top_nike_cart">
+                            My Cart 
+                            <i class="fas fa-cart-arrow-down"></i>
+                        </a>
+                    <% } %>
+                </li>
 
-       mobileMenuButton.addEventListener('click', function() {
-           mobileMenu.classList.toggle('active');
-       });
-   </script>
+                <li></li>
+                
+                
+                
+            </ul>
 
-</body>
-</html>
+        </div>
+    
+    </div>
+    <div class="search">
+        <div class="mobile-nav-button">
+            <button id="trigger-overlay" type="button">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+        <!-- open/close -->
+        <div class="overlay overlay-door">
+            <button type="button" class="overlay-close">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </button>
+            <form id="searchForm" action="/shop" method="get" class="d-flex">
+                <input id="searchInput" class="form-control" type="search" name="searchQuery" placeholder="Search here..." required="">
+                <button type="submit" class="btn btn-primary submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+            
+
+        </div>
+        <!-- open/close -->
+    <!-- </div> -->
+    <label class="top-log mx-auto"></label>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light top-header mb-2">
+
+        <button class="navbar-toggler mx-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon">
+                
+            </span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav nav-mega mx-auto">
+                <li class="nav-item active">
+                    <a class="nav-link ml-lg-0" href="/">Home
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about">About</a>
+                </li>
+              
+                <li class="nav-item">
+                    <a class="nav-link" href="/shop" id="navbarDropdown1" role="button" aria-haspopup="true" aria-expanded="false">
+                        Shop
+                    </a>
+                </li>
+             
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/contact">Contact</a>
+                </li>
+              
+            </ul>
+        </div>
+        
+    </nav>
+    </div>
+
+</header>
+ <script>
+function updateProductList(products) {
+    const productContainer = document.getElementById('productContainer'); 
+    productContainer.innerHTML = ''; 
+    products.forEach(product => {
+        const productElement = document.createElement('div');
+        productElement.classList.add('product');
+        productElement.innerHTML = `
+            <h3>${product.productName}</h3>
+            <p>${product.description}</p>
+            <p>Price: $${product.salePrice}</p>
+        `;
+        productContainer.appendChild(productElement);
+    });
+}
+
+</script>

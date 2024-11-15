@@ -3,8 +3,10 @@ const User = require("../../models/userSchema");
 const Product = require("../../models/productSchema")
 const Category = require("../../models/categorySchema")
 const Offer = require("../../models/offerSchema")
+const {calculateAverageRatings} = require("../user/userRatingController")
 
 
+//todo
 const loadSingleProduct = async (req, res, next) => {
     try {
         let productId = req.params.productId.trim();
@@ -37,6 +39,21 @@ const loadSingleProduct = async (req, res, next) => {
         .lean()  // Use lean() for better performance
         .exec();
 
+
+         // Calculate average ratings for the main product and related products
+        const allProductIds = [product._id, ...relatedProducts.map(p => p._id)];
+        const averageRatings = await calculateAverageRatings(allProductIds);
+
+        // Add rating information to the main product
+        product.averageRating = averageRatings[product._id.toString()]?.averageRating || 0;
+        product.totalRatings = averageRatings[product._id.toString()]?.totalRatings || 0;
+
+        // Add rating information to related products
+        const relatedProductsWithRatings = relatedProducts.map(relatedProduct => ({
+            ...relatedProduct,
+            averageRating: averageRatings[relatedProduct._id.toString()]?.averageRating || 0,
+            totalRatings: averageRatings[relatedProduct._id.toString()]?.totalRatings || 0
+        }));
 
         const categories = await Category.find({}).exec();
 

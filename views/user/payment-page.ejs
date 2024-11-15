@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <title>Goggles Ecommerce Category Bootstrap responsive Web Template | Payment :: w3layouts</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta name="keywords" content="Goggles a Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
+    Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
+    <script>
+        addEventListener("load", function () {
+            setTimeout(hideURLbar, 0);
+        }, false);
+
+        function hideURLbar() {
+            window.scrollTo(0, 1);
+        }
+    </script>
+
+</head>
+
+<body>
+    <div class="banner-top container-fluid" id="home">
+        <%-include("../../views/partials/user/header")%>
+    </div>
+    <!-- banner -->
+    <div class="banner_inner">
+        <div class="services-breadcrumb">
+            <div class="inner_breadcrumb">
+                <ul class="short">
+                    <li>
+                        <a href="/home">Home</a>
+                        <i>|</i>
+                    </li>
+                    <li>Payment </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+   
+    <section class="banner-bottom-wthreelayouts py-lg-5 py-3">
+        <div class="container">
+            <div class="inner-sec-shop px-lg-4 px-3">
+                <h3 class="tittle-w3layouts my-lg-4 mt-3">Payment </h3>
+                <div class="responsive_tabs">
+                    <div id="horizontalTab">
+                       
+                        <div class="resp-tabs-container">
+                            <form action="/cart/place-order/make-payment/confirm-order" method="POST" id="orderForm">
+                                <input type="hidden" name="userId" value="<%= user._id %>">
+                                <input type="hidden" name="address" id="addressInput" value='<%= JSON.stringify(address) %>'>
+                                <input type="hidden" name="totalPrice" id="hiddenTotalPrice" value="<%= totalPrice %>">
+                                <input type="hidden" name="finalTotal" id="hiddenFinalTotal" value="<%= finalTotal %>">
+                                <input type="hidden" name="discountAmount" id="discountAmount" value="<%= discountAmount %>">
+                                <input type="hidden" name="paymentMethod" id="paymentMethod" value="COD">
+                               
+                                <% items.forEach(item => { %>
+                                    <input type="hidden" name="items[]" value='<%= JSON.stringify(item) %>' />
+                                <% }) %>
+                            
+                        
+                            
+                                <label style="font-size: x-large;">
+                                    <input  type="radio" name="paymentMethodRadio" value="COD" onclick="setPaymentMethod('COD')" checked>
+                                    Cash on Delivery
+                                </label>
+<!--                             
+                                <label style="font-size: x-large;">
+                                    <input type="radio" name="paymentMethodRadio" value="OnlinePayment" onclick="setPaymentMethod('OnlinePayment')">
+                                    Pay Online (Razorpay)
+                                </label> -->
+
+                                <label style="font-size: x-large;">
+                                    <input type="radio" name="paymentMethodRadio" value="WalletPayment" onclick="setPaymentMethod('WalletPayment')">
+                                    Pay from Wallet
+                                </label>
+                            <br><br><br>
+                                <button class="btn btn-success" type="submit" id="confirmOrderBtn">Confirm Order</button>
+                            </form>
+                            <div id="responseMessage" style="margin-top: 20px; color: red;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Include the JavaScript file -->
+    <!-- <script src="/js/checkout.js"></script> -->
+
+    <%-include("../../views/partials/user/footer")%>
+    <!--jQuery-->
+    <script src="/js/jquery-2.2.3.min.js"></script>
+    <!-- newsletter modal -->
+    <!--search jQuery-->
+    <script src="/js/modernizr-2.6.2.min.js"></script>
+    <script src="/js/classie-search.js"></script>
+    <script src="/js/demo1-search.js"></script>
+    <!--//search jQuery-->
+    <!-- cart-js -->
+    <script src="/js/minicart.js"></script>
+
+    <script>
+     function setPaymentMethod(method) {
+    document.getElementById('paymentMethod').value = method;
+}
+
+document.getElementById('orderForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(this);
+    const addressData = JSON.parse(formData.get('address'));
+    const paymentMethod = formData.get('paymentMethod');
+    const finalTotal = parseFloat(formData.get('finalTotal'));
+    
+    if (finalTotal > 1000 && paymentMethod === 'COD') {
+        document.getElementById('responseMessage').textContent = "Cash on delivery is not applicable for price above $1000";
+        document.getElementById('responseMessage').style.color = 'red'; 
+        return;
+    }
+    
+    const requiredFields = ['house', 'place', 'city', 'state', 'pin', 'contactNo'];
+    for (const field of requiredFields) {
+        if (!addressData[field]) {
+            document.getElementById('responseMessage').textContent = `${field} is required in the address`;
+            return;
+        }
+    }
+
+    
+    if (paymentMethod === 'WalletPayment') {
+        try {
+            const response = await fetch('/user/check-wallet-balance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ amount: finalTotal }),
+            });
+            const data = await response.json();
+            if (!data.success) {
+                document.getElementById('responseMessage').textContent = "You don't have enough balance in your wallet. Please choose another option or add money to your wallet.";
+                return;
+            }
+        } catch (error) {
+            console.error('Error checking wallet balance:', error);
+            document.getElementById('responseMessage').textContent = "An error occurred while checking your wallet balance. Please try again.";
+            return;
+        }
+    }
+
+    this.submit();
+});
+        </script>
+
+
+
+</body>
+
+</html>
+
+	
+	// 	
+	// 	<script src="/js/easy-responsive-tabs.js"></script>
+	// 	
+	// 	<!-- credit-card -->
+	// 	<script type="/text/javascript" src="/js/creditly.js"></script>
+	// 
+
+	// 	<script type="/text/javascript"></script>
+	// 	
+	// 	<script src="/js/move-top.js"></script>
+    // <script src="/js/easing.js"></script>
+    /
+    /
+		<script src="/js/bootstrap.js"></script>
+		<!-- js file -->
+
+

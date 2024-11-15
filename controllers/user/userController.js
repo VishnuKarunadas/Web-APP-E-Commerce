@@ -6,7 +6,7 @@ const Cart = require("../../models/cartSchema")
 const ReferralOffer = require("../../models/referralOfferSchema");
 const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
-
+const { calculateAverageRatings }= require("../user/userRatingController")
 
 
 
@@ -385,8 +385,134 @@ const logout = async (req, res, next) => {
   }
 };
 
+const loadShoppage = async (req, res, next) => {
+  try {
+    const searchQuery = req.query.searchQuery || "";
+    const { sortBy, category } = req.query;
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = 8;
+    const skip = (page - 1) * limit;
+
+    let searchCondition = { isBlocked: false };
+
+    if (searchQuery.trim() !== "") {
+      const regex = new RegExp(searchQuery, "i");
+      searchCondition.$or = [{ productName: regex }];
+    }
+
+    if (category && category !== "") {
+      searchCondition.category = category;
+    } else {
+      const listedCategories = await Category.find({ isListed: true })
+        .select("_id")
+        .exec();
+      const listedCategoryIds = listedCategories.map((cat) => cat._id);
+      searchCondition.category = { $in: listedCategoryIds };
+    }
+
+
+
+    let sortCriteria = {};
+    switch (sortBy) {
+      case "popularity":
+        sortCriteria = { popularity: -1 };
+        break;
+      case "priceLowToHigh":
+        sortCriteria = { salePrice: 1 };
+        break;
+      case "priceHighToLow":
+        sortCriteria = { salePrice: -1 };
+        break;
+      case "averageRatings":
+        sortCriteria = { averageRating: -1 };
+        break;
+      case "featured":
+        sortCriteria = { isFeatured: -1 };
+        break;
+      case "newArrivals":
+        sortCriteria = { createdAt: -1 };
+        break;
+      case "aToZ":
+        sortCriteria = { productName: 1 };
+        break;
+      case "zToA":
+        sortCriteria = { productName: -1 };
+        break;
+      default:
+        sortCriteria = {};
+    }
+
+    const products = await Product.find(searchCondition)
+      .populate("category")
+
+      .sort(sortCriteria)
+      .skip(skip)
+      .limit(limit)
+      .lean()
+      .exec(); 
+      
+      const productIds = products.map(product => product._id);
+      const averageRatings = await calculateAverageRatings(productIds);
+  
+    
+      const productsWithRatings = products.map(product => ({
+        ...product,
+        averageRating: averageRatings[product._id.toString()]?.averageRating || 0,
+        totalRatings: averageRatings[product._id.toString()]?.totalRatings || 0
+      }));
+
+
+
+    const totalProducts = await Product.countDocuments(searchCondition);
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    let userId = req.user || req.session.user;
+    let userData = userId
+      ? await User.findById(userId).populate("cart").exec()
+      : null;
+    if (userData && userData.cart && !userData.cart.items) {
+      userData.cart.items = [];
+    }
+    res.locals.user = userData;
+
+    const categories = await Category.find({ isListed: true }).exec();
+
+    // const offer = await Offer.find()
+    //   .populate("category")
+    //   .populate("product")
+    //   .exec();
+
+    //   const bannerImage = await Image.findOne({
+    //     imageType: 'banner',
+    //     page: 'shop',
+    //     altText: 'inner'
+    //   });
+
+
+    return res.render("shop", {
+      user: userData,
+      products: products, 
+      categories: categories,
+      sortBy: sortBy || "",
+      currentPage: page,
+      totalPages: totalPages,
+      totalProducts: totalProducts,
+      // offer,
+      selectedCategory: category || "",
+      searchQuery,
+      message: products.length === 0 ? "No products found." : "",
+      // bannerImage
+    });
+  } catch (error) {
+    console.log("shop page not found:", error);
+    next(error);
+  }
+};
+
 module.exports = {
     loadHomepage,
+    loadShoppage,
     pageNotFound,
     loadSignUp,
     SignUp,

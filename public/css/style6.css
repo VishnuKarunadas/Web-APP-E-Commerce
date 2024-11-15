@@ -12,7 +12,7 @@
     height: 100%;
     top: 0;
     left: 0;
-	background: rgba(12, 12, 12, 0.98);
+	background: rgba(255, 255, 255, 0.932);
     z-index: 99;
 }
 
@@ -25,7 +25,7 @@
     top: 50px;
     overflow: hidden;
     background: none;
-    color: #fff;
+    color: #000000;
     border: 2px solid #7a7f7f;
     cursor: pointer;
 }
@@ -53,14 +53,16 @@ button#trigger-overlay {
     width: 100%;
     padding: 1em 1.5em;
     font-size: 17px;
-    color: #fff;
+    color: #000000;
     outline: none;
     background: none;
     -webkit-appearance: none;
-    border: 2px solid #fff;
+    border: 2px solid #000000;
     -webkit-appearance: none;
 	letter-spacing: 4px;
-	border-radius:0;
+    
+	border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
 }
 .search button.btn.btn-primary.submit{
 	color: #fff;
@@ -69,15 +71,17 @@ button#trigger-overlay {
 	text-transform: uppercase;
 	outline: none;
 	letter-spacing: 2px;
-	padding: 0.9em 3em;
+	padding: 1em 3em;
 	border: none;
 	cursor: pointer;
 	transition: 0.5s all;
 	-webkit-transition: 0.5s all;
 	-moz-transition: 0.5s all;
 	-webkit-appearance: none;
-	background: #ff4e00;
-	border-radius:0;
+	background: #000000;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+
 }
 /* Menu style *
 .overlay ul {
