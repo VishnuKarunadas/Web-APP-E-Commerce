@@ -11,7 +11,8 @@ const userAddressController = require('../controllers/user/userAddressController
 const userCartController = require("../controllers/user/userCartController");
 const userOrderController = require("../controllers/user/userOrderController");
 const userRatingController = require("../controllers/user/userRatingController");
-
+const userWishlistController = require("../controllers/user/userWishlistController")
+const userCouponController = require("../controllers/user/userCouponController");
 
 
 
@@ -80,11 +81,17 @@ router.delete('/cart/remove-deleted-item',userAuth,userCartController.removeDele
 
 router.get("/cart/place-order",userAuth,cartCount,userOrderController.placeOrder);
 
-// router.post("/cart/apply-coupon",userAuth,userOrderController.addCoupon);
-// router.post("/cart/remove-coupon", userAuth, userOrderController.removeCoupon);
+router.post("/cart/apply-coupon",userAuth,userOrderController.addCoupon);
+router.post("/cart/remove-coupon", userAuth, userOrderController.removeCoupon);
 
 router.post("/cart/place-order/make-payment",userAuth,cartCount,userOrderController.loadPayment);
 router.post("/cart/place-order/make-payment/confirm-order",userAuth,cartCount,userOrderController.confirmOrder);
+
+//razorpay
+router.get('/user/payment/razorpay-checkout', userAuth, userOrderController.razorpayCheckout);
+router.post("/razorpay-callback", userAuth,userOrderController.verifyRazorpayPayment);
+router.post("/verify-razorpay-payment", userAuth,userOrderController.verifyRazorpayPayment);
+
 router.get("/user/order-confirmation", userAuth,cartCount,userOrderController.orderConfirmationPage);
 
 router.get("/user/my-order",userAuth,cartCount,setBreadcrumbs,userOrderController.myOrder);
@@ -98,6 +105,20 @@ router.post("/user/my-order/order-details", userAuth,cartCount,setBreadcrumbs,us
 //ratings
 router.get("/user/my-order/order-details/rate-product/:productId", userAuth,cartCount,setBreadcrumbs,userRatingController.getRateProduct);
 router.post("/user/my-order/order-details/rate-product/", userAuth,cartCount,setBreadcrumbs,userRatingController.submitRating);
+
+
+// wishlist management
+
+router.get("/wishlist",userAuth,cartCount,setBreadcrumbs,userWishlistController.loadWishlist);
+router.post("/add-wishlist",userAuth,userWishlistController.addToWishlist);
+router.post("/wishlist/remove-from-wishlist",userAuth,userWishlistController.removeFromWishlist);
+router.delete('/wishlist/remove-deleted-item',userAuth,userWishlistController.removeDeletedItem);
+
+
+// coupon management
+
+router.get("/user/my-coupons",userAuth,cartCount,userCouponController.myCoupons);
+
 
 
 module.exports =router;

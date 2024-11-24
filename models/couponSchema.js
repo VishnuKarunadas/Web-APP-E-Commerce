@@ -48,7 +48,7 @@ const couponSchema = new Schema({
      status:{
         type:String,
         required:true,
-        enum:["Expired","Active","Used","Not available"]
+        enum:["Expired","Active","Used","Not available","Inactive"]
     },
     createdAt: {
       type: Date,

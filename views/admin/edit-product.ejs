@@ -31,7 +31,7 @@
         }
         .remove-icon {
             position: absolute;
-            margin-left: .5rem;
+            margin-left: 0.5rem;
             cursor: pointer;
         }
     </style>
@@ -45,7 +45,7 @@
                 <h2 class="content-title">Edit Product</h2>
             </div>
         </div>
-        <div class="col-lg-8"> 
+        <div class="col-lg-8">
             <div class="card mb-4">
                 <div class="card-body">
                     <form method="post" action="/admin/editProduct/<%= product._id %>" enctype="multipart/form-data" onsubmit="return validateForm()">
@@ -76,11 +76,29 @@
                             </div>
                             <div class="col-lg-4">
                                 <div class="mb-4">
-                                    <label class="form-label">Quantity</label>
-                                    <input name="quantity" type="text" value="<%= product.quantity %>" class="form-control">
-                                    <div id="quantity-error" class="error-message"></div>
+                                    <label class="form-label">Quantity (S)</label>
+                                    <input name="quantityS" type="text" value="<%= product.quantity.S || 0 %>" class="form-control">
+                                    <div id="quantityS-error" class="error-message"></div>
                                 </div>
                             </div>
+                            
+                            <div class="col-lg-4">
+                                <div class="mb-4">
+                                    <label class="form-label">Quantity (M)</label>
+                                    <input name="quantityM" type="text" value="<%= product.quantity.M || 0 %>" class="form-control">
+                                    <div id="quantityM-error" class="error-message"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-4">
+                                <div class="mb-4">
+                                    <label class="form-label">Quantity (L)</label>
+                                    <input name="quantityL" type="text" value="<%= product.quantity.L || 0 %>" class="form-control">
+                                    <div id="quantityL-error" class="error-message"></div>
+                                </div>
+                            </div>
+                            
+                            
                         </div>
                         <div class="row">
                             <div class="col-lg-4">
@@ -90,17 +108,15 @@
                                     <div id="color-error" class="error-message"></div>
                                 </div>
                             </div>
-
-                            
                             <div class="col-lg-4">
                                 <div class="mb-4">
                                     <label class="form-label">Category</label>
                                     <select class="form-select" name="category">
-                                        <% for (let i = 0; i < cat.length; i++) { %>
-                                            <option value="<%= cat[i].name %>" <%= product.category.name === cat[i].name ? 'selected' : '' %>>
-                                                <%= cat[i].name %>
+                                        <% cat.forEach(category => { %>
+                                            <option value="<%= category.name %>" <%= product.category.name === category.name ? 'selected' : '' %>>
+                                                <%= category.name %>
                                             </option>
-                                        <% } %>
+                                        <% }); %>
                                     </select>
                                     <div id="category-error" class="error-message"></div>
                                 </div>
@@ -112,38 +128,26 @@
                             </div>
                             <div class="card-body">
                                 <% for (let i = 0; i < 3; i++) { %>
-                                    <div class="col-md-12">
-                                        <div class="mb-4">
-                                            <div class="cropper-container" id="image-container-<%= i %>">
-                                                <% if (i < product.productImage.length) { %>
-                                                    <img class="rounded" style="width: 50px; height: 60px;" src="/uploads/product-images/<%= product.productImage[i] %>" alt="">
-                                                    <button type="button" onclick="deleteSingleImage('<%= product.productImage[i] %>', '<%= product._id %>',' <%= i %>')">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
-                                                <% } else { %>
-                                                    <p>No image</p>
-                                                <% } %>
-                                            </div>
-                                        </div>
+                                    <div class="cropper-container mb-4" id="image-container-<%= i %>">
+                                        <% if (i < product.productImage.length) { %>
+                                            <img class="rounded" style="width: 50px; height: 60px;" src="/uploads/product-images/<%= product.productImage[i] %>" alt="">
+                                            <button type="button" class="btn btn-danger btn-sm" onclick="deleteSingleImage('<%= product.productImage[i] %>', '<%= product._id %>', <%= i %>)">Remove</button>
+                                        <% } else { %>
+                                            <p>No image</p>
+                                        <% } %>
                                     </div>
-                                    
                                     <div class="image-cropper" id="imageCropper<%= i + 1 %>">
                                         <img src="" alt="" id="croppedImg<%= i + 1 %>">
-                                        <button type="button" id="saveButton<%= i + 1 %>" class="btn-sm btn-primary">Save</button>
+                                        <button type="button" id="saveButton<%= i + 1 %>" class="btn btn-primary btn-sm">Save</button>
                                     </div>
-                        
-                                    <div class="card-body align-items-center" style="margin-bottom: 20px;">
-                                        <img src="" alt="" id="imgView<%= i + 1 %>">
-                                        <input class="form-control" type="file" name="images<%= i + 1 %>" id="input<%= i + 1 %>" accept="image/png, image/jpeg, image/jpg" onchange="viewImage(event,' <%= i + 1 %>')" <%= i < product.productImage.length ? 'disabled' : '' %>>
+                                    <div class="mb-3">
+                                        <input class="form-control" type="file" name="images<%= i + 1 %>" id="input<%= i + 1 %>" accept="image/png, image/jpeg, image/jpg" onchange="viewImage(event, <%= i + 1 %>)" <%= i < product.productImage.length ? 'disabled' : '' %>>
                                         <div id="images-error<%= i + 1 %>" class="error-message"></div>
                                     </div>
                                 <% } %>
                             </div>
                         </div>
-                        
-                        <div>
-                            <button class="btn btn-primary" id="updatebtn" type="submit">Update</button>
-                        </div>
+                        <button class="btn btn-primary" type="submit">Update</button>
                     </form>
                 </div>
             </div>
@@ -154,44 +158,57 @@
 <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
 
 <script>
-function validateForm() {
+    function validateForm() {
     clearErrorMessages();
+
     const name = document.getElementsByName('productName')[0].value;
-    const description = document.getElementsByName('description')[0].value;
+    const description = document.getElementById('descriptionid').value;
     const price = document.getElementsByName('regularPrice')[0].value;
-    const saleprice = document.getElementsByName('salePrice')[0].value;
-    const color = document.getElementsByName('color')[0].value;
-    const category = document.getElementsByName('category')[0].value;
-    const quantity = parseInt(document.getElementsByName('quantity')[0].value, 10);
+    const salePrice = document.getElementsByName('salePrice')[0].value;
+    const quantityS = document.getElementsByName('quantityS')[0].value;
+    const quantityM = document.getElementsByName('quantityM')[0].value;
+    const quantityL = document.getElementsByName('quantityL')[0].value;
+
+    console.log(name);
+
     let isValid = true;
 
+    // Product name validation
     if (name.trim() === "") {
-        displayErrorMessage('productName-error', 'Please enter a product name.');
+        displayErrorMessage('product_name-error', 'Please enter a product name.');
+        isValid = false;
+    } else if (!/^[a-zA-Z0-9\s.,\/\-:;()&\[\]'"!?]*$/.test(name.trim())) {
+        displayErrorMessage('product_name-error', 'Product name should contain only alphabetic characters and numbers.');
         isValid = false;
     }
 
-    if (description.trim() === '') {
+    // Description validation
+    if (description.trim() === "") {
         displayErrorMessage('description-error', 'Please enter a product description.');
         isValid = false;
     }
 
-    if (isNaN(quantity) || quantity < 0) {
-        displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
+    // Price and quantity validations
+    if (price.trim() === "" || isNaN(price)) {
+        displayErrorMessage('regularPrice-error', 'Please enter a valid price.');
         isValid = false;
     }
 
-    if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
-        displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
+    if (salePrice.trim() === "" || isNaN(salePrice)) {
+        displayErrorMessage('salePrice-error', 'Please enter a valid sale price.');
         isValid = false;
     }
 
-    if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0) {
-        displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
+    if (quantityS.trim() === "" || isNaN(quantityS) || quantityS < 0) {
+        displayErrorMessage('quantity-error', 'Please enter a valid quantity for Small.');
         isValid = false;
     }
-
-    if (color.trim() === "") {
-        displayErrorMessage('color-error', 'Please enter a color.');
+    if (quantityM.trim() === "" || isNaN(quantityM) || quantityM < 0) {
+        displayErrorMessage('quantity-error', 'Please enter a valid quantity for Medium.');
+        isValid = false;
+    }
+    if (quantityL.trim() === "" || isNaN(quantityL) || quantityL < 0) {
+        displayErrorMessage('quantity-error', 'Please enter a valid quantity for Large.');
         isValid = false;
     }
 
@@ -274,9 +291,3 @@ function deleteSingleImage(imageId, productId, index) {
 </script>
 
 <%- include("../../views/partials/admin/footer") %>
-
-
-
-
-
-

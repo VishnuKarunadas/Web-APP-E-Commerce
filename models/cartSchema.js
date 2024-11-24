@@ -13,9 +13,14 @@ const cartSchema = new Schema({
             ref: "Product",  
             required: true
         },
+        size: {  // To store the selected size
+            type: String,
+            required: false, // Optional if size isn't always needed
+        },
         quantity: {
             type: Number,
-            required: true
+            required: true,
+            min:1,
         },
         regularPrice:{
             type:Number,

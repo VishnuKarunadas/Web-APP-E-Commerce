@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        @media (max-width: 340px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            .dashboard-sidebar {
+                width: 100%;
+                height: auto;
+            }
+            .wishlist-container {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <%- include("../../views/partials/user/header") %>
+        <%- include("../../views/partials/user/breadcrumb") %>
+
+        <div class="dashboard-container">
+            <%- include("../../views/partials/user/sidebar") %>
+
+            <div class="dashboard-content" id="dashboardContent">
+                <div class="container">
+                    <h3 class="mt-3">My Wishlist (<span id="wishlistCount"><%= wishlist.items.length %></span>)</h3> 
+                    <br>
+                    <div id="wishlistContainer">
+                        <% if (wishlist.items.length > 0) { %> 
+                            <% wishlist.items.forEach(function(item) { %> 
+                                <% if (item.productId) { %>
+                                <div class="wishlist-container" id="wishlist-item-<%= item.productId._id %>">
+                                    <div class="d-flex flex-wrap align-items-center">
+                                        <div class="p-2 flex-shrink-0">
+                                            <img src="/uploads/product-images/<%= item.productId.productImage && item.productId.productImage[0] %>" alt="Product Image" class="wishlist-image img-fluid" style="max-width: 100px;"> <!-- Adjusted: item.productId.productImage -->
+                                        </div>
+                                        <div class="p-2 flex-grow-1">
+                                            <a href="/product/<%= item.productId._id %>">
+                                                <h3 class="wishlist-title"><%= item.productId.productName %></h3>
+                                            </a>
+                                            <!-- Placeholder for rating if required later -->
+                                            <!-- 
+                                            <div class="wishlist-rating">
+                                                <span class="wishlist-rating-stars">
+                                                    <% for (let i = 0; i < 5; i++) { %>
+                                                        <% if (i < Math.round(item.productId.rating)) { %>
+                                                            ★
+                                                        <% } else { %>
+                                                            ☆
+                                                        <% } %>
+                                                    <% } %>
+                                                </span>
+                                                <span class="wishlist-rating-count"></span>
+                                            </div>
+                                            -->
+                                            <p class="wishlist-price">
+                                                ₹<% if (item.productId.offerPrice && item.productId.offerPrice < item.productId.salePrice) { %>
+                                                 
+                                                  <del><%= item.productId.regularPrice %></del> ₹<%= item.productId.offerPrice %>
+                                                <% } else if (item.productId.salePrice < item.productId.regularPrice) { %>
+                                                  
+                                                  <del><%= item.productId.regularPrice %></del> ₹<%= item.productId.salePrice %>
+                                                <% } else if (item.productId.salePrice === item.productId.regularPrice && item.productId.offerPrice && item.productId.offerPrice < item.productId.salePrice) { %>
+                                                  
+                                                  <del><%= item.productId.regularPrice %></del> ₹<%= item.productId.offerPrice %>
+                                                <% } else { %>
+                                                  
+                                                  <%= item.productId.regularPrice %>
+                                                <% } %>
+                                              </p>
+                                              
+                                        </div>
+                                        <form id="addToCartForm-<%= item.productId._id %>" onsubmit="return false;">
+                                            <input type="hidden" name="productId" value="<%= item.productId._id %>">
+                                            <input type="hidden" name="quantity" value="1">
+                                            <button type="button" class="googles-cart pgoogles-cart mr-3" onclick="addToCart('<%= item.productId._id %>', 1)">
+                                              <i class="fas fa-cart-plus"></i>
+                                            </button>
+                                        </form>
+                                        <div class="p-2 flex-shrink-0">
+                                            <i class="fa fa-trash fa-lg wishlist-remove" style="cursor: pointer;" data-product-id="<%= item.productId._id %>"></i> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } else { %>
+                          
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <p>Product has been removed from the store and is no longer available.</p>
+                                            <div class="p-2 flex-shrink-0">
+                                                <i class="fa fa-trash fa-lg remove-deleted-item" style="cursor: pointer;" data-item-id="<%= item._id %>"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                <% } %>
+                            <% }); %>
+                            
+                        <% } else { %>
+                            <p>Your wishlist is empty.</p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include("../../views/partials/user/footer") %>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.querySelectorAll('.wishlist-remove').forEach(item => {
+            item.addEventListener('click', function() {
+                const productId = this.getAttribute('data-product-id');
+                Swal.fire({
+                    title: 'Remove from Wishlist',
+                    text: "Are you sure you want to remove this product from your wishlist?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, remove it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        fetch('/wishlist/remove-from-wishlist', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ productId: productId }),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                
+                                document.getElementById(`wishlist-item-${productId}`).remove();
+                                
+                               
+                                const wishlistCount = document.getElementById('wishlistCount');
+                                wishlistCount.textContent = parseInt(wishlistCount.textContent) - 1;
+
+                                Swal.fire(
+                                    'Removed!',
+                                    'The product has been removed from your wishlist.',
+                                    'success'
+                                );
+
+                              
+                                if (document.querySelectorAll('.wishlist-container').length === 0) {
+                                    document.getElementById('wishlistContainer').innerHTML = '<p>Your wishlist is empty.</p>';
+                                }
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    'There was a problem removing the product. Please try again.',
+                                    'error'
+                                );
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire(
+                                'Error!',
+                                'There was a problem removing the product. Please try again.',
+                                'error'
+                            );
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+<script>
+    document.querySelectorAll('.remove-deleted-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const itemId = this.getAttribute('data-item-id'); 
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you want to remove this deleted item from the wishlist?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, remove it!'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch('/wishlist/remove-deleted-item', {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ itemId }) 
+                        });
+    
+                        const data = await response.json();
+    
+                        if (response.ok && data.success) {
+                            Swal.fire(
+                                'Removed!',
+                                'The deleted item has been removed from your wishlist.',
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('Failed', data.message || 'Failed to remove the item', 'error');
+                        }
+                    } catch (error) {
+                        Swal.fire(
+                            'Error',
+                            'An error occurred while removing the item',
+                            'error'
+                        );
+                        console.error('Error removing deleted item:', error);
+                    }
+                }
+            });
+        });
+    });
+    </script>
+
+
+<script>
+	function addToCart(productId) {
+	  const form = document.getElementById(`addToCartForm-${productId}`);
+	  const formData = new FormData(form);
+	
+	  fetch("/add-cart", {
+		method: "POST",
+		headers: {
+		  'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(Object.fromEntries(formData)),
+		credentials: 'include' 
+	  })
+	  .then(response => {
+		return response.json().then(data => {
+		  if (!response.ok) {
+			throw data;
+		  }
+		  return data;
+		});
+	  })
+	  .then(data => {
+		if (data.message === 'Item already in cart') {
+		  Swal.fire({
+			icon: 'info',
+			title: 'Already in Cart',
+			text: 'This item is already in your cart.'
+		  });
+		} else {
+		  Swal.fire({
+			icon: 'success',
+			title: 'Success',
+			text: data.message
+		  });
+		}
+		if (data.cartItemsCount) {
+		  updateCartItemCount(data.cartItemsCount);
+		}
+	  })
+	  .catch(error => {
+		console.error('Error:', error);
+		if (error.error === 'Please login to add items to cart') {
+		  Swal.fire({
+			icon: 'warning',
+			title: 'Authentication Required',
+			text: 'Please login to add items to cart',
+			showCancelButton: true,
+			confirmButtonText: 'Login',
+			cancelButtonText: 'Cancel'
+		  }).then((result) => {
+			if (result.isConfirmed) {
+			  window.location.href = '/login';
+			}
+		  });
+		} else {
+		  Swal.fire({
+			icon: 'error',
+			title: 'Error',
+			text: error.error || 'An error occurred, please login and try again'
+		  });
+		}
+	  });
+	}
+	
+	function updateCartItemCount(count) {
+	  const cartCountElement = document.getElementById('cartItemCount');
+	  if (cartCountElement) {
+		cartCountElement.textContent = count;
+	  }
+	}
+		</script>
+
+
+
+    
+</body>
+
+</html>

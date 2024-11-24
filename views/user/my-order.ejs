@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Order Page</title>
+  <!-- <title>Order Page</title> -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
     .order-item {
@@ -13,10 +13,11 @@
       background-color: #f9f9f9;
     }
     .order-image img {
-      width: 100px;
-      height: 100px;
+      padding: 10px;
+      width: 200px;
+      height: 200px;
       object-fit: cover;
-      border-radius: 4px;
+      border-radius: 42px;
     }
     .status-icon {
     width: 15px;
@@ -106,19 +107,19 @@
                   </h5>
                   
                     <p class="mb-0">SKU: <%= item.product.skuNumber %></p>
-                    <p class="mb-0"><%= item.product.description %></p>
+                    <!-- <p class="mb-0"><%= item.product.description %></p> -->
                     <p class="mb-0">Color: <%= item.product.color %></p>
                   </div>
                   <div class="col-md-2">
-                    <p class="font-weight-bold mb-0">Price: $<%= item.regularPrice %></p>
+                    <p class="font-weight-bold mb-0">Price: ₹<%= item.regularPrice %></p>
                     <p class="mb-0">Quantity: <%= item.quantity %></p>
-                    <p class="mb-0">Total: $<%= (item.regularPrice * item.quantity).toFixed(2) %></p>
+                    <p class="mb-0">Total: ₹<%= (item.regularPrice * item.quantity).toFixed(2) %></p>
                     
                     <!-- SaledPrice section underneath -->
                     <div class="mt-2" style="background-color: #f8d7da; padding: 8px; border-radius: 5px;">
-                      <p class="font-weight-bold text-success mb-0">Sale Price: $<%= item.saledPrice.toFixed(2) %></p>
-                      <p class="text-success mb-0"> Total Discount: $<%= ((item.regularPrice * item.quantity) -  (item.saledPrice * item.quantity)).toFixed(2) %></p>
-                      <p class="text-success mb-0">Saled Total: $<%= (item.saledPrice * item.quantity).toFixed(2) %></p>
+                      <p class="font-weight-bold text-success mb-0">Sale Price: ₹<%= item.saledPrice.toFixed(2) %></p>
+                      <p class="text-success mb-0"> Total Discount: ₹<%= ((item.regularPrice * item.quantity) -  (item.saledPrice * item.quantity)).toFixed(2) %></p>
+                      <p class="text-success mb-0">Saled Total: ₹<%= (item.saledPrice * item.quantity).toFixed(2) %></p>
                      
                     </div>
                   </div>

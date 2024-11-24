@@ -7,11 +7,30 @@
         <div class="col-md-12">
             <h2 class="mb-4">Products</h2>
             <form action="" method="get" class="d-inline mb-4">
-                <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 500px;">
-                    <input type="text" class="form-control border-0 rounded-pill" placeholder="Search products" name="search">
-                    <button class="btn border-0" type="submit">Search</button>
-                </div>
+              <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 500px;">
+                <!-- Search input -->
+                <input type="text" class="form-control border-0 rounded-pill" placeholder="Search products" name="search" id="search-input">
+                
+                <!-- Search button -->
+                <button class="btn border-0" type="submit">Search</button>
+            
+                <!-- Clear button -->
+                <button type="button" class="btn btn-outline-secondary border-0" id="clear-button">Clear</button>
+              </div>
             </form>
+            
+            <script>
+              document.getElementById('clear-button').addEventListener('click', function() {
+                // Clear the search input field
+                document.getElementById('search-input').value = '';
+            
+                // Optionally, reset the form or navigate
+                // For example, if you want to navigate to the product listing page when cleared
+                window.location.href = '/admin/products';  // This will reload the page or navigate to another URL.
+              });
+            </script>
+            
+            
             <br>
             <table class="table table-striped">
                 <thead>

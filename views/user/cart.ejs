@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Nike. Just Do It.Nike IN</title>
+    <link rel="icon" href="/img/favicon.ico" type="image/png" sizes="32x32">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/cart.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
@@ -28,23 +29,28 @@
                                         </div>
                                         <div class="details-container">
                                             <h5 class="product-name"> <%= item.product.brand ? item.product.brand.name : '' %><%= item.product.productName %></h5>
-                                            <p class="product-description"><%= item.product.description %></p>
+                                            <p class="product-description" id="product-description">Size :- <%= item.size %></p>
 
-                                            <p class="product-price">
-                                                $<% if (item.product.offerPrice && item.product.offerPrice < item.product.salePrice) { %>
-                                                 
-                                                  <del><%= item.product.regularPrice %></del> $<%= item.product.offerPrice %>
-                                                <% } else if (item.product.salePrice < item.product.regularPrice) { %>
-                                                  
-                                                  <del><%= item.product.regularPrice %></del> $<%= item.product.salePrice %>
-                                                <% } else if (item.product.salePrice === item.product.regularPrice && item.product.offerPrice && item.productId.offerPrice < item.productId.salePrice) { %>
-                                                  
-                                                  <del><%= item.product.regularPrice %></del> $<%= item.product.offerPrice %>
-                                                <% } else { %>
-                                                  
-                                                  <%= item.product.regularPrice %>
-                                                <% } %>
-                                              </p>
+                                            <script>
+                                                document.addEventListener("DOMContentLoaded", function() {
+                                                    const maxLength = 30; // Set the maximum length for description truncation
+                                            
+                                                    // Get all product descriptions
+                                                    const descriptionElements = document.querySelectorAll('.product-description');
+                                            
+                                                    descriptionElements.forEach((descriptionElement) => {
+                                                        let description = descriptionElement.innerText || descriptionElement.textContent;
+                                            
+                                                        // Truncate the description if it exceeds the max length
+                                                        if (description.length > maxLength) {
+                                                            description = description.substring(0, maxLength) + '...';
+                                                            descriptionElement.innerText = description;
+                                                        }
+                                                    });
+                                                });
+                                            </script>
+
+
                                               
                                         </div>
                                     </div>
@@ -53,18 +59,26 @@
                                         <div class="button-container">
                                             <form id="updateQuantityForm-<%= item.product._id %>" onsubmit="return false;">
                                                 <input type="hidden" name="productId" value="<%= item.product._id %>">
+                                                <input type="hidden" name="quantity" id="quantity-<%= item.product._id %>" value="<%= item.quantity %>">
+                                                <input type="hidden" name="size" id="selectedSize-<%= item.product._id %>" value="<%= item.size || '' %>"> <!-- size input -->
+                                                
+                                                <!-- Dropdown for selecting size (if applicable) -->
+
+                                    
                                                 <div class="quantity-buttons">
                                                     <button type="button" class="btn btn-primary" onclick="updateQuantity('<%= item.product._id %>', -1)">-</button>
                                                     <button type="button" class="btn btn-primary"><%= item.quantity %></button>
                                                     <button type="button" class="btn btn-primary" onclick="updateQuantity('<%= item.product._id %>', 1)">+</button>
                                                 </div>
                                             </form>
+                                            
                                             <form id="removeItemForm-<%= item.product._id %>" onsubmit="return false;">
                                                 <input type="hidden" name="productId" value="<%= item.product._id %>">
                                                 <button type="button" class="btn btn-danger" onclick="removeFromCart('<%= item.product._id %>')">REMOVE</button>
                                             </form>
                                         </div>
                                     </div>
+                                    
                                 </div>
                             </div>
                         <% } else { %>

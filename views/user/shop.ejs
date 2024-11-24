@@ -9,10 +9,11 @@
 <html lang="zxx">
 
 <head>
-	<title>Goggles Ecommerce Category Bootstrap responsive Web Template | Shop :: w3layouts</title>
+	<title>Nike. Just Do It.Nike IN</title>
+    <link rel="icon" href="/img/favicon.ico" type="image/png" sizes="32x32">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta charset="utf-8">
-	<meta name="keywords" content="Goggles a Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
+	<meta name="keywords" content=" Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
 Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
 	<script>
 		addEventListener("load", function () {
@@ -453,7 +454,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 </html>
 
 <script>
-	function addToCart(productId) {
+function addToCart(productId) {
   const form = document.getElementById(`addToCartForm-${productId}`);
   const formData = new FormData(form);
 
@@ -493,24 +494,17 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
   })
   .catch(error => {
     console.error('Error:', error);
-    if (error.error === 'Please login to add items to cart') {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Authentication Required',
-        text: 'Please login to add items to cart',
-        showCancelButton: true,
-        confirmButtonText: 'Login',
-        cancelButtonText: 'Cancel'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.location.href = '/login';
-        }
-      });
+    // Check if the error indicates the user is not logged in
+    if (1) {
+      // Redirect to the login page
+      window.location.href = '/login';
     } else {
+		console.error('Error:', error);
+      // Handle other errors
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: error.error || 'An error occurred, please login and try again'
+        text: error.error || 'An error occurred, please try again later'
       });
     }
   });
@@ -600,6 +594,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             console.error('Error:', error);
+			window.location.href = '/login';
             if (error.error === 'Please login to add items to Wishlist') {
                 Swal.fire({
                     icon: 'warning',

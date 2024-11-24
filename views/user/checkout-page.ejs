@@ -6,7 +6,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart</title>
+
+    <title>Nike. Just Do It.Nike IN</title>
+    <link rel="icon" href="/img/favicon.ico" type="image/png" sizes="32x32">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
               body {
@@ -144,6 +146,16 @@
         .login-details button:hover, .delivery-address-details button:hover {
             background-color: #0069d9;
         }
+        .login, .coupon-selection {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        
+        #couponMessage {
+            margin-top: 10px;
+            font-weight: bold;
+        }
        
     </style>
 </head>
@@ -170,42 +182,89 @@
                             </div>
                         </div>
                     </div>
-                    <div class="delivery-address">
+<div class="delivery-address">
+    <div class="row">
+        <div class="col-md-1">
+            <span class="badge badge-primary">2</span>
+        </div>
+        <div class="col-md-11">
+            <div class="delivery-address-details">
+                <form id="addressForm">
+                    <div class="form-group">
+                        <label for="existingAddress">Select Address:</label>
+                        <select id="existingAddress" name="address" class="form-control" onchange="handleAddressChange(event)">
+                            <% if (addresses && addresses.length > 0) { %>
+                                <% addresses.forEach(address => { %>
+                                    <option value="<%= address._id %>">
+                                        <%= address.house %>, <%= address.place %>, <%= address.city %>, <%= address.state %>, <%= address.pin %>, <%= address.contactNo %>
+                                    </option>
+                                <% }) %>
+                            <% } %>
+                        </select>
+                    </div>
+                 
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='/user/add-new-address'">
+                        Add New Address
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- <script>
+    function handleAddressChange(event) {
+        // Prevent form submission if "add-new" is selected
+        event.preventDefault();
+
+        if (event.target.value === 'add-new') {
+            window.location.href = '/user/add-new-address';
+        }
+    }
+</script> -->
+
+
+                    <div class="coupon-selection">
                         <div class="row">
                             <div class="col-md-1">
-                                <span class="badge badge-primary">2</span>
+                                <span class="badge badge-primary">3</span>
                             </div>
                             <div class="col-md-11">
-                                <div class="delivery-address-details">
-                                    <form id="addressForm">
+                                <div class="coupon-details">
+                                    <form id="couponForm">
                                         <div class="form-group">
-                                            <label for="existingAddress">Select Address:</label>
-                                            <select id="existingAddress" name="address" class="form-control">
-                                                <% if (addresses && addresses.length > 0) { %>
-                                                    <% addresses.forEach(address => { %>
-                                                        <option value="<%= address._id %>">
-                                                            <%= address.house %>, <%= address.place %>, <%= address.city %>, <%= address.state %>, <%= address.pin %>, <%= address.contactNo %>
+                                            <label for="availableCoupons">Select a Coupon:</label>
+                                            <select id="availableCoupons" name="coupon" class="form-control">
+                                                <option value="">Select a coupon</option>
+                                                <% if (coupons && coupons.length > 0) { %>
+                                                    <% coupons.forEach(coupon => { %>
+                                                        <option value="<%= coupon._id %>">
+                                                            <%= coupon.code %> - <%= coupon.description %> (Valid until: <%= new Date(coupon.endDate).toLocaleDateString() %>)
                                                         </option>
                                                     <% }) %>
                                                 <% } else { %>
-                                                    <option value="">No addresses available</option>
+                                                    <option value="">No coupons available</option>
                                                 <% } %>
                                             </select>
                                         </div>
+    
+                                        <button type="button" id="applyCouponBtn" class="btn btn-primary">Apply Coupon</button>
+                                        <button type="button" id="removeCouponBtn" class="btn btn-danger" style="display:none;">Remove Coupon</button>
+                                        
                                     </form>
+                                    <div id="couponMessage"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
 
              
 
                 <div class="order-summary">
                     <div class="row">
                         <div class="col-md-1">
-                            <span class="badge badge-primary" style="margin-left: 15px;">3</span>
+                            <span class="badge badge-primary" style="margin-left: 15px;">4</span>
                         </div>
                         <div class="col-md-11">
                             <h6>ORDER SUMMARY</h6>
@@ -315,6 +374,7 @@
                         <form action="/cart/place-order/make-payment" method="POST" id="paymentForm">
                             <input type="hidden" name="address" id="selectedAddress">
                             <input type="hidden" name="userId" value="<%= user._id %>">
+                            <input type="hidden" name="appliedCouponId" id="appliedCouponId">
                             <input type="hidden" name="finalTotal" value="<%= finalTotal %>">
                             <button class="btn btn-success btn-block" type="submit">Make a Payment</button>
                         </form>
@@ -357,7 +417,79 @@
 
     </script>
     
-
+    <script>
+        $(document).ready(function() {
+            
+            $('#applyCouponBtn').click(function() {
+                const couponId = $('#availableCoupons').val();
+                if (!couponId) {
+                    $('#couponMessage').text('Please select a coupon').removeClass('text-success').addClass('text-danger');
+                    return;
+                }
+    
+                $.ajax({
+                    url: '/cart/apply-coupon',
+                    method: 'POST',
+                    data: { couponId: couponId },
+                    success: function(response) {
+                        $('#subtotal').text('₹' + response.totalPrice);
+                        $('#discount').text('- ₹' + response.discount);
+                        $('#platformFee').text('₹' + response.platformFee);
+                        $('#deliveryCharges').text('₹' + response.deliveryCharges);
+                        $('#totalAmount').text('₹' + response.total);
+                        $('#finalTotal').text('₹' + response.finalTotal);
+                        $('#hiddenFinalTotal').val(response.finalTotal);
+                        $('#savingsMessage').text('You will save ₹' + response.discount + ' on this order');
+                        $('#appliedCouponId').val(response.couponId);
+                        $('#couponMessage').text('Coupon applied successfully!').removeClass('text-danger').addClass('text-success');
+    
+                        
+                        $('#availableCoupons').prop('disabled', true);
+                        $('#applyCouponBtn').hide();
+                        $('#removeCouponBtn').show(); 
+                    },
+                    error: function(xhr) {
+                        const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred while applying the coupon.';
+                        $('#couponMessage').text(errorMessage).removeClass('text-success').addClass('text-danger');
+                    }
+                });
+            });
+    
+    
+            $('#removeCouponBtn').click(function() {
+                $.ajax({
+                    url: '/cart/remove-coupon', 
+                    method: 'POST', 
+                    success: function(response) {
+                        $('#subtotal').text('₹' + response.totalPrice);
+                        $('#discount').text('₹' + response.discount); 
+                        $('#platformFee').text('₹' + response.platformFee);
+                        $('#deliveryCharges').text('₹' + response.deliveryCharges);
+                        $('#totalAmount').text('₹' + response.total);
+                        $('#finalTotal').text('₹' + response.finalTotal);
+                        $('#hiddenFinalTotal').val(response.finalTotal);
+                        $('#savingsMessage').text('Coupon removed.');
+                        $('#appliedCouponId').val(''); 
+                        $('#couponMessage').text('Coupon removed successfully!').removeClass('text-danger').addClass('text-success');
+    
+                        
+                        $('#availableCoupons').prop('disabled', false);
+                        $('#applyCouponBtn').show();
+                        $('#removeCouponBtn').hide(); 
+                    },
+                    error: function(xhr) {
+                        const errorMessage = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred while removing the coupon.';
+                        $('#couponMessage').text(errorMessage).removeClass('text-success').addClass('text-danger');
+                    }
+                });
+            });
+    
+            $('#paymentForm').submit(function() {
+                const finalTotal = $('#finalTotal').text().replace('₹', '');
+                $('#hiddenFinalTotal').val(finalTotal);
+            });
+        });
+    </script>
     
     
 

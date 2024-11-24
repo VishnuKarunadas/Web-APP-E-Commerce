@@ -172,10 +172,10 @@ img.img-fluid {
   <div class="inner-sec-shop px-lg-4 px-3">
     <div class="row">
       <% products.forEach(product => { %>
-          <div class="col-md-3 product-men women_two">
+          <div class="col-md-3 product-men women_two mt-4">
               <div class="product-nike-info nike">
-                  <div class="men-pro-item">
-                      <div class="men-thumb-item">
+                  <div class="men-pro-items mt-2">
+                      <div class="men-thumb-items mt-2">
                           <!-- Check if product.productImage exists and has at least one image -->
                           <% if (product.productImage && product.productImage.length > 0) { %>
                               <!-- Display the first image -->
@@ -201,9 +201,27 @@ img.img-fluid {
                                   <div class="product_price">
                                       <h4>
                                           <a href="/product/<%= product._id %>" class="product-text">
-                                              <%= product.brand ? product.brand.name : '' %> <%= product.productName %>
+                                               <%= product.productName %>
                                           </a>
                                       </h4>
+                                      <script>
+                                        document.addEventListener("DOMContentLoaded", function() {
+                                            const maxLength = 30; // Set the maximum length for description truncation
+                                    
+                                            // Get all product descriptions
+                                            const descriptionElements = document.querySelectorAll('.product-text');
+                                    
+                                            descriptionElements.forEach((descriptionElement) => {
+                                                let description = descriptionElement.innerText || descriptionElement.textContent;
+                                    
+                                                // Truncate the description if it exceeds the max length
+                                                if (description.length > maxLength) {
+                                                    description = description.substring(0, maxLength) + '...';
+                                                    descriptionElement.innerText = description;
+                                                }
+                                            });
+                                        });
+                                    </script>
                                       <div class="grid-price mt-2">
                                           <% if (product.offerPrice && product.offerPrice < product.salePrice) { %>
                                               <span class="money" style="text-decoration: line-through;">$<%= product.regularPrice %></span>
@@ -236,20 +254,22 @@ img.img-fluid {
                                   <span class="rating-count">(<%= product.totalRatings %> reviews)</span>
                               <% } %>
                           </div>
-                          <div class="nike single-item hvr-outline-out">
+                          <div class="container ">
+                            <div class="row py-3">
                               <form id="addToCartForm-<%= product._id %>" onsubmit="return false;">
-                                  <input type="hidden" name="productId" value="<%= product._id %>">
-                                  <input type="hidden" name="quantity" value="1">
-                                  <button type="button" class="nike-cart pnike-cart" onclick="addToCart('<%= product._id %>')">
-                                      <i class="fas fa-cart-plus"></i>
-                                  </button>
-                              </form>
-                              <form id="addToWishlistForm-<%= product._id %>" onsubmit="return false;">
-                                  <input type="hidden" name="productId" value="<%= product._id %>">
-                                  <button type="button" class="nike-cart pnike-cart" onclick="addToWishlist('<%= product._id %>')">
-                                      <i class="fas fa-heart"></i>
-                                  </button>
-                              </form>
+                                <input type="hidden" name="productId" value="<%= product._id %>">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="button" class="nike-cart " onclick="addToCart('<%= product._id %>')">
+                                    <i class="fas fa-cart-plus"></i>
+                                </button>
+                            </form>
+                            <form id="addToWishlistForm-<%= product._id %>" onsubmit="return false;">
+                                <input type="hidden" name="productId" value="<%= product._id %>">
+                                <button type="button" class="nike-cart " onclick="addToWishlist('<%= product._id %>')">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </form>
+                            </div>
                           </div>
                       </div>
                       <div class="clearfix"></div>

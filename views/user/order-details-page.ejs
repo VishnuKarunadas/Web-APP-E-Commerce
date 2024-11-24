@@ -39,7 +39,7 @@
                         
                         <div class="col-md-4">
                             <h5>Your Rewards in this item</h5>
-                            <p  class="text-success" style="font-size: large;" ><span  class="coin-icon">&#9733;</span>  $<%= ((selectedItem.regularPrice - selectedItem.saledPrice)*selectedItem.quantity).toFixed() %> Saved </p>
+                            <p  class="text-success" style="font-size: large;" ><span  class="coin-icon">&#9733;</span>  ₹<%= ((selectedItem.regularPrice - selectedItem.saledPrice)*selectedItem.quantity).toFixed() %> Saved </p>
                             <h6>Payment Method</h6> 
                             <% if (order.payment && order.payment.length > 0) { %>
                               <p><span><%= order.payment[0].method %></span></p>
@@ -62,7 +62,16 @@
                             <% } %>
                             
                         </div>
-
+                        <div class="col-md-4">
+                        <% if (selectedItem.itemOrderStatus === 'Delivered') { %>
+                          <h5>More actions</h5>
+                            <button class="btn btn-warning mb-2" id="downloadInvoiceBtn" 
+                                    data-order-id="<%= order._id %>" 
+                                    data-item-id="<%= selectedItem.itemOrderId %>">
+                                <i class="fas fa-download"></i> Download Invoice
+                            </button>
+                          <% } %>
+                        </div>
                         
             
                     </div>
@@ -86,31 +95,31 @@
                                 </div>
                                 <div class="col-md-6">
                                   <h5>
-                            
+                                    <%= selectedItem.product.brand ? selectedItem.product.brand.name : 'No Brand' %> 
                                     <%= selectedItem.product.productName %>
                                   </h5>
                                   
                                     <p>Color: <%= selectedItem.product.color %> | SKU: <%= selectedItem.product.skuNumber %></p>
                                 
-                                    <p style="font-size: large;">Actual price: $<%= selectedItem.regularPrice %> <span class="coin-icon">&#9733;</span><%= selectedItem.quantity %></p>
-                                    <p style="font-size: large;" class="text-success">Offer price: $<%= selectedItem.price %>
+                                    <p style="font-size: large;">Actual price: ₹<%= selectedItem.regularPrice %> <span class="coin-icon">&#9733;</span><%= selectedItem.quantity %></p>
+                                    <p style="font-size: large;" class="text-success">Offer price: ₹<%= selectedItem.price %>
                                 </div>
                                 <div class="col-md-6"  style="font-size: large;">
                                     <% if (selectedItem.price !== selectedItem.saledPrice) { %>
                                         <p style="font-size: large;" class="text-success">
-                                            Other discount: $<%= selectedItem.price - selectedItem.saledPrice %>
+                                            Other discount: ₹<%= selectedItem.price - selectedItem.saledPrice %>
                                         </p>
                                     <% } %>
                                     
                                     <% if (selectedItem && selectedItem.saledPrice) { %>
                                       <div class="mb-2">
-                                        <p class="text-success">Saled Price: $<%= selectedItem.saledPrice.toFixed(2) %></p>
+                                        <p class="text-success">Saled Price: ₹<%= selectedItem.saledPrice.toFixed(2) %></p>
                                       </div>
                                       <div class="mb-2">
                                         <p>Quantity: <span class="coin-icon">&#9733;</span> <%= selectedItem.quantity %></p>
                                       </div>
                                       <div class="mb-2">
-                                        <p class="text-success">Total: $<%= (selectedItem.saledPrice * selectedItem.quantity).toFixed(2) %></p>
+                                        <p class="text-success">Total: ₹<%= (selectedItem.saledPrice * selectedItem.quantity).toFixed(2) %></p>
                                       </div>
                                     <% } else { %>
                                       <div class="mb-2">
@@ -158,30 +167,30 @@
                               </div>
                               <div class="col-md-6">
                                 <h5>
-                      
+                                  <%= item.product.brand ? item.product.brand.name : '' %> 
                                   <%= item.product.productName %>
                                 </h5>
                                 
                                 <p>Color: <%= item.product.color %> | SKU: <%= item.product.skuNumber %></p>
-                                <p style="font-size: large;">Actual price: $<%= item.regularPrice %> 
+                                <p style="font-size: large;">Actual price: ₹<%= item.regularPrice %> 
                                 <span class="coin-icon">&#9733;</span><%= item.quantity %></p>
-                                <p style="font-size: large;" class="text-success">Offer price: $<%= item.price %></p>
+                                <p style="font-size: large;" class="text-success">Offer price: ₹<%= item.price %></p>
                               </div>
                               <div class="col-md-6" style="font-size: large;">
                                 <% if (item.price !== item.saledPrice) { %>
                                   <p style="font-size: large;" class="text-success">
-                                    Other discount: $<%= (item.price - item.saledPrice).toFixed(2) %>
+                                    Other discount: ₹<%= (item.price - item.saledPrice).toFixed(2) %>
                                   </p>
                                 <% } %>
                                 <% if (item && item.saledPrice) { %>
                                   <div class="mb-2">
-                                    <p class="text-success">Saled Price: $<%= item.saledPrice.toFixed(2) %></p>
+                                    <p class="text-success">Saled Price: ₹<%= item.saledPrice.toFixed(2) %></p>
                                   </div>
                                   <div class="mb-2">
                                     <p>Quantity: <span class="coin-icon">&#9733;</span> <%= item.quantity %></p>
                                   </div>
                                   <div class="mb-2">
-                                    <p class="text-success">Total: $<%= (item.saledPrice * item.quantity).toFixed(2) %></p>
+                                    <p class="text-success">Total: ₹<%= (item.saledPrice * item.quantity).toFixed(2) %></p>
                                   </div>
                                 <% } else { %>
                                   <div class="mb-2">
@@ -229,7 +238,7 @@
             "key": "<%= process.env.RAZOR_PAY_KEY_ID %>",
             "amount": data.amount,
             "currency": "INR",
-            "name": "nike SHOP",
+            "name": "Nike",
             "description": "Re-payment for Order",
             "order_id": data.razorpayOrderId,
             "handler": function (response){
@@ -320,8 +329,6 @@
           'Content-Type': 'application/json'
         }
       });
-      console.log("hii");
-      
 
       if (response.ok) {
         window.location.href = response.url; 

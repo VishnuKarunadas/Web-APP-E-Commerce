@@ -205,6 +205,7 @@
 
 
 // Fetch the existing category names from the server
+// Existing code for fetching categories
 async function fetchExistingCategoryNames() {
   try {
     const response = await fetch("/admin/getCategories");
@@ -232,6 +233,35 @@ function updateCategoryList(categoryNames) {
     categoryList.appendChild(categoryItem);
   });
 }
+
+// Call this function when a new category is added
+function addNewCategory(newCategory) {
+  // Add the new category to the existing category array
+  existingCategoryNames.push(newCategory.toLowerCase()); 
+
+  // Dynamically update the category list
+  const categoryList = document.getElementById('category-list');
+  const categoryItem = document.createElement('li');
+  categoryItem.textContent = newCategory;
+  categoryList.appendChild(categoryItem);
+
+  // Optionally, you can also send the new category to the server (if needed)
+  // fetch("/admin/addCategory", { method: "POST", body: JSON.stringify({ category: newCategory }) });
+}
+
+// Example of adding a new category
+document.getElementById('add-category-button').addEventListener('click', function() {
+  const newCategoryInput = document.getElementById('new-category-input');
+  const newCategory = newCategoryInput.value.trim();
+
+  if (newCategory && !existingCategoryNames.includes(newCategory.toLowerCase())) {
+    addNewCategory(newCategory);
+    newCategoryInput.value = '';  // Clear input field
+  } else {
+    alert("Category already exists or invalid category.");
+  }
+});
+
 
 // Handle the form submission for adding a new category
 async function handleCategoryFormSubmit(event) {

@@ -4,7 +4,8 @@
 	<html lang="zxx">
 	
 	<head>
-		<title>Nike</title>
+		<title><%= product.brand ? product.brand.name : '' %> <%= product.productName %>(<%= product.color %>)</title>
+		<link rel="icon" href="/img/favicon.ico" type="image/png" sizes="32x32">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta charset="utf-8">
 		<meta name="keywords" content="Goggles a Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
@@ -31,9 +32,46 @@
 		<link href="//fonts.googleapis.com/css?family=Inconsolata:400,700" rel="stylesheet">
 		<link href="//fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800"
 			rel="stylesheet">
+			<style>
+				.cart-popup {
+					position: absolute;
+					top: 70px;
+					right: 20px;
+					background: #fff;
+					box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+					border-radius: 8px;
+					padding: 10px;
+					display: none;
+					z-index: 1000;
+				}
+				.cart-popup img {
+					width: 50px;
+					height: 50px;
+					margin-right: 10px;
+					object-fit: cover;
+				}
+				.cart-popup-content {
+					display: flex;
+					align-items: center;
+				}
+			</style>
+			
+			
 	</head>
 	
 	<body>
+
+		<div id="cart-popup" class="cart-popup">
+			<div class="cart-popup-content">
+
+				<div>
+					<h3><%= product.brand ? product.brand.name : '' %> <%= product.productName %></h3>
+				</div>
+			</div>
+		</div>
+		
+
+
 		<div class="banner-top container-fluid" id="home">
 			<!-- header -->
 			<%-include("../../views/partials/user/header")%>
@@ -137,56 +175,57 @@
 	
 								</div>
 								
+								<div class="color-quality">
+									<div style="display: flex; align-items: center;">
+									  <h5 style="margin-right: 10px;">Size:</h5>
+									  <select name="size" id="productSize" style="margin-left: 10px;">
+										<% if (product.size && product.size.length > 0) { %>
+										  <% product.size.forEach(size => { %>
+											<option value="<%= size %>"><%= size %></option>
+										  <% }) %>
+										<% } else { %>
+										  <option value="" disabled>No sizes available</option>
+										<% } %>
+									  </select>
+									</div>
+								  </div>
+								
 								
 								<div class="occasional">
-								
 								</div>
-								<div class="occasion-cart">
-									<div class="nike single-item singlepage" style="display: flex; gap: 10px;">
-										<form id="addToCartForm-<%= product._id %>" onsubmit="return false;">
-											<input type="hidden" name="productId" value="<%= product._id %>">
-											<input type="hidden" name="quantity" value="1">
-											<button type="button" class="nike-cart pnike-cart" onclick="addToCart('<%= product._id %>')">
-												Add to Cart
-											</button>
-										</form>
-										<form id="addToWishlistForm-<%= product._id %>" onsubmit="return false;">
-											<input type="hidden" name="productId" value="<%= product._id %>">
-											<button type="button" class="nike-cart pnike-cart" onclick="addToWishlist('<%= product._id %>')">
-												<i class="fas fa-heart"></i>
-											</button>
-										</form>
+								<div class="container">
+									<div class="row p-1" style="display: flex; gap: 10px;">
+										<div class="col-12 col-md-6 mx-auto">
+											<!-- Add to Cart Button -->
+											<form id="addToCartForm-<%= product._id %>" onsubmit="return false;">
+												<input type="hidden" name="productId" value="<%= product._id %>">
+												<input type="hidden" name="quantity" value="1">
+												<input type="hidden" name="size" id="selectedSize-<%= product._id %>">
+												    <!-- Size Dropdown -->
+    <select id="productSize-<%= product._id %>" name="size" style="margin-left: 10px;">
+        <option value="" disabled selected>Select Size</option>
+        <% if (product.size && product.size.length > 0) { %>
+            <% product.size.forEach(size => { %>
+                <option value="<%= size %>"><%= size %></option>
+            <% }) %>
+        <% } else { %>
+            <option value="" disabled>No sizes available</option>
+        <% } %>
+    </select>
+												<button type="button" class="btn btn-black my-2 btn-lg" style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); width: 100%; border-radius: 25px; border-color: black;" onclick="addToCart('<%= product._id %>')">
+													Add to Cart
+												</button>
+											</form>
+								
+											<!-- Add to Wishlist Button -->
+											<form id="addToWishlistForm-<%= product._id %>" onsubmit="return false;">
+												<input type="hidden" name="productId" value="<%= product._id %>">
+												<button type="button" class="btn btn-black btn-lg" style="background-color: black; color: white; width: 100%; border-radius: 25px;" onclick="addToWishlist('<%= product._id %>')"">
+													Favourite <i class="fas fa-heart"></i>
+												</button>
+											</form>
+										</div>
 									</div>
-								</div>
-								
-								<!-- <ul class="footer-social text-left mt-lg-4 mt-3">
-									<li>Share On : </li>
-									<li class="mx-2">
-										<a href="#">
-											<span class="fab fa-facebook-f"></span>
-										</a>
-									</li>
-									<li class="mx-2">
-										<a href="#">
-											<span class="fab fa-twitter"></span>
-										</a>
-									</li>
-									<li class="mx-2">
-										<a href="#">
-											<span class="fab fa-google-plus-g"></span>
-										</a>
-									</li>
-									<li class="mx-2">
-										<a href="#">
-											<span class="fab fa-linkedin-in"></span>
-										</a>
-									</li>
-									<li class="mx-2">
-										<a href="#">
-											<span class="fas fa-rss"></span>
-										</a>
-									</li>
-								</ul> -->
 							</div>
 							<div class="clearfix"> </div>
 							<!--/tabs-->
@@ -199,7 +238,7 @@
 										<!--/tab_one-->
 										<div class="tab1">
 											<div class="single_page">
-												<h6 ><%= product.description %>...</h6>
+												<h6 ><%= product.description %>.</h6>
 												<p></p>
 											</div>
 										</div>
@@ -220,7 +259,8 @@
 				<!-- Related Products Section -->
 	<!-- Related Products Section -->
 	<div class="related-products" style="padding: 20px;">
-		<h3>Products might like</h3>
+		<h3>YOU MIGHT ALSO LIKE</h3>
+		<br>
 		<div class="row">
 			<% if (relatedProducts.length > 0) { %>
 				<% relatedProducts.forEach(relatedProduct => { %>
@@ -514,90 +554,100 @@
 	
 	
 	<script>
-		function addToCart(productId) {
-	  const form = document.getElementById(`addToCartForm-${productId}`);
-	  const formData = new FormData(form);
-	
-	  fetch("/add-cart", {
-		method: "POST",
-		headers: {
-		  'Content-Type': 'application/json',
-		},
-		body: JSON.stringify(Object.fromEntries(formData)),
-		credentials: 'include' 
-	  })
-	  .then(response => {
-		return response.json().then(data => {
-		  if (!response.ok) {
-			throw data;
-		  }
-		  return data;
-		});
-	  })
-	  .then(data => {
-		if (data.message === 'Item already in cart') {
-		  Swal.fire({
-			icon: 'info',
-			title: 'Already in Cart',
-			text: 'This item is already in your cart.'
-		  });
-		} else {
-		  Swal.fire({
-			icon: 'success',
-			title: 'Success',
-			text: data.message
-		  });
-		}
-		if (data.cartItemsCount !== undefined) {
-		  updateCartItemCount(data.cartItemsCount);
-		}
-	  })
-	  .catch(error => {
-		console.error('Error:', error);
-		if (error.error === 'Please login to add items to cart') {
-		  Swal.fire({
-			icon: 'warning',
-			title: 'Authentication Required',
-			text: 'Please login to add items to cart',
-			showCancelButton: true,
-			confirmButtonText: 'Login',
-			cancelButtonText: 'Cancel'
-		  }).then((result) => {
-			if (result.isConfirmed) {
-			  window.location.href = '/login';
-			}
-		  });
-		} else {
-		  Swal.fire({
-			icon: 'error',
-			title: 'Error',
-			text: error.error || 'An error occurred, please login and try again'
-		  });
-		}
-	  });
-	}
-	
-	function updateCartItemCount(count) {
-	  const cartCountElement = document.querySelector('.cart-count');
-	  if (cartCountElement) {
-		if (count > 0) {
-		  cartCountElement.textContent = count;
-		  cartCountElement.style.display = 'inline';
-		} else {
-		  cartCountElement.textContent = '';
-		  cartCountElement.style.display = 'none';
-		}
-	  }
-	}
-	
-	document.addEventListener('DOMContentLoaded', function() {
-	  const cartCountElement = document.querySelector('.cart-count');
-	  if (cartCountElement) {
-		const initialCount = parseInt(cartCountElement.textContent, 10);
-		updateCartItemCount(initialCount || 0);
-	  }
-	});
-			</script>
+
+        // Function to add item to the cart
+        function addToCart(productId) {
+            const form = document.getElementById(`addToCartForm-${productId}`);
+            const formData = new FormData(form);
+
+            // Send POST request to the server
+            fetch("/add-cart", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(Object.fromEntries(formData)),
+                credentials: 'include' // If you're using session/cookies for user identification
+            })
+            .then(response => {
+                return response.json().then(data => {
+                    if (!response.ok) {
+                        throw data;
+                    }
+                    return data;
+                });
+            })
+            .then(data => {
+                // If the item is already in the cart
+                if (data.message === 'Item already in cart') {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Already in Cart',
+                        text: 'This item is already in your cart.'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.message
+                    });
+                }
+
+                // Update the cart item count
+                if (data.cartItemsCount !== undefined) {
+                    updateCartItemCount(data.cartItemsCount);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                if (error.error === 'Please login to add items to cart') {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Authentication Required',
+                        text: 'Please login to add items to cart',
+                        showCancelButton: true,
+                        confirmButtonText: 'Login',
+                        cancelButtonText: 'Cancel'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '/login';
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: error.error || 'An error occurred, please login and try again'
+                    });
+                }
+            });
+        }
+
+        // Function to update the cart item count on the page
+        function updateCartItemCount(count) {
+            const cartCountElement = document.querySelector('.cart-count');
+            if (cartCountElement) {
+                if (count > 0) {
+                    cartCountElement.textContent = count;
+                    cartCountElement.style.display = 'inline';
+                } else {
+                    cartCountElement.textContent = '';
+                    cartCountElement.style.display = 'none';
+                }
+            }
+        }
+ 
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  const cartCountElement = document.querySelector('.cart-count');
+  if (cartCountElement) {
+    const initialCount = parseInt(cartCountElement.textContent, 10);
+    updateCartItemCount(initialCount || 0);
+  }
+});
+		</script>
 	
 	<script>
 		function addToWishlist(productId) {
@@ -640,26 +690,8 @@
 			})
 			.catch(error => {
 				console.error('Error:', error);
-				if (error.error === 'Please login to add items to Wishlist') {
-					Swal.fire({
-						icon: 'warning',
-						title: 'Authentication Required',
-						text: 'Please login to add items to Wishlist',
-						showCancelButton: true,
-						confirmButtonText: 'Login',
-						cancelButtonText: 'Cancel'
-					}).then((result) => {
-						if (result.isConfirmed) {
-							window.location.href = '/login';
-						}
-					});
-				} else {
-					Swal.fire({
-						icon: 'error',
-						title: 'Error',
-						text: error.error || 'An error occurred, please login and try again'
-					});
-				}
+				window.location.href = '/login';
+				
 			});
 		}
 	
