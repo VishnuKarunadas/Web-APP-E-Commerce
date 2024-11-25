@@ -57,7 +57,7 @@ p {
     letter-spacing: 1px;
     font-size: 0.9em;
     line-height: 1.9em;
-    color: #959596;
+    color: #000000;
 }
 
 ul {
@@ -1575,7 +1575,7 @@ footer {
 
 .footer-text p,
 .contact-info p {
-    color: #616263;
+    color: #000000;
 	line-height: 1.9em;
 }
 
@@ -1598,7 +1598,7 @@ footer {
 }
 
 .copyright-w3layouts p {
-    color: #616263;
+    color: #000000;
 }
 
 .copyright-w3layouts p a:hover {

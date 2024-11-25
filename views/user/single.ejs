@@ -161,57 +161,43 @@
 									  <span class="rating-count">(<%= product.totalRatings %> reviews)</span>
 									<% } %>
 								  </div>
-								<br>
-								<div class="color-quality">
-									<div style="display: flex; align-items: center;">
-										<h5 style="margin-right: 10px;">Category:</h5>
-										<p style="margin: 0;">
-											<%= product.category ? product.category.name : 'No Category' %>
-										</p>
-									</div>
-	
-	
-
-	
+								  <div style="display: flex; align-items: center;">
+									<h5 style="margin-right: 10px;">Category:</h5>
+									<p style="margin: 0;">
+										<%= product.category ? product.category.name : 'No Category' %>
+									</p>
 								</div>
-								
-								<div class="color-quality">
-									<div style="display: flex; align-items: center;">
-									  <h5 style="margin-right: 10px;">Size:</h5>
-									  <select name="size" id="productSize" style="margin-left: 10px;">
-										<% if (product.size && product.size.length > 0) { %>
-										  <% product.size.forEach(size => { %>
-											<option value="<%= size %>"><%= size %></option>
-										  <% }) %>
-										<% } else { %>
-										  <option value="" disabled>No sizes available</option>
-										<% } %>
-									  </select>
-									</div>
-								  </div>
+
+
 								
 								
 								<div class="occasional">
 								</div>
 								<div class="container">
-									<div class="row p-1" style="display: flex; gap: 10px;">
-										<div class="col-12 col-md-6 mx-auto">
+									<div class="row p-1" style="display: flex; gap: 10px; align-items: start;">
+										<div class="col-12 col-md-6  align-items: start;">
 											<!-- Add to Cart Button -->
 											<form id="addToCartForm-<%= product._id %>" onsubmit="return false;">
 												<input type="hidden" name="productId" value="<%= product._id %>">
 												<input type="hidden" name="quantity" value="1">
 												<input type="hidden" name="size" id="selectedSize-<%= product._id %>">
 												    <!-- Size Dropdown -->
-    <select id="productSize-<%= product._id %>" name="size" style="margin-left: 10px;">
-        <option value="" disabled selected>Select Size</option>
-        <% if (product.size && product.size.length > 0) { %>
-            <% product.size.forEach(size => { %>
-                <option value="<%= size %>"><%= size %></option>
-            <% }) %>
-        <% } else { %>
-            <option value="" disabled>No sizes available</option>
-        <% } %>
-    </select>
+												
+
+													<select id="productSize-<%= product._id %>" name="size" style="margin-left: 10px;">
+															<h5 class="mb-0 mr-2">Size:</h5>
+														<div style="display: flex; align-items: center;">
+															<h5 style="margin-right: 10px;">Size:</h5>
+														<option value="" disabled selected>Select Size</option>
+														<% if (product.size && product.size.length > 0) { %>
+															<% product.size.forEach(size => { %>
+																<option value="<%= size %>"><%= size %></option>
+															<% }) %>
+														<% } else { %>
+															<option value="" disabled>No sizes available</option>
+														<% } %>
+													</div>
+													</select>
 												<button type="button" class="btn btn-black my-2 btn-lg" style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); width: 100%; border-radius: 25px; border-color: black;" onclick="addToCart('<%= product._id %>' ,'<%= product.size %>','<%= product._id %>')">
 													Add to Cart
 												</button>
@@ -229,6 +215,12 @@
 							</div>
 							<div class="clearfix"> </div>
 							<!--/tabs-->
+
+										
+									</div>
+								</div>
+							</div>
+							<!--//tabs-->
 							<div class="responsive_tabs">
 								<div id="horizontalTab">
 									<ul class="resp-tabs-list">
@@ -247,11 +239,6 @@
 												</div>
 											</div>
 										</div>
-										
-									</div>
-								</div>
-							</div>
-							<!--//tabs-->
 						</div>	
 					</div>
 					<br>

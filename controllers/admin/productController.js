@@ -281,6 +281,7 @@ const addProducts = async (req, res) => {
         if (!categoryId) {
             return res.status(400).json("Invalid category name");
         }
+        console.log(categoryId)
 
         // Prepare size and quantity data
         const sizes = [];
@@ -289,6 +290,22 @@ const addProducts = async (req, res) => {
         
         console.log(products.quantityS,products.quantityM,products.quantityL)
         // Capture size and quantity for S, M, L (or others based on the form data)
+        console.log(products.category)
+        if(products.category === "Shoes"){
+            if ( products.quantityS) {
+                sizes.push('7');
+                quantity['7'] = parseInt(products.quantityS, 10);
+            }
+            if ( products.quantityM) {
+                sizes.push('8');
+                quantity['8'] = parseInt(products.quantityM, 10);
+            }
+            if ( products.quantityL) {
+                sizes.push('9');
+                quantity['9'] = parseInt(products.quantityL, 10);
+            }
+        }else if (products.category === "Clothing"){
+
         if ( products.quantityS) {
             sizes.push('S');
             quantity['S'] = parseInt(products.quantityS, 10);
@@ -301,7 +318,7 @@ const addProducts = async (req, res) => {
             sizes.push('L');
             quantity['L'] = parseInt(products.quantityL, 10);
         }
-
+    }
         // Set product status based on quantity (if quantity is zero for all sizes, it's out of stock)
         const productStatus = Object.values(quantity).some(q => q > 0) ? "Available" : "Out of stock";
 
@@ -347,6 +364,148 @@ const addProducts = async (req, res) => {
         return res.redirect("/admin/pageerror");
     }
 };
+//new code down
+
+// const addProducts = async (req, res) => {
+//     try {
+//         const products = req.body;
+
+//         // Check if product with the same name exists
+//         const productExists = await Product.findOne({ productName: products.productName });
+//         if (productExists) {
+//             return res.status(400).json("Product already exists, please try with another name");
+//         }
+
+//         let images = [];
+
+//         // Image processing
+//         if (req.files) {
+//             for (let field of ['images1', 'images2', 'images3']) {
+//                 if (req.files[field] && req.files[field].length > 0) {
+//                     const originalImagePath = req.files[field][0].path;
+
+//                     // Extract the original file name without extension
+//                     const originalFileName = path.basename(req.files[field][0].filename, path.extname(req.files[field][0].filename));
+
+//                     // Generate a new image name based on the original file name
+//                     const resizedImageName = `resized_${originalFileName}.png`; // or use the extension of the original file
+//                     const resizedImagePath = path.join('public', 'uploads', 'product-images', resizedImageName);
+
+//                     // Create output directory if it doesn't exist
+//                     const directory = path.dirname(resizedImagePath);
+//                     if (!fs.existsSync(directory)) {
+//                         fs.mkdirSync(directory, { recursive: true });
+//                     }
+
+//                     // Resize and save the image
+//                     await sharp(originalImagePath)
+//                         .resize({ width: 440, height: 440 })
+//                         .toFile(resizedImagePath);
+
+//                     // Save filename for DB entry
+//                     images.push(resizedImageName);
+
+//                     // Delete the original file after processing
+//                     try {
+//                         fs.unlinkSync(originalImagePath);
+//                     } catch (unlinkError) {
+//                         console.error('Error deleting original file:', unlinkError);
+//                     }
+//                 }
+//             }
+//         }
+
+//         // Validate and retrieve category ID
+//         const categoryId = await Category.findOne({ name: products.category });
+//         if (!categoryId) {
+//             return res.status(400).json("Invalid category name");
+//         }
+
+//         // Initialize size array and quantity object
+//         const sizes = [];
+//         const quantity = {};
+
+//         console.log("addproduct page");
+//         console.log(products.quantityS, products.quantityM, products.quantityL, products.size7, products.size8, products.size9);
+
+//         // Handle product size based on product type
+//         if (products.productType === 'Shoe') {
+//             // If product is a shoe, handle sizes as numbers (e.g., '7', '8', '9')
+//             if (products.size7) {
+//                 sizes.push('7');
+//                 quantity['7'] = parseInt(products.size7, 10);
+//             }
+//             if (products.size8) {
+//                 sizes.push('8');
+//                 quantity['8'] = parseInt(products.size8, 10);
+//             }
+//             if (products.size9) {
+//                 sizes.push('9');
+//                 quantity['9'] = parseInt(products.size9, 10);
+//             }
+//         } else if (products.productType === 'Dress') {
+//             // If product is a dress, handle sizes as strings (e.g., 'S', 'M', 'L')
+//             if (products.quantityS) {
+//                 sizes.push('S');
+//                 quantity['S'] = parseInt(products.quantityS, 10);
+//             }
+//             if (products.quantityM) {
+//                 sizes.push('M');
+//                 quantity['M'] = parseInt(products.quantityM, 10);
+//             }
+//             if (products.quantityL) {
+//                 sizes.push('L');
+//                 quantity['L'] = parseInt(products.quantityL, 10);
+//             }
+//         }
+
+//         // Set product status based on quantity (if quantity is zero for all sizes, it's out of stock)
+//         const productStatus = Object.values(quantity).some(q => q > 0) ? "Available" : "Out of stock";
+
+//         // Offer Price Calculation
+//         const offer = await Offer.findOne({ product: categoryId._id });
+//         let offerPrice = products.salePrice;
+
+//         if (offer) {
+//             const offerValue = offer.discountType === 'percentage'
+//                 ? products.salePrice * (offer.discountValue / 100)
+//                 : offer.discountValue;
+
+//             offerPrice = Math.max(products.salePrice - offerValue, 0);
+//         }
+
+//         // Create and save new product
+//         const newProduct = new Product({
+//             productName: products.productName,
+//             description: products.description,
+//             SKUNumber: products.SKUNumber, // Ensuring SKU is passed
+//             category: categoryId._id,
+//             regularPrice: products.regularPrice,
+//             salePrice: products.salePrice,
+//             offerPrice: offerPrice,
+//             createdAt: new Date(),
+//             quantity: quantity,  // Store quantity object for each size
+//             color: products.color,
+//             size: sizes,  // Store size array
+//             productImage: images,  // Store the resized image names
+//             status: productStatus,  // Set product status
+//             productType: products.productType  // Store product type (e.g., 'Shoe' or 'Dress')
+//         });
+
+//         // Save the new product to the database
+//         await newProduct.save();
+
+//         // Optionally update product offer prices after adding a product
+//         await updateProductOfferPrice();
+
+//         // Redirect after saving
+//         return res.redirect("/admin/addProducts");
+//     } catch (error) {
+//         console.error("Error Saving product:", error);
+//         return res.redirect("/admin/pageerror");
+//     }
+// };
+
 
 // const getAllProducts = async (req, res) => {
 //     try {
@@ -761,19 +920,35 @@ const editProduct = async (req, res) => {
         // Prepare size and quantity data
         const sizes = [];
         const quantity = {};
+        if(data.category === "Shoes"){
+            if ( data.quantityS) {
+                sizes.push('7');
+                quantity['7'] = parseInt(data.quantityS, 10);
+            }
+            if ( data.quantityM) {
+                sizes.push('8');
+                quantity['8'] = parseInt(data.quantityM, 10);
+            }
+            if ( data.quantityL) {
+                sizes.push('9');
+                quantity['9'] = parseInt(data.quantityL, 10);
+            }
+        }else if (data.category === "Clothing"){
 
-        if (data.quantityS) {
-            sizes.push('S');
-            quantity['S'] = parseInt(data.quantityS, 10);
-        }
-        if (data.quantityM) {
-            sizes.push('M');
-            quantity['M'] = parseInt(data.quantityM, 10);
-        }
-        if (data.quantityL) {
-            sizes.push('L');
-            quantity['L'] = parseInt(data.quantityL, 10);
-        }
+            if (data.quantityS) {
+                sizes.push('S');
+                quantity['S'] = parseInt(data.quantityS, 10);
+            }
+            if (data.quantityM) {
+                sizes.push('M');
+                quantity['M'] = parseInt(data.quantityM, 10);
+            }
+            if (data.quantityL) {
+                sizes.push('L');
+                quantity['L'] = parseInt(data.quantityL, 10);
+            }
+    }
+       
 
         // Set product status based on quantity (if quantity is zero for all sizes, it's out of stock)
         const productStatus = Object.values(quantity).some(q => q > 0) ? "Available" : "Out of stock";
