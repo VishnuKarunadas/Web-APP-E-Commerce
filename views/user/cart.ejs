@@ -66,15 +66,15 @@
 
                                     
                                                 <div class="quantity-buttons">
-                                                    <button type="button" class="btn btn-primary" onclick="updateQuantity('<%= item.product._id %>', -1)">-</button>
+                                                    <button type="button" class="btn btn-primary" onclick="updateQuantity('<%= item.product._id %>', -1,'<%= item.size %>','<%= item._id %>')">-</button>
                                                     <button type="button" class="btn btn-primary"><%= item.quantity %></button>
-                                                    <button type="button" class="btn btn-primary" onclick="updateQuantity('<%= item.product._id %>', 1)">+</button>
+                                                    <button type="button" class="btn btn-primary" onclick="updateQuantity('<%= item.product._id %>' ,1,'<%= item.size %>','<%= item._id %>' )">+</button>
                                                 </div>
                                             </form>
                                             
                                             <form id="removeItemForm-<%= item.product._id %>" onsubmit="return false;">
                                                 <input type="hidden" name="productId" value="<%= item.product._id %>">
-                                                <button type="button" class="btn btn-danger" onclick="removeFromCart('<%= item.product._id %>')">REMOVE</button>
+                                                <button type="button" class="btn btn-danger" onclick="removeFromCart('<%= item.product._id %>' ,'<%= item.size %>','<%= item._id %>' )">REMOVE</button>
                                             </form>
                                         </div>
                                     </div>
@@ -87,7 +87,7 @@
                                     <p>Product has been removed from the store and is no longer available.</p>
                                     <form id="removeDeletedItemForm-<%= item._id %>" onsubmit="return false;">
                                         <input type="hidden" name="productId" value="<%= item._id %>">
-                                        <button type="button" class="btn btn-danger" onclick="removeDeletedItem('<%= item._id %>')">REMOVE FROM CART</button>
+                                        <button type="button" class="btn btn-danger" onclick="removeDeletedItem('<%= item.product._id %>' ,'<%= item.size %>','<%= item._id %>')">REMOVE FROM CART</button>
                                     </form>
                                 </div>
                             </div>
@@ -140,7 +140,7 @@
 
 <script>
 
-async function removeDeletedItem(itemId) {
+async function removeDeletedItem(productId ,size ,itemId) {
     Swal.fire({
         title: 'Are you sure?',
         text: 'Do you want to remove this deleted item from the cart?',
@@ -157,7 +157,7 @@ async function removeDeletedItem(itemId) {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ itemId })
+                    body: JSON.stringify({ productId ,size ,itemId })
                 });
 
                 const data = await response.json();
@@ -190,7 +190,7 @@ async function removeDeletedItem(itemId) {
 
 <script>
 
-async function removeFromCart(productId) {
+async function removeFromCart(productId ,size ,itemId) {
     Swal.fire({
         title: 'Are you sure?',
         text: 'Do you want to remove this item from the cart?',
@@ -207,7 +207,7 @@ async function removeFromCart(productId) {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ productId }) 
+                    body: JSON.stringify({ productId ,size ,itemId}) 
                 });
 
                 const data = await response.json();
@@ -238,13 +238,13 @@ async function removeFromCart(productId) {
 </script>
 <script>
 
-function updateQuantity(productId, change) {
+function updateQuantity(productId, change ,size,itemId) {
     fetch('/cart/update-quantity', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ productId, change })
+        body: JSON.stringify({ productId, change, size,itemId })
     })
     .then(response => response.json())
     .then(data => {

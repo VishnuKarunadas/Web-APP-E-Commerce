@@ -244,6 +244,7 @@ const cart = async (req, res, next) => {
 // };
 
 const addToCart = async (req, res, next) => {
+  console.log("------------------- Add To Cart -------------------")
   try {
     const userId = req.session.user || req.user;
 
@@ -252,12 +253,14 @@ const addToCart = async (req, res, next) => {
     }
 
     const { productId, quantity, size } = req.body; // Include size in the body
+    console.log("Size:", size, "Product ID:", productId, "Item quantity:", quantity);
 
     if (!mongoose.Types.ObjectId.isValid(productId)) {
       return res.status(400).json({ error: "Invalid product ID" });
     }
 
     const product = await Product.findById(productId).exec();
+    console.log(product);
     if (!product) {
       return res.status(404).json({ error: "Product not found" });
     }
@@ -268,12 +271,17 @@ const addToCart = async (req, res, next) => {
     }
 
     // Check if the product is out of stock for the selected size
-    if (product.quantity === 0 || (size && product.sizes && product.sizes[size] && product.sizes[size] < quantity)) {
-      return res.status(400).json({ error: "Product or selected size is out of stock" });
-    }
-
     if (product.isBlocked) {
       return res.status(400).json({ error: "Product is blocked" });
+    }
+    console.log(product.size ,product.quantity[size])
+    // Check stock for size
+    if (product.quantity[size]===0) {
+      return res.status(400).json({ error: `Size ${size} is out of stock` });
+    }
+
+    if (product.quantity === 0 || (size && product.sizes && product.sizes[size] < quantity)) {
+      return res.status(400).json({ error: "Product or selected size is out of stock" });
     }
 
     let cart = await Cart.findOne({ userId: userId }).populate("items.product");
@@ -321,22 +329,23 @@ const addToCart = async (req, res, next) => {
       });
 
       // Update product stock: decrease the stock for the specific size (if sizes are defined)
-      if (size && product.sizes && product.sizes[size]) {
-        product.sizes[size] -= quantity; // Decrease stock for the selected size
-      } else {
-        product.quantity -= quantity; // If no size, just decrease total quantity
-      }
+      // if (size && product.sizes && product.sizes[size]) {
+      //   product.sizes[size] -= quantity; // Decrease stock for the selected size
+      // } else {
+      //   product.quantity -= quantity; // If no size, just decrease total quantity
+      // }
 
-      await Product.findByIdAndUpdate(productId, {
-        $set: {
-          status: product.quantity <= 0 ? "out of stock" : product.status,
-        },
-      });
+      // Update product stock and status
+    //   await Product.findByIdAndUpdate(productId, {
+    //     $set: {
+    //       status: product.sizes ? (product.sizes[size] <= 0 ? "out of stock" : product.status) : (product.quantity <= 0 ? "out of stock" : product.status),
+    //     },
+    //   });
     }
 
     await cart.save();
     await User.findByIdAndUpdate(userId, { cart: cart._id });
-    
+
     res.json({
       message: "Item added to cart successfully",
       cartItemsCount: cart.items.length,
@@ -346,7 +355,8 @@ const addToCart = async (req, res, next) => {
   }
 };
 
-const MAX_QUANTITY_PER_PRODUCT = 5;
+
+// const MAX_QUANTITY_PER_PRODUCT = 5;
 
 // const updateQuantity = async (req, res, next) => {
 //   const { productId, change } = req.body;
@@ -549,10 +559,15 @@ const MAX_QUANTITY_PER_PRODUCT = 5;
 //   }
 // };
 
+const MAX_QUANTITY_PER_PRODUCT = 5; // Set the maximum quantity per product to 5
+
 const updateQuantity = async (req, res, next) => {
-  const { productId, change} = req.body; // Ensure size is passed
+  const { productId, change, size, itemId } = req.body; // Ensure size is passed
   const userId = req.session.user || req.user;
-// console.log(size,quantity)
+  console.log("--------------------update Quantity-----------------------");
+  console.log("Size:", size, "Product ID:", productId, "Item ID:", itemId);
+  const size2 = size;
+
   try {
     let cart = await Cart.findOne({ userId }).populate("items.product");
 
@@ -560,8 +575,10 @@ const updateQuantity = async (req, res, next) => {
       return res.status(404).json({ error: "Cart not found" });
     }
 
+    // Find the item in the cart by productId and size
+    console.log(size2, itemId);
     const item = cart.items.find(
-      (item) => item.product._id.toString() === productId
+      (item) => item.product._id.toString() === productId && item.size === size2
     );
 
     if (!item) {
@@ -571,15 +588,22 @@ const updateQuantity = async (req, res, next) => {
     if (item.product.isBlocked) {
       return res.status(400).json({ error: "Product is blocked" });
     }
-    // console.log(item)
+    console.log(item);
 
     // Ensure proper number conversion for quantity
     let newQuantity = Number(item.quantity) + Number(change);
-// console.log(newQuantity)
-    // Ensure minimum quantity is 1
+    console.log(newQuantity);
+
+    // Ensure minimum quantity is 1 and not exceeding max limit
     if (newQuantity < 1) {
       return res.status(400).json({
         error: "Minimum quantity is 1. If you want to remove the item, use the remove button.",
+      });
+    }
+
+    if (newQuantity > MAX_QUANTITY_PER_PRODUCT) {
+      return res.status(400).json({
+        error: `Maximum quantity per product is ${MAX_QUANTITY_PER_PRODUCT}.`,
       });
     }
 
@@ -588,49 +612,44 @@ const updateQuantity = async (req, res, next) => {
     if (!product) {
       return res.status(404).json({ error: "Product not found" });
     }
-const size = item.size;
-    // console.log(item.size);
-    // console.log(product);
 
-    if (item.size) {
-      // Handle size-specific quantity
-      if (!product.quantity[size]) {
-        return res.status(400).json({ error: `Size ${size} is not available for this product.` });
-      }
-    
-      const availableStock = product.quantity[size];
+    const size = item.size;
+    // Handle size-specific quantity
+    if (!product.quantity[size]) {
+      return res.status(400).json({ error: `Size ${size} is not available for this product.` });
+    }
 
-      if (newQuantity > availableStock) {
-        return res.status(400).json({ error: "Not enough stock available for the selected size." });
-      }
+    const availableStock = product.quantity[size];
 
-      // Update product stock for the specific size
-  product.quantity[item.size] = availableStock - change;
-  product.status = Object.values(product.quantity).some(q => q > 0)
-    ? "Available"
-    : "Out of stock";
+    console.log(availableStock);
 
-} else {
-  return res
-    .status(400)
-    .json({ error: "General stock update is not supported. Use size-specific updates." });
-}
+    if (newQuantity > availableStock) {
+      return res.status(400).json({ error: "Not enough stock available for the selected size." });
+    }
 
-await product.save();
+    // Update product stock for the specific size
+    product.quantity[size] = availableStock - change;
+    console.log(product.quantity[size]);
 
-// Update cart item quantity
-if (isNaN(newQuantity) || newQuantity <= 0) {
-  return res.status(400).json({ error: "Invalid quantity in cart." });
-}
+    // Update product status
+    product.status = Object.values(product.quantity).some(q => q > 0) ? "Available" : "Out of stock";
+    console.log(product.status);
 
-item.quantity = newQuantity;
-await cart.save();
+    await product.save();
 
-res.json({
-  success: true,
-  updatedQuantity: item.quantity,
-  productStatus: product.status,
-});
+    // Update cart item quantity
+    if (isNaN(newQuantity) || newQuantity <= 0) {
+      return res.status(400).json({ error: "Invalid quantity in cart." });
+    }
+
+    item.quantity = newQuantity;
+    await cart.save();
+
+    res.json({
+      success: true,
+      updatedQuantity: item.quantity,
+      productStatus: product.status,
+    });
   } catch (error) {
     next(error);
   }
@@ -638,13 +657,13 @@ res.json({
 
 
 const removeFromCart = async (req, res) => {
-  const { productId } = req.body;
-  console.log(productId)
+  const { productId, size, itemId } = req.body; // Ensure size is passed
+  console.log("--------------------Remove From cart -----------------------");
+  console.log("Size:", size, "Product ID:", productId, "Item ID:", itemId);
+
+  const sizeOfProduct = size;
   const userId = req.session.user || req.user;
-  // const item = cart.items.find(
-  //   (item) => item.product._id.toString() === productId
-  // );
-  
+
   if (!userId) {
     return res.status(401).json({ success: false, message: "Please login" });
   }
@@ -653,25 +672,25 @@ const removeFromCart = async (req, res) => {
     let cart = await Cart.findOne({ userId }).populate("items.product");
 
     if (!cart) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Cart not found" });
+      return res.status(404).json({ success: false, message: "Cart not found" });
     }
 
     const itemToRemove = cart.items.find(
-      (item) => item.product._id.toString() === productId
+      (item) => item.product._id.toString() === productId && item.size === sizeOfProduct
     );
+    console.log(itemToRemove);
 
     if (!itemToRemove) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Item not found in cart" });
+      return res.status(404).json({ success: false, message: "Item not found in cart" });
     }
 
+    // Remove the specific item based on product ID and size
     cart.items = cart.items.filter(
-      (item) => item.product._id.toString() !== productId
+      (item) => !(item.product._id.toString() === productId && item.size === sizeOfProduct)
     );
+    console.log(cart.items);
 
+    // Optionally, update product stock if needed (uncomment the block below if required)
     // await Product.findByIdAndUpdate(productId, {
     //   $inc: { quantity: itemToRemove.quantity },
     //   $set: { status: "Available" },
@@ -684,6 +703,7 @@ const removeFromCart = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
 
 const removeDeletedItem = async (req, res) => {
   try {

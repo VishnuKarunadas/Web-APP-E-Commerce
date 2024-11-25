@@ -47,7 +47,7 @@ const productSchema = new Schema({
     quantity: {
         type: Object,
         of: Number,
-        default: { 'S': 0, 'M': 0, 'L': 0 },  // Default quantities
+        default: { 'S': 0, 'M': 0, 'L': 0, "7":0,"8":0,"9":0 },  // Default quantities
         validate: {
             validator: function(v) {
                 // Ensure all quantities are non-negative integers

@@ -39,7 +39,9 @@
                         <th scope="col"><b>SKU Number</b></th> 
                         <th scope="col"><b>Category</b></th>
                         <th scope="col"><b>Sale Price</b></th>
-                        <th scope="col"><b>Quantity</b></th>
+                        <th scope="col"><b>Quantity-Small</b></th>
+                        <th scope="col"><b>Quantity-Medium</b></th>
+                        <th scope="col"><b>Quantity-Large</b></th>
                         <th scope="col"><b>Action</b></th>
                         <th scope="col"><b>Edit</b></th>
                         <th scope="col"><b>Delete</b></th>
@@ -52,7 +54,9 @@
                         <td><%= data[i].skuNumber %></td> 
                         <td><%= data[i].category.name %></td>
                         <td><%= data[i].salePrice %></td>
-                        <td><%= data[i].quantity %></td>
+                        <td><%= data[i].quantity.S %></td>
+                        <td><%= data[i].quantity.M %></td>
+                        <td><%= data[i].quantity.L %></td>
                         <td>
                           <% if (data[i].isBlocked === false) { %>
                             <button class="btn btn-danger" style="width: 80px;">

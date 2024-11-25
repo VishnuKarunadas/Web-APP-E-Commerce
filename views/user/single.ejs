@@ -212,7 +212,7 @@
             <option value="" disabled>No sizes available</option>
         <% } %>
     </select>
-												<button type="button" class="btn btn-black my-2 btn-lg" style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); width: 100%; border-radius: 25px; border-color: black;" onclick="addToCart('<%= product._id %>')">
+												<button type="button" class="btn btn-black my-2 btn-lg" style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); width: 100%; border-radius: 25px; border-color: black;" onclick="addToCart('<%= product._id %>' ,'<%= product.size %>','<%= product._id %>')">
 													Add to Cart
 												</button>
 											</form>
@@ -556,7 +556,7 @@
 	<script>
 
         // Function to add item to the cart
-        function addToCart(productId) {
+        function addToCart(productId,size) {
             const form = document.getElementById(`addToCartForm-${productId}`);
             const formData = new FormData(form);
 

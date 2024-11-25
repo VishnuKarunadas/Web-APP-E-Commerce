@@ -557,24 +557,32 @@ const confirmOrder = async (req, res) => {
 
     await Cart.findOneAndUpdate({ userId: userId }, { $set: { items: [] } });
 console.log("------------------- conform order------------------");
-console.log(parsedItems.product);
+console.log(parsedItems);
     // Reduce product quantity after order is confirmed
     for (let item of parsedItems) {
-      const product = await Product.findById(item.productId);
+      const productSizes = item.size
+      const product = await Product.findById(item.product._id);
+      console.log(item.product._id);
+     console.log(productSizes)
+      console.log(product.quantity[productSizes])
       if (product) {
+
+        // if()
         // Ensure there's enough stock to reduce
-        if (product.quantity < item.quantity) {
+        if (product.quantity[productSizes] < item.quantity) {
           throw new Error(`Not enough stock available for product: ${product.name}`);
         }
-
+        console.log(item.quantity)
         // Reduce stock based on the quantity purchased
-        product.quantity -= item.quantity;
-        
+        product.quantity[productSizes] -= item.quantity;
+        console.log(product.quantity[productSizes])
         // If quantity goes to 0 or below, mark the product as out of stock
-        if (product.quantity <= 0) {
+        if (product.quantity[productSizes] <= 0) {
           product.status = 'Out of stock';
         }
-        await product.save();
+        console.log(product);
+        const updateProduct = await Product.findByIdAndUpdate(item.product._id, product, { new: true });
+        await updateProduct.save();
       } else {
         throw new Error(`Product with ID ${item.productId} not found`);
       }
