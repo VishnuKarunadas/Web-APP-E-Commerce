@@ -71,6 +71,10 @@ const orderSchema = new mongoose.Schema({
       ref: 'Product',
       required: true
     },
+    size: {
+      type: [String],  // Array of sizes (e.g. ['S', 'M', 'L'])
+      required: false,
+    },
     quantity: {
       type: Number,
       required: true

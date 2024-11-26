@@ -13,6 +13,7 @@ const userOrderController = require("../controllers/user/userOrderController");
 const userRatingController = require("../controllers/user/userRatingController");
 const userWishlistController = require("../controllers/user/userWishlistController")
 const userCouponController = require("../controllers/user/userCouponController");
+const userWalletController = require("../controllers/user/userWalletController");
 
 
 
@@ -99,7 +100,7 @@ router.post("/user/my-order/cancel/:itemOrderId/:cancelReason", userAuth, userOr
 router.post('/user/my-order/return-order',userAuth, userOrderController.returnOrder);
 
 router.post('/user/my-order/return-order',userAuth, userOrderController.returnOrder);
-
+router.post("/user/my-order/order-details/re-checkout/:orderId", userAuth,userOrderController.confirmRePayment);
 router.post("/user/my-order/order-details", userAuth,cartCount,setBreadcrumbs,userOrderController.orderDetails);
 
 //ratings
@@ -118,6 +119,11 @@ router.delete('/wishlist/remove-deleted-item',userAuth,userWishlistController.re
 // coupon management
 
 router.get("/user/my-coupons",userAuth,cartCount,userCouponController.myCoupons);
+
+// wallet management
+
+router.get("/user/my-wallet",userAuth,cartCount,setBreadcrumbs,userWalletController.wallet);
+router.post('/user/check-wallet-balance', userAuth,userWalletController.checkWalletBalance);
 
 
 

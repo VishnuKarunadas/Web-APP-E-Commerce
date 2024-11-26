@@ -51,6 +51,7 @@ const orders = async (req, res) => {
 };
 
 const updateOrderStatus = async (req, res) => {
+  console.log("-----------------Update Order Status (Admin-side)-----------------");
   try {
     const { id } = req.params;
     const { status, itemId, cancelReason, returnReason, returnRejectionReason } = req.body;
@@ -60,11 +61,23 @@ const updateOrderStatus = async (req, res) => {
     }
 
     const order = await Order.findById(id).populate('user');
+    // console.log(orders)
     if (!order) {
       return res.status(404).json({ success: false, message: 'Order not found' });
     }
 
     const item = order.items.find(item => item.itemOrderId === itemId);
+    console.log(item.size)
+    const productSize = item.size;
+    const product = await Product.findById(item.product);
+
+    if (product) {
+      console.log('Ordered item size:', product.size); // Log the size of the product
+    } else {
+      console.log('Product not found');
+    }
+    ////////////////////////////////////////////////
+    console.log("order= " ,order)
     if (!item) {
       return res.status(404).json({ success: false, message: 'Item not found in the order' });
     }
@@ -92,9 +105,14 @@ const updateOrderStatus = async (req, res) => {
 
     if (status === 'Cancelled' || status === 'Returned') {
       item.cancelReason = status === 'Cancelled' ? (cancelReason || 'Not specified') : undefined;
-      await Product.findByIdAndUpdate(item.product, {
-        $inc: { quantity: item.quantity }
-      }, { new: true });
+      await Product.findByIdAndUpdate(
+        item.product, 
+        {
+          $inc: { [`quantity.${item.size}`]: item.quantity } // Dynamically access the size key
+        },
+        { new: true }
+      );
+      
 
       const paymentMethod = order.payment[0].method;
       const paymentStatus = order.payment[0].status;

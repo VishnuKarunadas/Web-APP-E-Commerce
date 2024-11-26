@@ -111,7 +111,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								  <% } else { %>
 									<div class="row">
 									  <% products.forEach(product => { %>
-										<% if (product.quantity > 0) { %> <!-- Check if the quantity is greater than 0 -->
+										<% if ((product.quantity.S || product.quantity.M || product.quantity.L) > 0) { %> <!-- Check if the quantity is greater than 0 -->
 										  <div class="col-md-3 product-men women_two shop-gd">
 											<div class="product-nike-info nike">
 											  <div class="men-pro-item">
@@ -129,10 +129,28 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 													<div class="grid_meta">
 													  <div class="product_price">
 														<h4>
-														  <a href="/product/<%= product._id %>">
+														  <a href="/product/<%= product._id %>" class="product-text">
 															<%= product.brand ? product.brand.name : '' %> <%= product.productName %>
 														  </a>
 														</h4>
+														<script>
+															document.addEventListener("DOMContentLoaded", function() {
+																const maxLength = 20; // Set the maximum length for description truncation
+														
+																// Get all product descriptions
+																const descriptionElements = document.querySelectorAll('.product-text');
+														
+																descriptionElements.forEach((descriptionElement) => {
+																	let description = descriptionElement.innerText || descriptionElement.textContent;
+														
+																	// Truncate the description if it exceeds the max length
+																	if (description.length > maxLength) {
+																		description = description.substring(0, maxLength) ;
+																		descriptionElement.innerText = description;
+																	}
+																});
+															});
+														</script>
 														<div class="grid-price mt-2">
 														  <% if (product.offerPrice && product.offerPrice < product.salePrice) { %>
 															<span class="money" style="text-decoration: line-through;">$<%= product.regularPrice %></span>
@@ -168,13 +186,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 													  <% } %>
 													</div>
 													<div class="nike single-item hvr-outline-out">
-													  <form id="addToCartForm-<%= product._id %>" onsubmit="return false;">
-														<input type="hidden" name="productId" value="<%= product._id %>">
-														<input type="hidden" name="quantity" value="1">
-														<button type="button" class="nike-cart pnike-cart" onclick="addToCart('<%= product._id %>')">
-														  <i class="fas fa-cart-plus"></i>
-														</button>
-													  </form>
+
 													  <form id="addToWishlistForm-<%= product._id %>" onsubmit="return false;">
 														<input type="hidden" name="productId" value="<%= product._id %>">
 														<button type="button" class="nike-cart pnike-cart" onclick="addToWishlist('<%= product._id %>')">

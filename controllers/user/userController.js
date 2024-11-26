@@ -8,7 +8,10 @@ const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
 const { calculateAverageRatings }= require("../user/userRatingController")
 
-
+const {
+  applyReferralOffer,
+  creditWallet,
+} = require("../../controllers/user/userReferralController");
 
 const pageNotFound = async (req,res)=>{
     try {
@@ -213,118 +216,6 @@ const SignUp = async (req, res, next) => {
   };
 
 
-  // const loadHomepage = async (req, res, next) => {
-  //   try {
-    
-  
-     
-  //     const currentPage = parseInt(req.query.page) || 1;
-  //     const productsPerPage = 8; 
-  
-     
-  //     const categories = await Category.find({ isListed: true });
-  
-  //     let productData = await Product.find({
-  //       isBlocked: false,
-  //       category: { $in: categories.map(category => category._id) },
-  //       quantity: { $gte: 0 }
-  //     });
-  
-      
-  //     const totalProducts = productData.length;
-  
-
-  //     const totalPages = Math.ceil(totalProducts / productsPerPage);
-  
-  //     // Slice the product data to only include the products for the current page
-  //     const startIndex = (currentPage - 1) * productsPerPage;
-  //     productData = productData.slice(startIndex, startIndex + productsPerPage);
-  //     // console.log("Product Images:", productData.map(product => product.productImage));
-  //     let userId = req.user || req.session.user;
-  //   let userData = userId
-  //     ? await User.findById(userId).populate("cart").exec()
-  //     : null;
-  //   if (userData && userData.cart && !userData.cart.items) {
-  //     userData.cart.items = [];
-  //   }
-
-  //   res.locals.user = userData;
-  
-  //    console.log("home page rendering...");
-     
-        
-  //       // Render homepage with user, cart items, product data
-  //       return res.render("home", {
-  //         user: userData,
-  //         // cartItems,
-  //         products: productData,
-  //         currentPage,
-  //         totalPages,
-  //         sortBy: req.query.sortBy || 'name' // Example: you may want to handle sorting
-  //       })
-  //   } catch (error) {
-  //     console.log("Error loading homepage:", error);
-  //     next(error);
-  //   }
-  // };
-  
-// const loadHomepage = async (req, res, next) => {
-//   try {
-//     const currentPage = parseInt(req.query.page) || 1;
-//     const productsPerPage = 8; 
-    
-//     const categories = await Category.find({ isListed: true });
-
-//     // Define the base query for all products
-//     const productQuery = {
-//       isBlocked: false,
-//       category: { $in: categories.map(category => category._id) }
-//     };
-
-//     // Handle products with size-specific quantities and general quantity
-//     productQuery.$or = [
-//       // Products with size quantities (quantity is a map)
-//       { "quantity": { $exists: true, $ne: {} } },
-//       // Products with a direct quantity field (e.g., bags without sizes)
-//       { quantity: { $gte: 0 } }
-//     ];
-
-//     // Fetch products based on the query
-//     let productData = await Product.find(productQuery);
-
-//     const totalProducts = productData.length;
-//     const totalPages = Math.ceil(totalProducts / productsPerPage);
-
-//     // Slice the product data to only include the products for the current page
-//     const startIndex = (currentPage - 1) * productsPerPage;
-//     productData = productData.slice(startIndex, startIndex + productsPerPage);
-
-//     let userId = req.user || req.session.user;
-//     let userData = userId
-//       ? await User.findById(userId).populate("cart").exec()
-//       : null;
-
-//     if (userData && userData.cart && !userData.cart.items) {
-//       userData.cart.items = [];
-//     }
-
-//     res.locals.user = userData;
-
-//     console.log("Home page rendering...");
-
-//     // Render homepage with user, cart items, product data
-//     return res.render("home", {
-//       user: userData,
-//       products: productData,
-//       currentPage,
-//       totalPages,
-//       sortBy: req.query.sortBy || 'name' // Example: handle sorting
-//     });
-//   } catch (error) {
-//     console.log("Error loading homepage:", error);
-//     next(error);
-//   }
-// };
 
 const loadHomepage = async (req, res, next) => {
   try {

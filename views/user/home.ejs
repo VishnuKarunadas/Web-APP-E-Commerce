@@ -17,7 +17,7 @@
 
 
   .btn:hover {
-      background-color: #ff4c4c;
+      background-color: #1e1d1d;
       transform: translateY(-2px);
   }
 
@@ -32,7 +32,7 @@
       background-color: rgba(255, 255, 255, 0.8);
       padding: 10px;
       border-radius: 50%;
-      color: #ff6b6b;
+      color: #000000;
       font-size: 18px;
       z-index: 10;
       transition: background-color 0.3s, color 0.3s, transform 0.3s;
@@ -41,7 +41,7 @@
 
   .wishlist-btn:hover {
       background-color: rgba(255, 255, 255, 1);
-      color: #ff4c4c;
+      color: #1c1b1b;
       transform: translateY(-2px);
   }
 
@@ -72,14 +72,14 @@
   color: #ffffff; /* Change text color to white on hover */
 }
 .product-text{
-  color: #110524; /* Red color for text */
+  color: #000000; /* Red color for text */
   font-weight: bold; /* Make the text bold */
 
   /* background-color: #ffffff; White background for the button */
 }
 .product-text:hover {
  
-  color: #535353; /* Change text color to white on hover */
+  color: #000000; /* Change text color to white on hover */
 }
   .product-img {
       position: relative;
@@ -163,13 +163,13 @@ img.img-fluid {
 }
 
   .product-content-wrap a:hover {
-      background-color: #ff4c4c;
+      background-color: #000000;
   }
    /* Custom CSS to control the video size */
    .text_top{
     padding: 10px;
     text-align: center;
-    font-size: 36px;
+    font-size: 56px;
     color: #000000;
     
    }
@@ -186,7 +186,7 @@ img.img-fluid {
   <div class="container-fluid">
     <!-- Custom Video Container with increased height -->
     <div class="custom-video-container row justify-content-center">
-        <div class="col-12 col-md-8 col-lg-12">
+        <div class="col-12 col-md-12 col-lg-12">
             <video  muted autoplay loop class="w-100">
                 <source src="/video/AIR MAX 97 __ Nike Ad (Unofficial) - Mudnag (1080p, h264, youtube).mp4" type="video/mp4">
                 Your browser does not support the video tag.
@@ -194,7 +194,7 @@ img.img-fluid {
         </div>
     </div>
     <div class="d-flex justify-content-center"></div>
-    <h1 class="text_top"> <strong>TOP OF THE WISHLIST KICKS</strong></h1>
+    <h1 class="col-sl-6 col-md-8 col-lg-12 row justify-content-center text-center"> <strong>TOP OF THE WISHLIST KICKS</strong></h1>
     <h6 class="small_text_top">All-Time icons and sports-inspired gifts to make everyone on your list look and feel their best.</h6>
     <div class="d-flex justify-content-center">
       <a href="">
@@ -229,7 +229,7 @@ img.img-fluid {
                                   <a href="/product/<%= product._id %>" class="link-product-add-cart">Quick View</a>
                               </div>
                           </div>
-                          <span class="product-new-top">New</span>
+                         
                       </div>
                       <div class="item-info-product">
                           <div class="info-product-price">
@@ -242,7 +242,7 @@ img.img-fluid {
                                       </h4>
                                       <script>
                                         document.addEventListener("DOMContentLoaded", function() {
-                                            const maxLength = 30; // Set the maximum length for description truncation
+                                            const maxLength = 20; // Set the maximum length for description truncation
                                     
                                             // Get all product descriptions
                                             const descriptionElements = document.querySelectorAll('.product-text');
@@ -252,7 +252,7 @@ img.img-fluid {
                                     
                                                 // Truncate the description if it exceeds the max length
                                                 if (description.length > maxLength) {
-                                                    description = description.substring(0, maxLength) + '...';
+                                                    description = description.substring(0, maxLength) ;
                                                     descriptionElement.innerText = description;
                                                 }
                                             });
@@ -260,17 +260,17 @@ img.img-fluid {
                                     </script>
                                       <div class="grid-price mt-2">
                                           <% if (product.offerPrice && product.offerPrice < product.salePrice) { %>
-                                              <span class="money" style="text-decoration: line-through;">$<%= product.regularPrice %></span>
+                                            
                                               <span class="money" style="color: red; font-weight: bold;">$<%= product.offerPrice %></span>
                                           <% } else if (product.salePrice < product.regularPrice) { %>
-                                              <span class="money" style="text-decoration: line-through;">$<%= product.regularPrice %></span>
-                                              <span class="money" style="color: red; font-weight: bold;">$<%= product.salePrice %></span>
+                                              
+                                              <span class="money" style="color: rgb(0, 0, 0);">MRP: ₹<%= product.salePrice %></span>
                                           <% } else { %>
                                               <span class="money">$<%= product.regularPrice %></span>
                                           <% } %>
                                       </div>
                                   </div>
-                                  <span class="money "><%= product.status %></span>
+                                  <span class="money " style="color: green; padding-bottom: 15px;"><%= product.status %></span>
                               </div>
                               <ul class="stars">
                                   <% for (let i = 1; i <= 5; i++) { %>
@@ -290,23 +290,7 @@ img.img-fluid {
                                   <span class="rating-count">(<%= product.totalRatings %> reviews)</span>
                               <% } %>
                           </div>
-                          <div class="container ">
-                            <div class="row py-3">
-                              <form id="addToCartForm-<%= product._id %>" onsubmit="return false;">
-                                <input type="hidden" name="productId" value="<%= product._id %>">
-                                <input type="hidden" name="quantity" value="1">
-                                <button type="button" class="nike-cart " onclick="addToCart('<%= product._id %>')">
-                                    <i class="fas fa-cart-plus"></i>
-                                </button>
-                            </form>
-                            <form id="addToWishlistForm-<%= product._id %>" onsubmit="return false;">
-                                <input type="hidden" name="productId" value="<%= product._id %>">
-                                <button type="button" class="nike-cart " onclick="addToWishlist('<%= product._id %>')">
-                                    <i class="fas fa-heart"></i>
-                                </button>
-                            </form>
-                            </div>
-                          </div>
+
                       </div>
                       <div class="clearfix"></div>
                   </div>

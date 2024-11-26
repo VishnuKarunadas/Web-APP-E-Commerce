@@ -2,10 +2,11 @@
 <html lang="zxx">
 
 <head>
-    <title>Nike</title>
+    <title>Nike. Just Do It.Nike IN</title>
+    <link rel="icon" href="/img/favicon.ico" type="image/png" sizes="32x32">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
-    <meta name="keywords" content="Goggles a Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
+    <meta name="keywords" content="Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
     Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
     <script>
         addEventListener("load", function () {
@@ -102,94 +103,58 @@
     <!-- cart-js -->
     <script src="/js/minicart.js"></script>
 
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
      function setPaymentMethod(method) {
     document.getElementById('paymentMethod').value = method;
 }
 
-
-document.getElementById('paymentForm').addEventListener('submit', async function (event) {
+document.getElementById('orderForm').addEventListener('submit', async function(event) {
     event.preventDefault();
-
+    
     const formData = new FormData(this);
-    const orderId = formData.get('orderId');
+    const addressData = JSON.parse(formData.get('address'));
     const paymentMethod = formData.get('paymentMethod');
-
-    const responseMessage = document.getElementById('responseMessage');
-    responseMessage.style.color = 'red'; // Default color for errors
-
-    // If Razorpay is selected as the payment method
-    if (paymentMethod === 'Razorpay') {
-        try {
-            // Fetch Razorpay order details from the backend
-            const razorpayOrderResponse = await fetch('/user/payment/razorpay-checkout', {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include', // For passing authentication cookies if necessary
-            });
-
-            const razorpayOrderData = await razorpayOrderResponse.json();
-
-            if (!razorpayOrderData.success) {
-                responseMessage.textContent = "Failed to initialize Razorpay checkout. Please try again.";
-                return;
-            }
-
-            // Initialize Razorpay checkout
-            const razorpayOptions = {
-                key: razorpayOrderData.razorpayKeyId,
-                amount: razorpayOrderData.amount,
-                currency: 'INR',
-                name: 'Your Store Name',
-                description: 'Payment for your order',
-                order_id: razorpayOrderData.razorpayOrderId,
-                handler: async function (response) {
-                    try {
-                        // Send payment verification data to the backend
-                        const verifyResponse = await fetch('/verify-razorpay-payment', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(response),
-                            credentials: 'include', // Pass authentication data if required
-                        });
-
-                        const verifyData = await verifyResponse.json();
-
-                        if (verifyData.success) {
-                            responseMessage.style.color = 'green';
-                            responseMessage.textContent = "Payment successful! Your order has been placed.";
-                            setTimeout(() => window.location.href = `/order/success/${verifyData.orderId}`, 3000);
-                        } else {
-                            responseMessage.textContent = verifyData.message || "Payment verification failed.";
-                        }
-                    } catch (error) {
-                        responseMessage.textContent = "Error verifying payment. Please contact support.";
-                    }
-                },
-                prefill: {
-                    name: formData.get('userName'),
-                    email: formData.get('userEmail'),
-                    contact: formData.get('userContact'),
-                },
-                theme: { color: '#528FF0' },
-            };
-
-            const rzp = new Razorpay(razorpayOptions);
-            rzp.open();
-        } catch (error) {
-            responseMessage.textContent = "Error initializing Razorpay checkout. Please try again later.";
+    const finalTotal = parseFloat(formData.get('finalTotal'));
+    
+    if (finalTotal > 1000 && paymentMethod === 'COD') {
+        document.getElementById('responseMessage').textContent = "Cash on delivery is not applicable for price above ₹1000";
+        document.getElementById('responseMessage').style.color = 'red'; 
+        return;
+    }
+    
+    const requiredFields = ['house', 'place', 'city', 'state', 'pin', 'contactNo'];
+    for (const field of requiredFields) {
+        if (!addressData[field]) {
+            document.getElementById('responseMessage').textContent = `${field} is required in the address`;
+            return;
         }
-        return; // Prevent the form from being submitted for Razorpay
     }
 
-    // Fallback for other payment methods
+    
+    if (paymentMethod === 'WalletPayment') {
+        try {
+            const response = await fetch('/user/check-wallet-balance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ amount: finalTotal }),
+            });
+            const data = await response.json();
+            if (!data.success) {
+                document.getElementById('responseMessage').textContent = "You don't have enough balance in your wallet. Please choose another option or add money to your wallet.";
+                return;
+            }
+        } catch (error) {
+            console.error('Error checking wallet balance:', error);
+            document.getElementById('responseMessage').textContent = "An error occurred while checking your wallet balance. Please try again.";
+            return;
+        }
+    }
+
     this.submit();
 });
-</script>
-
-      
-      
+        </script>
 
 
 

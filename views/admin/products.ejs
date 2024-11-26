@@ -54,9 +54,9 @@
                         <td><%= data[i].skuNumber %></td> 
                         <td><%= data[i].category.name %></td>
                         <td><%= data[i].salePrice %></td>
-                        <td><%= data[i].quantity.S %></td>
-                        <td><%= data[i].quantity.M %></td>
-                        <td><%= data[i].quantity.L %></td>
+                        <td><%= (data[i].quantity.S || data[i].quantity['7']) %></td>
+                        <td><%= (data[i].quantity.M || data[i].quantity['8'])%></td>
+                        <td><%= (data[i].quantity.L || data[i].quantity['9'])%></td>
                         <td>
                           <% if (data[i].isBlocked === false) { %>
                             <button class="btn btn-danger" style="width: 80px;">

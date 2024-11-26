@@ -165,65 +165,61 @@
 <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
 
 <script>
-    function validateForm() {
+function validateForm() {
     clearErrorMessages();
 
-    const name = document.getElementsByName('productName')[0].value;
-    const description = document.getElementById('descriptionid').value;
-    const price = document.getElementsByName('regularPrice')[0].value;
-    const salePrice = document.getElementsByName('salePrice')[0].value;
-    const quantityS = document.getElementsByName('quantityS')[0].value;
-    const quantityM = document.getElementsByName('quantityM')[0].value;
-    const quantityL = document.getElementsByName('quantityL')[0].value;
-
-    console.log(name);
+    const name = document.getElementsByName('productName')[0].value.trim();
+    const description = document.getElementsByName('description')[0].value.trim();
+    const price = document.getElementsByName('regularPrice')[0].value.trim();
+    const salePrice = document.getElementsByName('salePrice')[0].value.trim();
+    const quantityS = document.getElementsByName('quantityS')[0];
+    const quantityM = document.getElementsByName('quantityM')[0];
+    const quantityL = document.getElementsByName('quantityL')[0];
 
     let isValid = true;
 
     // Product name validation
-    if (name.trim() === "") {
-        displayErrorMessage('product_name-error', 'Please enter a product name.');
+    if (name === "") {
+        displayErrorMessage('productName-error', 'Please enter a product name.');
         isValid = false;
-    } else if (!/^[a-zA-Z0-9\s.,\/\-:;()&\[\]'"!?]*$/.test(name.trim())) {
-        displayErrorMessage('product_name-error', 'Product name should contain only alphabetic characters and numbers.');
+    } else if (!/^[a-zA-Z0-9\s.,\/\-:;()&\[\]'"!?]*$/.test(name)) {
+        displayErrorMessage('productName-error', 'Product name should contain only alphabetic characters and numbers.');
         isValid = false;
     }
 
     // Description validation
-    if (description.trim() === "") {
+    if (description === "") {
         displayErrorMessage('description-error', 'Please enter a product description.');
         isValid = false;
     }
 
-    // Price and quantity validations
-    if (price.trim() === "" || isNaN(price)) {
-        displayErrorMessage('regularPrice-error', 'Please enter a valid price.');
+    // Price validation
+    if (price === "" || isNaN(price)) {
+        displayErrorMessage('regularPrice-error', 'Please enter a valid regular price.');
         isValid = false;
     }
 
-    if (salePrice.trim() === "" || isNaN(salePrice)) {
+    if (salePrice === "" || isNaN(salePrice)) {
         displayErrorMessage('salePrice-error', 'Please enter a valid sale price.');
         isValid = false;
     }
 
-    if (quantityS.trim() === "" || isNaN(quantityS) || quantityS < 0) {
-        displayErrorMessage('quantity-error', 'Please enter a valid quantity for Small.');
-        isValid = false;
+    // Quantity validation and defaulting to zero
+    if (quantityS.value.trim() === "" || isNaN(quantityS.value)) {
+        quantityS.value = null; // Default to 0
     }
-    if (quantityM.trim() === "" || isNaN(quantityM) || quantityM < 0) {
-        displayErrorMessage('quantity-error', 'Please enter a valid quantity for Medium.');
-        isValid = false;
+    if (quantityM.value.trim() === "" || isNaN(quantityM.value)) {
+        quantityM.value = null;; // Default to 0
     }
-    if (quantityL.trim() === "" || isNaN(quantityL) || quantityL < 0) {
-        displayErrorMessage('quantity-error', 'Please enter a valid quantity for Large.');
-        isValid = false;
+    if (quantityL.value.trim() === "" || isNaN(quantityL.value)) {
+        quantityL.value = null; // Default to 0
     }
 
     return isValid;
 }
 
 function displayErrorMessage(elementId, message) {
-    var errorElement = document.getElementById(elementId);
+    const errorElement = document.getElementById(elementId);
     errorElement.innerText = message;
     errorElement.style.display = "block";
 }
@@ -235,6 +231,7 @@ function clearErrorMessages() {
         element.style.display = "none";
     });
 }
+
 
 function viewImage(event, index) {
     let input = event.target;

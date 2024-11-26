@@ -579,6 +579,8 @@ const getAllProducts = async (req, res) => {
         // Fetch categories that are listed
         const category = await Category.find({ isListed: true });
 
+        console.log("Product data from- getAllProduct",productData);
+
         if (category) {
             res.render("products", {
                 data: productData,
@@ -625,7 +627,7 @@ const unblockProduct = async (req, res) => {
         if (product.quantity > 0) {
             product.status = "Available";
         } else {
-            product.status = "out of stock";
+            product.status = "Out of stock";
         }
         
         await product.save();
@@ -857,15 +859,160 @@ const getEditProduct = async (req, res) => {
 //     }
 // };
 
+// const editProduct = async (req, res) => {
+//     try {
+//         const id = req.params.id;
+//         const data = req.body;
+
+//         // Check if the product with the same name already exists (excluding the current product)
+//         const existingProduct = await Product.findOne({
+//             productName: data.productName,
+//             _id: { $ne: id } // Ensure we are not checking the current product itself
+//         });
+
+//         if (existingProduct) {
+//             return res.status(400).json({ error: "Product with this name already exists. Please try another name." });
+//         }
+
+//         let images = [];
+
+//         // Image processing if new images are uploaded
+//         if (req.files) {
+//             for (let field of ['images1', 'images2', 'images3']) {
+//                 if (req.files[field] && req.files[field].length > 0) {
+//                     const originalImagePath = req.files[field][0].path;
+
+//                     // Extract the original file name without extension
+//                     const originalFileName = path.basename(req.files[field][0].filename, path.extname(req.files[field][0].filename));
+
+//                     // Generate a new image name
+//                     const resizedImageName = `resized_${originalFileName}.png`;
+//                     const resizedImagePath = path.join('public', 'uploads', 'product-images', resizedImageName);
+
+//                     // Create output directory if it doesn't exist
+//                     const directory = path.dirname(resizedImagePath);
+//                     if (!fs.existsSync(directory)) {
+//                         fs.mkdirSync(directory, { recursive: true });
+//                     }
+
+//                     // Resize and save the image
+//                     await sharp(originalImagePath)
+//                         .resize({ width: 440, height: 440 })
+//                         .toFile(resizedImagePath);
+
+//                     // Save filename for DB entry
+//                     images.push(resizedImageName);
+
+//                     // Delete the original file after processing
+//                     try {
+//                         fs.unlinkSync(originalImagePath);
+//                     } catch (unlinkError) {
+//                         console.error('Error deleting original file:', unlinkError);
+//                     }
+//                 }
+//             }
+//         }
+
+//         // Validate category
+//         const category = await Category.findOne({ name: data.category });
+//         if (!category) {
+//             return res.status(400).json({ error: "Invalid category name" });
+//         }
+
+//         // Prepare size and quantity data
+//         const sizes = [];
+//         const quantity = {};
+//         console.log("--------------------------------------")
+//         console.log(data.quantityS,data.quantityM,data.quantityL)
+//         if(data.category === "Shoes"){
+
+//             if ( data.quantityS) {
+//                 sizes.push('7');
+//                 quantity['7'] = parseInt(data.quantityS, 10);
+//             }
+//             if ( data.quantityM) {
+//                 sizes.push('8');
+//                 quantity['8'] = parseInt(data.quantityM, 10);
+//             }
+//             if ( data.quantityL) {
+//                 sizes.push('9');
+//                 quantity['9'] = parseInt(data.quantityL, 10);
+//             }
+//         }else if (data.category === "Clothing"){
+
+//             if (data.quantityS) {
+//                 sizes.push('S');
+//                 quantity['S'] = parseInt(data.quantityS, 10);
+//             }
+//             if (data.quantityM) {
+//                 sizes.push('M');
+//                 quantity['M'] = parseInt(data.quantityM, 10);
+//             }
+//             if (data.quantityL) {
+//                 sizes.push('L');
+//                 quantity['L'] = parseInt(data.quantityL, 10);
+//             }
+//     }
+       
+
+//         // Set product status based on quantity (if quantity is zero for all sizes, it's out of stock)
+//         const productStatus = Object.values(quantity).some(q => q > 0) ? "Available" : "Out of stock";
+
+//         // Offer Price Calculation
+//         const offer = await Offer.findOne({ product: category._id });
+//         let offerPrice = data.salePrice;
+
+//         if (offer) {
+//             const offerValue = offer.discountType === 'percentage'
+//                 ? data.salePrice * (offer.discountValue / 100)
+//                 : offer.discountValue;
+
+//             offerPrice = Math.max(data.salePrice - offerValue, 0);
+//         }
+
+//         // Prepare updated fields
+//         const updateFields = {
+//             productName: data.productName,
+//             description: data.description,
+//             category: category._id,
+//             regularPrice: data.regularPrice,
+//             salePrice: data.salePrice,
+//             offerPrice: offerPrice,
+//             quantity: quantity,  // This will store the quantity of sizes (S, M, L)
+//             color: data.color,
+//             size: sizes,  // This will store the available sizes for the product
+//             status: productStatus,
+//         };
+
+//         // If new images are uploaded, add them to the productImages array
+//         if (images.length > 0) {
+//             updateFields.$push = { productImage: { $each: images } };
+//         }
+
+//         // Update the product
+//         const updatedProduct = await Product.findByIdAndUpdate(id, updateFields, { new: true });
+
+//         // Save the updated product to persist any changes
+//         await updatedProduct.save();
+
+//         // Redirect to the products page after successful update
+//         res.redirect("/admin/products");
+
+//     } catch (error) {
+//         console.error("Error editing product:", error);
+//         res.redirect("/admin/pageerror");
+//     }
+// };
+
 const editProduct = async (req, res) => {
     try {
         const id = req.params.id;
         const data = req.body;
 
-        // Check if the product with the same name already exists (excluding the current product)
+        // Validate product name uniqueness
         const existingProduct = await Product.findOne({
             productName: data.productName,
-            _id: { $ne: id } // Ensure we are not checking the current product itself
+            _id: { $ne: id }, // Exclude current product
         });
 
         if (existingProduct) {
@@ -874,20 +1021,20 @@ const editProduct = async (req, res) => {
 
         let images = [];
 
-        // Image processing if new images are uploaded
+        // Process uploaded images
         if (req.files) {
             for (let field of ['images1', 'images2', 'images3']) {
                 if (req.files[field] && req.files[field].length > 0) {
                     const originalImagePath = req.files[field][0].path;
 
-                    // Extract the original file name without extension
+                    // Extract the original file name
                     const originalFileName = path.basename(req.files[field][0].filename, path.extname(req.files[field][0].filename));
 
-                    // Generate a new image name
+                    // Define resized image path
                     const resizedImageName = `resized_${originalFileName}.png`;
                     const resizedImagePath = path.join('public', 'uploads', 'product-images', resizedImageName);
 
-                    // Create output directory if it doesn't exist
+                    // Ensure output directory exists
                     const directory = path.dirname(resizedImagePath);
                     if (!fs.existsSync(directory)) {
                         fs.mkdirSync(directory, { recursive: true });
@@ -898,12 +1045,11 @@ const editProduct = async (req, res) => {
                         .resize({ width: 440, height: 440 })
                         .toFile(resizedImagePath);
 
-                    // Save filename for DB entry
                     images.push(resizedImageName);
 
-                    // Delete the original file after processing
+                    // Delete the original image file
                     try {
-                        fs.unlinkSync(originalImagePath);
+                        await fs.promises.unlink(originalImagePath);
                     } catch (unlinkError) {
                         console.error('Error deleting original file:', unlinkError);
                     }
@@ -917,42 +1063,27 @@ const editProduct = async (req, res) => {
             return res.status(400).json({ error: "Invalid category name" });
         }
 
-        // Prepare size and quantity data
+        // Prepare size and quantity
         const sizes = [];
-        const quantity = {};
-        if(data.category === "Shoes"){
-            if ( data.quantityS) {
-                sizes.push('7');
-                quantity['7'] = parseInt(data.quantityS, 10);
-            }
-            if ( data.quantityM) {
-                sizes.push('8');
-                quantity['8'] = parseInt(data.quantityM, 10);
-            }
-            if ( data.quantityL) {
-                sizes.push('9');
-                quantity['9'] = parseInt(data.quantityL, 10);
-            }
-        }else if (data.category === "Clothing"){
+        const quantity = {
+            S: parseInt(data.quantityS || 0, 10),
+            M: parseInt(data.quantityM || 0, 10),
+            L: parseInt(data.quantityL || 0, 10),
+        };
 
-            if (data.quantityS) {
-                sizes.push('S');
-                quantity['S'] = parseInt(data.quantityS, 10);
-            }
-            if (data.quantityM) {
-                sizes.push('M');
-                quantity['M'] = parseInt(data.quantityM, 10);
-            }
-            if (data.quantityL) {
-                sizes.push('L');
-                quantity['L'] = parseInt(data.quantityL, 10);
-            }
-    }
-       
+        if (data.category === "Shoes") {
+            if (quantity.S > 0) sizes.push("7");
+            if (quantity.M > 0) sizes.push("8");
+            if (quantity.L > 0) sizes.push("9");
+        } else if (data.category === "Clothing") {
+            if (quantity.S > 0) sizes.push("S");
+            if (quantity.M > 0) sizes.push("M");
+            if (quantity.L > 0) sizes.push("L");
+        }
 
         // Set product status based on quantity (if quantity is zero for all sizes, it's out of stock)
         const productStatus = Object.values(quantity).some(q => q > 0) ? "Available" : "Out of stock";
-
+        console.log(productStatus)
         // Offer Price Calculation
         const offer = await Offer.findOne({ product: category._id });
         let offerPrice = data.salePrice;
@@ -992,13 +1123,11 @@ const editProduct = async (req, res) => {
 
         // Redirect to the products page after successful update
         res.redirect("/admin/products");
-
     } catch (error) {
         console.error("Error editing product:", error);
         res.redirect("/admin/pageerror");
     }
 };
-
 
   
 

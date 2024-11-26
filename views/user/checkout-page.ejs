@@ -291,18 +291,10 @@
                                              </h6>
                                               
                                             <p>Quantity: <%= item.quantity %></p>
+                                            <p>Size: <%= item.size %></p>
                 
                                             
-                                            <p class="product-price">
-                                              
-                                                $<% if (item.product.offerPrice && item.product.offerPrice < item.product.regularPrice) { %>
-                                                    <del><%= item.product.regularPrice %></del> $<%= item.product.offerPrice %>
-                                                <% } else if (item.product.salePrice < item.product.regularPrice) { %>
-                                                    <del><%= item.product.regularPrice %></del> $<%= item.product.salePrice %>
-                                                <% } else { %>
-                                                    <%= item.product.regularPrice %>
-                                                <% } %>
-                                            </p>
+
                                         </div>
                                     </div>
                 
@@ -310,11 +302,11 @@
                                     <div class="col-md-6 text-right">
                                         <p>
                                             
-                                            Actual Total: $<%= item.product.regularPrice * item.quantity %> 
+                                            Actual Total: ₹<%= item.product.regularPrice * item.quantity %> 
                                         </p>
                                         <p>
                                            
-                                            Discount: $<%= (item.product.offerPrice && item.product.offerPrice < item.product.regularPrice) 
+                                            Discount: ₹<%= (item.product.offerPrice && item.product.offerPrice < item.product.regularPrice) 
                                                 ? (item.product.regularPrice - item.product.offerPrice) * item.quantity 
                                                 : (item.product.salePrice && item.product.salePrice < item.product.regularPrice)
                                                 ? (item.product.regularPrice - item.product.salePrice) * item.quantity 
@@ -322,7 +314,7 @@
                                         </p>
                                         <p>
                                             <!-- Net Total (Actual Total - Discount) -->
-                                            Net Total: $<%= (item.product.regularPrice * item.quantity) - 
+                                            Net Total: ₹<%= (item.product.regularPrice * item.quantity) - 
                                                 ((item.product.offerPrice && item.product.offerPrice < item.product.regularPrice) 
                                                 ? (item.product.regularPrice - item.product.offerPrice) * item.quantity 
                                                 : (item.product.salePrice && item.product.salePrice < item.product.regularPrice)
@@ -350,26 +342,26 @@
                     <h4>PRICE DETAILS</h4>
                     <dl>
                         <dt>Price (<%= distinctProductCount %> items)</dt>
-                        <dd id="totalPrice">$<%= totalPrice %></dd>
+                        <dd id="totalPrice">₹<%= totalPrice %></dd>
                     </dl>
                     <dl>
                         <dt>Discount</dt>
-                        <dd id="discount">- $<%= discount %></dd>
+                        <dd id="discount">- ₹<%= discount %></dd>
                     </dl>
                     <dl>
                         <dt>Platform Fee</dt>
-                        <dd id="platformFee">$<%= platformFee %></dd>
+                        <dd id="platformFee">₹<%= platformFee %></dd>
                     </dl>
                     <dl>
                         <dt>Delivery Charges</dt>
-                        <dd id="deliveryCharges">$<%= deliveryCharges %></dd>
+                        <dd id="deliveryCharges">₹<%= deliveryCharges %></dd>
                     </dl>
                     <hr>
                     <dl>
                         <dt>Total Amount</dt>
-                        <dd id="finalTotal">$<%= finalTotal %></dd>
+                        <dd id="finalTotal">₹<%= finalTotal %></dd>
                     </dl>
-                    <p class="text-success" id="savingsMessage">You will save $<%= discount %> on this order</p>
+                    <p class="text-success" id="savingsMessage">You will save ₹<%= discount %> on this order</p>
                     <div class="col-md-12">
                         <form action="/cart/place-order/make-payment" method="POST" id="paymentForm">
                             <input type="hidden" name="address" id="selectedAddress">
@@ -432,14 +424,14 @@
                     method: 'POST',
                     data: { couponId: couponId },
                     success: function(response) {
-                        $('#subtotal').text('₹' + response.totalPrice);
-                        $('#discount').text('- ₹' + response.discount);
-                        $('#platformFee').text('₹' + response.platformFee);
-                        $('#deliveryCharges').text('₹' + response.deliveryCharges);
-                        $('#totalAmount').text('₹' + response.total);
-                        $('#finalTotal').text('₹' + response.finalTotal);
+                        $('#subtotal').text('$' + response.totalPrice);
+                        $('#discount').text('- $' + response.discount);
+                        $('#platformFee').text('$' + response.platformFee);
+                        $('#deliveryCharges').text('$' + response.deliveryCharges);
+                        $('#totalAmount').text('$' + response.total);
+                        $('#finalTotal').text('$' + response.finalTotal);
                         $('#hiddenFinalTotal').val(response.finalTotal);
-                        $('#savingsMessage').text('You will save ₹' + response.discount + ' on this order');
+                        $('#savingsMessage').text('You will save $' + response.discount + ' on this order');
                         $('#appliedCouponId').val(response.couponId);
                         $('#couponMessage').text('Coupon applied successfully!').removeClass('text-danger').addClass('text-success');
     
@@ -461,12 +453,12 @@
                     url: '/cart/remove-coupon', 
                     method: 'POST', 
                     success: function(response) {
-                        $('#subtotal').text('₹' + response.totalPrice);
-                        $('#discount').text('₹' + response.discount); 
-                        $('#platformFee').text('₹' + response.platformFee);
-                        $('#deliveryCharges').text('₹' + response.deliveryCharges);
-                        $('#totalAmount').text('₹' + response.total);
-                        $('#finalTotal').text('₹' + response.finalTotal);
+                        $('#subtotal').text('$' + response.totalPrice);
+                        $('#discount').text('$' + response.discount); 
+                        $('#platformFee').text('$' + response.platformFee);
+                        $('#deliveryCharges').text('$' + response.deliveryCharges);
+                        $('#totalAmount').text('$' + response.total);
+                        $('#finalTotal').text('$' + response.finalTotal);
                         $('#hiddenFinalTotal').val(response.finalTotal);
                         $('#savingsMessage').text('Coupon removed.');
                         $('#appliedCouponId').val(''); 
@@ -485,7 +477,7 @@
             });
     
             $('#paymentForm').submit(function() {
-                const finalTotal = $('#finalTotal').text().replace('₹', '');
+                const finalTotal = $('#finalTotal').text().replace('$', '');
                 $('#hiddenFinalTotal').val(finalTotal);
             });
         });

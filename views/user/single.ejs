@@ -124,19 +124,19 @@
 								<p>
 									<% if (product.offerPrice && product.offerPrice < product.salePrice) { %>
 									  
-									  <span class="item_price">$<%= product.offerPrice %></span>
-									  <del>$<%= product.regularPrice %></del>
+									  <span class="item_price">₹<%= product.offerPrice %></span>
+									  <del>₹<%= product.regularPrice %></del>
 									<% } else if (product.salePrice < product.regularPrice) { %>
 									
-									  <span class="item_price">$<%= product.salePrice %></span>
-									  <del>$<%= product.regularPrice %></del>
+									  <span class="item_price">₹<%= product.salePrice %></span>
+									  <del>₹<%= product.regularPrice %></del>
 									<% } else if (product.salePrice === product.regularPrice && product.offerPrice && product.offerPrice < product.salePrice) { %>
 									  
-									  <span class="item_price">$<%= product.offerPrice %></span>
-									  <del>$<%= product.regularPrice %></del>
+									  <span class="item_price">₹<%= product.offerPrice %></span>
+									  <del>₹<%= product.regularPrice %></del>
 									<% } else { %>
 									  
-									  <span class="item_price">$<%= product.regularPrice %></span>
+									  <span class="item_price">₹<%= product.regularPrice %></span>
 									<% } %>
 								  </p>
 								  
@@ -230,7 +230,7 @@
 										<!--/tab_one-->
 										<div class="tab1">
 											<div class="single_page">
-												<h6 ><%= product.description %>.</h6>
+												<h3  style="font-size: 15px;"><%= product.description %>.</h3>
 												<p></p>
 											</div>
 										</div>
@@ -272,10 +272,10 @@
 												</h4>
 												<div class="grid-price mt-2">
 													<% if (relatedProduct.offerPrice && relatedProduct.offerPrice < relatedProduct.salePrice) { %>
-														<span class="money" style="text-decoration: line-through;">$<%= relatedProduct.salePrice %></span>
-														<span class="money" style="color: red; font-weight: bold;">$<%= relatedProduct.offerPrice %></span>
+														<span class="money" style="text-decoration: line-through;">₹<%= relatedProduct.salePrice %></span>
+														<span class="money" style="color: red; font-weight: bold;">₹<%= relatedProduct.offerPrice %></span>
 													<% } else { %>
-														<span class="money">$<%= relatedProduct.salePrice %></span>
+														<span class="money">₹<%= relatedProduct.salePrice %></span>
 													<% } %>
 												</div>
 											</div>
