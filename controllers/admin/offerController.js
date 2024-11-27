@@ -140,49 +140,96 @@ const deleteOffer = async (req, res) => {
   }
 };
 
-const updateProductOfferPrice = async () => {
-  try {
+// const updateProductOfferPrice = async () => {
+//   try {
     
-    const offers = await Offer.find().populate('product').populate('category').exec();
+//     const offers = await Offer.find().populate('product').populate('category').exec();
 
     
+//     await Product.updateMany({}, { offerPrice: 0 });
+
+//     for (const offer of offers) {
+//       let productsToUpdate = [];
+
+      
+//       if (offer.product) {
+//         productsToUpdate = await Product.find({ _id: offer.product });
+
+      
+//       } else if (offer.category) {
+//         productsToUpdate = await Product.find({ category: offer.category });
+
+      
+//       } else if (!offer.product && !offer.category) {
+//         productsToUpdate = await Product.find({});
+//       }
+
+      
+//       for (const product of productsToUpdate) {
+
+//         let offerValue;
+
+     
+//         if (offer.discountType === 'percentage') {
+//           offerValue = product.salePrice * (offer.discountValue / 100);
+//         } else {
+        
+//           offerValue = offer.discountValue;
+//         }
+
+        
+//         const offerPrice = product.salePrice - offerValue;
+
+//         product.offerPrice = Math.max(offerPrice, 0);
+//         console.log(offerPrice)
+//         console.log("---------------------------------------")
+//         console.log(product.offerPrice)
+//         await product.save();
+//       }
+//     }
+//   } catch (error) {
+//     console.error("Error updating product offer prices:", error);
+//   }
+// };
+const updateProductOfferPrice = async () => {
+  try {
+    const offers = await Offer.find().populate('product').populate('category').exec();
+
+    // Reset all offer prices to 0
     await Product.updateMany({}, { offerPrice: 0 });
 
     for (const offer of offers) {
       let productsToUpdate = [];
 
-      
+      // Fetch products based on the offer
       if (offer.product) {
         productsToUpdate = await Product.find({ _id: offer.product });
-
-      
       } else if (offer.category) {
         productsToUpdate = await Product.find({ category: offer.category });
-
-      
       } else if (!offer.product && !offer.category) {
         productsToUpdate = await Product.find({});
       }
 
-      
       for (const product of productsToUpdate) {
-
         let offerValue;
 
-     
+        // Calculate offer value
         if (offer.discountType === 'percentage') {
-          offerValue = product.salePrice * (offer.discountValue / 100);
+          offerValue = parseFloat((product.salePrice * (offer.discountValue / 100)).toFixed(2));
         } else {
-        
-          offerValue = offer.discountValue;
+          offerValue = parseFloat(offer.discountValue.toFixed(2));
         }
 
-        
-        const offerPrice = product.salePrice - offerValue;
+        // Calculate offer price and round it to two decimal places
+        const offerPrice = parseFloat((product.salePrice - offerValue).toFixed(2));
 
+        // Ensure non-negative offer price
         product.offerPrice = Math.max(offerPrice, 0);
 
-        
+        console.log("Calculated Offer Price:", offerPrice);
+        console.log("---------------------------------------");
+        console.log("Updated Product Offer Price:", product.offerPrice);
+
         await product.save();
       }
     }

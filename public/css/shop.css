@@ -498,7 +498,7 @@ p.sbmincart-empty-text {
 
 span.money {
 	font-size: 1em;
-	color: #ff4e00;
+	color: #000000;
 	font-weight: 700;
 	letter-spacing: 1px;
 }
@@ -521,11 +521,12 @@ span.money {
 }
 
 .link-product-add-cart {
-	background: #0c0c0c;
+	background: #77717144;
 	color: #fff;
 	display: inline-block;
-	height: 40px;
-	line-height: 40px;
+	height: 1000px;
+	width: 3000px;
+;
 	text-transform: uppercase;
 	transition: all 0.5s ease-out 0s;
 }
@@ -566,10 +567,11 @@ span.money {
 }
 
 .inner-men-cart-pro .link-product-add-cart {
-	width: 42%;
+	height: 10000px;
+	width: 400px;
 	top: 0px;
-	left: 28%;
-	margin: 0 auto;
+	
+
 	position: absolute;
 	transition: all 0.5s ease-out 0s;
 	font-size: 0.8em;
@@ -578,11 +580,11 @@ span.money {
 }
 
 .men-thumb-item:hover .inner-men-cart-pro .link-product-add-cart {
-	top: 77%;
+	top: 1%;
 }
 
 .link-product-add-cart:hover {
-    background: #ff4e00;
+    background: #00000000;
     color: #fff;
 }
 
@@ -941,9 +943,10 @@ input.checked {
     font-size: 1.2em;
 }
 .wrapper_top_shop .inner-men-cart-pro .link-product-add-cart {
-    width: 56%;
+    width: 100%;
+	height: 100%;
     top: 0px;
-	left: 22%;
+	left: 1%;
 }
 /*-- nuts --*/
 
@@ -958,7 +961,7 @@ input.checked {
 
 span.item_price {
 	font-size: 18px;
-	color: #d60404;
+	color: #000000;
 }
 
 .info-product-price del {
@@ -1360,10 +1363,10 @@ span.item_price {
 		width: 15%;
 	}
 	.inner-men-cart-pro .link-product-add-cart {
-		width: 70%;
-		top: 0px;
-		left: 16%;
-		margin: 0 auto;
+		width: 100%;
+
+		left: 1%;
+	
 		font-size: 0.9em;
 		height: 37px;
 	}

@@ -262,7 +262,7 @@ const fetchCompletedOrdersWithItems = async (startDate, endDate) => {
 
 const generateExcel = async (res, orders, dateFilter, startDate, endDate) => {
     const workbook = new Excel.Workbook();
-    const worksheet = workbook.addWorksheet('Sales Report');
+    const worksheet = workbook.addWorksheet('Sales Report - Nike');
 
     const stats = await calculateStats(startDate, endDate);
 
@@ -390,7 +390,7 @@ const generatePDF = async (res, orders, dateFilter, startDate, endDate) => {
     const stats = await calculateStats(startDate, endDate);
 
     const addHeader = (includeSummary) => {
-        doc.fontSize(16).text('Sales Report', { align: 'center' });
+        doc.fontSize(16).text('Sales Report - Nike', { align: 'center' });
         doc.moveDown();
 
         doc.fontSize(12).text(`Date Range: ${startDate.toLocaleDateString()} to ${endDate.toLocaleDateString()}`, { align: 'center' });

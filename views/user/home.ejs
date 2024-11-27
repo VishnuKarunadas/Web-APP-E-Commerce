@@ -261,7 +261,7 @@ img.img-fluid {
                                       <div class="grid-price mt-2">
                                           <% if (product.offerPrice && product.offerPrice < product.salePrice) { %>
                                             
-                                              <span class="money" style="color: red; font-weight: bold;">$<%= product.offerPrice %></span>
+                                              <span class="money" style="color: rgb(0, 0, 0); font-weight: bold;">$<%= product.offerPrice %></span>
                                           <% } else if (product.salePrice < product.regularPrice) { %>
                                               
                                               <span class="money" style="color: rgb(0, 0, 0);">MRP: ₹<%= product.salePrice %></span>

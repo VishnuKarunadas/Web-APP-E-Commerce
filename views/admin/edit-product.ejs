@@ -77,7 +77,7 @@
                             <div class="col-lg-4">
                                 <div class="mb-4">
                                     <label class="form-label">Quantity (S)</label>
-                                    <input name="quantityS" type="text" value="<%= product.quantity.S || 0 %>" class="form-control">
+                                    <input name="quantityS" type="text" value="<%= (product.quantity.S || product.quantity['7']) %>" class="form-control">
                                     <div id="quantityS-error" class="error-message"></div>
                                 </div>
                             </div>
@@ -85,7 +85,7 @@
                             <div class="col-lg-4">
                                 <div class="mb-4">
                                     <label class="form-label">Quantity (M)</label>
-                                    <input name="quantityM" type="text" value="<%= product.quantity.M || 0 %>" class="form-control">
+                                    <input name="quantityM" type="text" value="<%= (product.quantity.M || product.quantity['8']) %>" class="form-control">
                                     <div id="quantityM-error" class="error-message"></div>
                                 </div>
                             </div>
@@ -93,10 +93,11 @@
                             <div class="col-lg-4">
                                 <div class="mb-4">
                                     <label class="form-label">Quantity (L)</label>
-                                    <input name="quantityL" type="text" value="<%= product.quantity.L || 0 %>" class="form-control">
+                                    <input name="quantityL" type="text" value="<%= (product.quantity.L || product.quantity['9']) %>" class="form-control">
                                     <div id="quantityL-error" class="error-message"></div>
                                 </div>
                             </div>
+                            
                             
                             
                         </div>
@@ -204,16 +205,18 @@ function validateForm() {
         isValid = false;
     }
 
-    // Quantity validation and defaulting to zero
+    // Modify quantity validation to default to 0 instead of null
     if (quantityS.value.trim() === "" || isNaN(quantityS.value)) {
-        quantityS.value = null; // Default to 0
+        isValid = false;
+       
     }
     if (quantityM.value.trim() === "" || isNaN(quantityM.value)) {
-        quantityM.value = null;; // Default to 0
+        isValid = false;
     }
     if (quantityL.value.trim() === "" || isNaN(quantityL.value)) {
-        quantityL.value = null; // Default to 0
+        isValid = false;
     }
+
 
     return isValid;
 }

@@ -227,143 +227,172 @@ const getProductAddPage = async (req,res) => {
 //         return res.redirect("/admin/pageerror");
 //     }
 // };
-const addProducts = async (req, res) => {
-    try {
-        const products = req.body;
+    const addProducts = async (req, res) => {
+        try {
+            const products = req.body;
 
-        // Check if product with the same name exists
-        const productExists = await Product.findOne({ productName: products.productName });
-        if (productExists) {
-            return res.status(400).json("Product already exists, please try with another name");
-        }
+            // Check if product with the same name exists
+            const productExists = await Product.findOne({ productName: products.productName });
+            if (productExists) {
+                return res.status(400).json("Product already exists, please try with another name");
+            }
 
-        let images = [];
+            let images = [];
 
-        // Image processing
-        if (req.files) {
-            for (let field of ['images1', 'images2', 'images3']) {
-                if (req.files[field] && req.files[field].length > 0) {
-                    const originalImagePath = req.files[field][0].path;
+            // Image processing
+            if (req.files) {
+                for (let field of ['images1', 'images2', 'images3']) {
+                    if (req.files[field] && req.files[field].length > 0) {
+                        const originalImagePath = req.files[field][0].path;
 
-                    // Extract the original file name without extension
-                    const originalFileName = path.basename(req.files[field][0].filename, path.extname(req.files[field][0].filename));
+                        // Extract the original file name without extension
+                        const originalFileName = path.basename(req.files[field][0].filename, path.extname(req.files[field][0].filename));
 
-                    // Generate a new image name based on the original file name
-                    const resizedImageName = `resized_${originalFileName}.png`; // or use the extension of the original file
-                    const resizedImagePath = path.join('public', 'uploads', 'product-images', resizedImageName);
+                        // Generate a new image name based on the original file name
+                        const resizedImageName = `resized_${originalFileName}.png`; // or use the extension of the original file
+                        const resizedImagePath = path.join('public', 'uploads', 'product-images', resizedImageName);
 
-                    // Create output directory if it doesn't exist
-                    const directory = path.dirname(resizedImagePath);
-                    if (!fs.existsSync(directory)) {
-                        fs.mkdirSync(directory, { recursive: true });
-                    }
+                        // Create output directory if it doesn't exist
+                        const directory = path.dirname(resizedImagePath);
+                        if (!fs.existsSync(directory)) {
+                            fs.mkdirSync(directory, { recursive: true });
+                        }
 
-                    // Resize and save the image
-                    await sharp(originalImagePath)
-                        .resize({ width: 440, height: 440 })
-                        .toFile(resizedImagePath);
+                        // Resize and save the image
+                        await sharp(originalImagePath)
+                            .resize({ width: 440, height: 440 })
+                            .toFile(resizedImagePath);
 
-                    // Save filename for DB entry
-                    images.push(resizedImageName);
+                        // Save filename for DB entry
+                        images.push(resizedImageName);
 
-                    // Delete the original file after processing
-                    try {
-                        fs.unlinkSync(originalImagePath);
-                    } catch (unlinkError) {
-                        console.error('Error deleting original file:', unlinkError);
+                        // Delete the original file after processing
+                        try {
+                            fs.unlinkSync(originalImagePath);
+                        } catch (unlinkError) {
+                            console.error('Error deleting original file:', unlinkError);
+                        }
                     }
                 }
             }
-        }
 
-        // Validate and retrieve category ID
-        const categoryId = await Category.findOne({ name: products.category });
-        if (!categoryId) {
-            return res.status(400).json("Invalid category name");
-        }
-        console.log(categoryId)
-
-        // Prepare size and quantity data
-        const sizes = [];
-        const quantity = {};
-        console.log("addproduct page");
-        
-        console.log(products.quantityS,products.quantityM,products.quantityL)
-        // Capture size and quantity for S, M, L (or others based on the form data)
-        console.log(products.category)
-        if(products.category === "Shoes"){
-            if ( products.quantityS) {
-                sizes.push('7');
-                quantity['7'] = parseInt(products.quantityS, 10);
+            // Validate and retrieve category ID
+            const categoryId = await Category.findOne({ name: products.category });
+            if (!categoryId) {
+                return res.status(400).json("Invalid category name");
             }
-            if ( products.quantityM) {
-                sizes.push('8');
-                quantity['8'] = parseInt(products.quantityM, 10);
+            console.log(categoryId)
+
+            // Prepare size and quantity data
+        //     const sizes = [];
+        //     const quantity = {};
+        //     console.log("addproduct page");
+            
+        //     console.log(products.quantityS,products.quantityM,products.quantityL)
+        //     // Capture size and quantity for S, M, L (or others based on the form data)
+        //     console.log(products.category)
+        //     if(products.category === "Shoes"){
+        //         if ( products.quantityS) {
+        //             sizes.push('7');
+        //             quantity['7'] = parseInt(products.quantityS, 10);
+        //         }
+        //         if ( products.quantityM) {
+        //             sizes.push('8');
+        //             quantity['8'] = parseInt(products.quantityM, 10);
+        //         }
+        //         if ( products.quantityL) {
+        //             sizes.push('9');
+        //             quantity['9'] = parseInt(products.quantityL, 10);
+        //         }
+        //     }else if (products.category === "Clothing"){
+
+        //     if ( products.quantityS) {
+        //         sizes.push('S');
+        //         quantity['S'] = parseInt(products.quantityS, 10);
+        //     }
+        //     if ( products.quantityM) {
+        //         sizes.push('M');
+        //         quantity['M'] = parseInt(products.quantityM, 10);
+        //     }
+        //     if ( products.quantityL) {
+        //         sizes.push('L');
+        //         quantity['L'] = parseInt(products.quantityL, 10);
+        //     }
+        // }
+        //     // Set product status based on quantity (if quantity is zero for all sizes, it's out of stock)
+        //     const productStatus = Object.values(quantity).some(q => q > 0) ? "Available" : "Out of stock";
+
+                // Prepare size and quantity
+                const quantity = {};
+            
+
+                if (products.category === "Shoes") {
+                    if (parseInt(products.quantityS || 0, 10) > 0) quantity["7"] = parseInt(products.quantityS, 10);
+                    if (parseInt(products.quantityM || 0, 10) > 0) quantity["8"] = parseInt(products.quantityM, 10);
+                    if (parseInt(products.quantityL || 0, 10) > 0) quantity["9"] = parseInt(products.quantityL, 10);
+                } else if (products.category === "Clothing") {
+                    if (parseInt(products.quantityS || 0, 10) > 0) quantity["S"] = parseInt(products.quantityS, 10);
+                    if (parseInt(products.quantityM || 0, 10) > 0) quantity["M"] = parseInt(products.quantityM, 10);
+                    if (parseInt(products.quantityL || 0, 10) > 0) quantity["L"] = parseInt(products.quantityL, 10);
+                }
+                
+                // Extract sizes for frontend or other processing
+                const sizes = Object.keys(quantity);
+                
+                // Set product status based on quantity (if quantity is zero for all sizes, it's out of stock)
+                const productStatus = Object.values(quantity).some(q => q > 0) ? "Available" : "Out of stock";
+                
+                console.log("Sizes:", sizes);
+                console.log("Quantity:", quantity);
+                console.log("Product Status:", productStatus);
+                
+                
+
+            // Offer Price Calculation
+            const offer = await Offer.findOne({ product: categoryId._id });
+            let offerPrice = products.salePrice;
+            console.log(offerPrice)
+
+            if (offer) {
+                const offerValue = offer.discountType === 'percentage'
+                    ? products.salePrice * (offer.discountValue / 100)
+                    : offer.discountValue;
+
+                // Ensure offerPrice is rounded to two decimal places
+                offerPrice = Math.max(parseFloat((products.salePrice - offerValue).toFixed(2)), 0);
             }
-            if ( products.quantityL) {
-                sizes.push('9');
-                quantity['9'] = parseInt(products.quantityL, 10);
-            }
-        }else if (products.category === "Clothing"){
+            console.log(offerPrice)
 
-        if ( products.quantityS) {
-            sizes.push('S');
-            quantity['S'] = parseInt(products.quantityS, 10);
+            // Create and save new product
+            const newProduct = new Product({
+                productName: products.productName,
+                description: products.description,
+                SKUNumber: products.SKUNumber, // Ensuring SKU is passed
+                category: categoryId._id,
+                regularPrice: products.regularPrice,
+                salePrice: products.salePrice,
+                offerPrice: offerPrice,
+                createdAt: new Date(),
+                quantity: quantity,  // Store quantity object for each size
+                color: products.color,
+                size: sizes,  // Store size array
+                productImage: images,  // Store the resized image names
+                status: productStatus,  // Set product status
+            });
+
+            // Save the new product to the database
+            await newProduct.save();
+
+            // Optionally update product offer prices after adding a product
+            await updateProductOfferPrice();
+
+            // Redirect after saving
+            return res.redirect("/admin/addProducts");
+        } catch (error) {
+            console.error("Error Saving product:", error);
+            return res.redirect("/admin/pageerror");
         }
-        if ( products.quantityM) {
-            sizes.push('M');
-            quantity['M'] = parseInt(products.quantityM, 10);
-        }
-        if ( products.quantityL) {
-            sizes.push('L');
-            quantity['L'] = parseInt(products.quantityL, 10);
-        }
-    }
-        // Set product status based on quantity (if quantity is zero for all sizes, it's out of stock)
-        const productStatus = Object.values(quantity).some(q => q > 0) ? "Available" : "Out of stock";
-
-        // Offer Price Calculation
-        const offer = await Offer.findOne({ product: categoryId._id });
-        let offerPrice = products.salePrice;
-
-        if (offer) {
-            const offerValue = offer.discountType === 'percentage'
-                ? products.salePrice * (offer.discountValue / 100)
-                : offer.discountValue;
-
-            offerPrice = Math.max(products.salePrice - offerValue, 0);
-        }
-
-        // Create and save new product
-        const newProduct = new Product({
-            productName: products.productName,
-            description: products.description,
-            SKUNumber: products.SKUNumber, // Ensuring SKU is passed
-            category: categoryId._id,
-            regularPrice: products.regularPrice,
-            salePrice: products.salePrice,
-            offerPrice: offerPrice,
-            createdAt: new Date(),
-            quantity: quantity,  // Store quantity object for each size
-            color: products.color,
-            size: sizes,  // Store size array
-            productImage: images,  // Store the resized image names
-            status: productStatus,  // Set product status
-        });
-
-        // Save the new product to the database
-        await newProduct.save();
-
-        // Optionally update product offer prices after adding a product
-        await updateProductOfferPrice();
-
-        // Redirect after saving
-        return res.redirect("/admin/addProducts");
-    } catch (error) {
-        console.error("Error Saving product:", error);
-        return res.redirect("/admin/pageerror");
-    }
-};
+    };
 //new code down
 
 // const addProducts = async (req, res) => {
@@ -689,6 +718,7 @@ const getEditProduct = async (req, res) => {
     try {
         const id = req.query.id;
         const product = await Product.findById(id);  // Fetch the product by ID
+        console.log("-----------------------------------")
         console.log(product);  // Log the product data to verify the structure
         const category = await Category.find({});
 
@@ -1064,26 +1094,28 @@ const editProduct = async (req, res) => {
         }
 
         // Prepare size and quantity
-        const sizes = [];
-        const quantity = {
-            S: parseInt(data.quantityS || 0, 10),
-            M: parseInt(data.quantityM || 0, 10),
-            L: parseInt(data.quantityL || 0, 10),
-        };
+        const quantity = {};
 
         if (data.category === "Shoes") {
-            if (quantity.S > 0) sizes.push("7");
-            if (quantity.M > 0) sizes.push("8");
-            if (quantity.L > 0) sizes.push("9");
+            if (parseInt(data.quantityS || 0, 10) > 0) quantity["7"] = parseInt(data.quantityS, 10);
+            if (parseInt(data.quantityM || 0, 10) > 0) quantity["8"] = parseInt(data.quantityM, 10);
+            if (parseInt(data.quantityL || 0, 10) > 0) quantity["9"] = parseInt(data.quantityL, 10);
         } else if (data.category === "Clothing") {
-            if (quantity.S > 0) sizes.push("S");
-            if (quantity.M > 0) sizes.push("M");
-            if (quantity.L > 0) sizes.push("L");
+            if (parseInt(data.quantityS || 0, 10) > 0) quantity["S"] = parseInt(data.quantityS, 10);
+            if (parseInt(data.quantityM || 0, 10) > 0) quantity["M"] = parseInt(data.quantityM, 10);
+            if (parseInt(data.quantityL || 0, 10) > 0) quantity["L"] = parseInt(data.quantityL, 10);
         }
-
+        
+        // Extract sizes for frontend or other processing
+        const sizes = Object.keys(quantity);
+        
         // Set product status based on quantity (if quantity is zero for all sizes, it's out of stock)
         const productStatus = Object.values(quantity).some(q => q > 0) ? "Available" : "Out of stock";
-        console.log(productStatus)
+        
+        console.log("Sizes:", sizes);
+        console.log("Quantity:", quantity);
+        console.log("Product Status:", productStatus);
+        
         // Offer Price Calculation
         const offer = await Offer.findOne({ product: category._id });
         let offerPrice = data.salePrice;
