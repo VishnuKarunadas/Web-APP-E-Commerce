@@ -169,6 +169,7 @@ const updateOrderStatus = async (req, res) => {
     } else {
       order.status = 'Processing';
     }
+    console.log(order);
     
     await order.save();
 

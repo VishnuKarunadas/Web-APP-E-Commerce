@@ -62,16 +62,7 @@
                             <% } %>
                             
                         </div>
-                        <div class="col-md-4">
-                        <% if (selectedItem.itemOrderStatus === 'Delivered') { %>
-                          <h5>More actions</h5>
-                            <button class="btn btn-warning mb-2" id="downloadInvoiceBtn" 
-                                    data-order-id="<%= order._id %>" 
-                                    data-item-id="<%= selectedItem.itemOrderId %>">
-                                <i class="fas fa-download"></i> Download Invoice
-                            </button>
-                          <% } %>
-                        </div>
+
                         
             
                     </div>
@@ -95,7 +86,7 @@
                                 </div>
                                 <div class="col-md-6">
                                   <h5>
-                                    <%= selectedItem.product.brand ? selectedItem.product.brand.name : 'No Brand' %> 
+                                  
                                     <%= selectedItem.product.productName %>
                                   </h5>
                                   
@@ -238,7 +229,7 @@
             "key": "<%= process.env.RAZOR_PAY_KEY_ID %>",
             "amount": data.amount,
             "currency": "INR",
-            "name": "GOOGLES SHOP",
+            "name": "Nike Shop",
             "description": "Re-payment for Order",
             "order_id": data.razorpayOrderId,
             "handler": function (response){

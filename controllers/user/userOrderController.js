@@ -736,6 +736,7 @@ const myOrder = async (req, res, next) => {
   
 
 const cancelOrder = async (req, res, next) => {
+  console.log("--------------        Cancel Order   -------------------------");
   try {
     const { itemOrderId, cancelReason } = req.params;
     console.log('Cancelling item with ID:', itemOrderId);

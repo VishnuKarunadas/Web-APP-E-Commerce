@@ -80,7 +80,7 @@
                                 <img src="/uploads/product-images/<%= item.product.productImage[0] %>" alt="<%= item.product.productName %>" class="img-fluid" onerror="this.src='/images/placeholder-image.jpg'; this.onerror=null;">
                             </div>
                             <div class="col-md-6">
-                                <h5><%= item.product.brand ? item.product.brand.name : 'No Brand' %> <%= item.product.productName %></h5>
+                                <h5> <%= item.product.productName %></h5>
                                 <p>Color: <%= item.product.color %> | SKU: <%= item.product.skuNumber %></p>
                                 <p>Quantity: <%= item.quantity %></p>
                                 <p>Actual Price: $<%= item.regularPrice * item.quantity %></p>
@@ -116,18 +116,13 @@ function updateItemStatus(orderId, itemId) {
         'Shipped': 'Shipped',
         'Delivered': 'Delivered',
         'Cancelled': 'Cancelled',
-        'Return Requested': 'Return Requested',
-        'Return Approved': 'Return Approved',
-        'Return Rejected': 'Return Rejected',
+        'Return_Requested': 'Return Requested',
+        'Return_Approved': 'Return Approved',
+        'Return_Rejected': 'Return Rejected',
         'Returned': 'Returned'
     };
 
-    if (currentStatus === 'Delivered') {
-        delete inputOptions.Pending;
-        delete inputOptions.Processing;
-        delete inputOptions.Shipped;
-        delete inputOptions.Cancelled;
-    } else if (currentStatus === 'Cancelled' || currentStatus === 'Returned') {
+     if (currentStatus === 'Cancelled' || currentStatus === 'Returned' || currentStatus === 'Delivered') {
         Swal.fire({
             title: 'Error!',
             text: 'This item status cannot be changed.',
