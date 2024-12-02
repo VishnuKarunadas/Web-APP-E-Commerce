@@ -62,7 +62,16 @@
                             <% } %>
                             
                         </div>
-
+                        <div class="col-md-4">
+                          <% if (selectedItem.itemOrderStatus === 'Delivered') { %>
+                            <h5>More actions</h5>
+                              <button class="btn btn-warning mb-2" id="downloadInvoiceBtn" 
+                                      data-order-id="<%= order._id %>" 
+                                      data-item-id="<%= selectedItem.itemOrderId %>">
+                                  <i class="fas fa-download"></i> Download Invoice
+                              </button>
+                            <% } %>
+                          </div>
                         
             
                     </div>

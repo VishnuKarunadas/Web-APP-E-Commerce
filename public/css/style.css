@@ -164,7 +164,7 @@ span.sub {
     text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.14);
 }
 
-h1.logo-w3layouts a.navbar-brand {
+h1.logo-nikelayout a.navbar-brand {
     font-size: 1.5em;
     text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.26);
     color: #454546;
@@ -712,7 +712,7 @@ figure.effect-lexi:hover p {
 }
 
 /*-- //effect --*/
-/*--/footer-top-w3layouts--*/
+/*--/footer-top-nikelayout--*/
 .mail-grid-icon i {
     font-size: 1.3em;
     color: #151515;
@@ -742,7 +742,7 @@ figure.effect-lexi:hover p {
     width: 70%;
     text-align: left;
 }
-/*--//footer-top-w3layouts--*/
+/*--//footer-top-nikelayout--*/
 .blog-item{
     position:relative;
 }
@@ -855,7 +855,7 @@ a.shop:hover {
 
 /*--about --*/
 
-h3.tittle-w3layouts {
+h3.tittle-nikelayout {
     color: #353434;
     font-size: 3em;
     text-align: left;
@@ -1494,7 +1494,7 @@ a.b-home:hover {
 .owl-carousel.owl-theme.row.owl-loaded.owl-drag {
     margin: 0;
 }
-h3.tittle-w3layouts.two{
+h3.tittle-nikelayout.two{
     font-weight:300;
     color:#fff;
     letter-spacing:10px;
@@ -1548,7 +1548,7 @@ a.carousel-control-next.test, a.carousel-control-prev.test {
 .bottom-sub-grid p a,.about-info a {
     color: #333!important;
 }
-.footer-top-w3layouts-grid-sec:hover .mail-grid-icon i {
+.footer-top-nikelayout-grid-sec:hover .mail-grid-icon i {
     color: #ff4e00;
 }
 /*--footer--*/
@@ -1586,17 +1586,17 @@ footer {
 	color: #000000;
 }
 
-.copyright-w3layouts {
+.copyright-nikelayout {
 	border-top: 1px solid #292828;
 	margin-top: 2em;
 	padding-top: 2em;
 }
 
-.copyright-w3layouts p {
+.copyright-nikelayout p {
     color: #000000;
 }
 
-.copyright-w3layouts p a:hover {
+.copyright-nikelayout p a:hover {
 	color: #fff;
 }
 
@@ -1689,7 +1689,7 @@ ul.links li a:hover {
 	color: #fff;
 }
 
-.copyright-w3layouts a i:hover {
+.copyright-nikelayout a i:hover {
 	color: #ffa200;
 	transition: all 0.7s ease-in-out;
 	-webkit-transition: all 0.7s ease-in-out;
@@ -1716,7 +1716,7 @@ ul.links li a:hover {
 
 /*--//social-icons--*/
 
-.copyright-w3layouts a {
+.copyright-nikelayout a {
     color: #ff4e00;
 }
 
@@ -1811,7 +1811,7 @@ ul.links li a:hover {
     .header_left {
         width: 37.5%;
     }
-    h3.tittle-w3layouts-w3ls {
+    h3.tittle-nikelayout-w3ls {
         font-size: 3em;
     }
 }
@@ -1922,7 +1922,7 @@ ul.links li a:hover {
     .sign.text-center {
         margin-top: 35px;
     }
-    h3.tittle-w3layouts-w3ls {
+    h3.tittle-nikelayout-w3ls {
         font-size: 2.4em;
     }
     .testimonials_grid p {
@@ -2093,7 +2093,7 @@ ul.links li a:hover {
         margin-top: 1em;
         margin-left: 5%;
     }
-    .footer-top-w3layouts-grid-sec {
+    .footer-top-nikelayout-grid-sec {
         margin-bottom: 1em;
     }
     .footer-grid-w3ls {
@@ -2104,7 +2104,7 @@ ul.links li a:hover {
         width: 50%;
         margin-bottom: 1em;
     }
-    h3.tittle-w3layouts {
+    h3.tittle-nikelayout {
         font-size: 2.6em;
     }
     .team-img:after {
@@ -2134,10 +2134,10 @@ ul.links li a:hover {
         letter-spacing: 1px;
         font-size: 0.9em;
     }
-    h1.logo-w3layouts a.navbar-brand {
+    h1.logo-nikelayout a.navbar-brand {
        font-size: 1.3em;
     }
-    h3.tittle-w3layouts {
+    h3.tittle-nikelayout {
         font-size: 2.2em;
     }
 }
@@ -2228,7 +2228,7 @@ ul.links li a:hover {
     h3.subheading {
         font-size: 18px;
     }
-    h3.tittle-w3layouts {
+    h3.tittle-nikelayout {
         font-size: 2em;
     }
     .testimonials_grid h3 {
@@ -2311,7 +2311,7 @@ ul.links li a:hover {
         width: 100%;
         height:70%;
     }
-    h3.tittle-w3layouts.two {
+    h3.tittle-nikelayout.two {
         letter-spacing: 2px;
     }
 }
@@ -2328,7 +2328,7 @@ ul.links li a:hover {
     .carousel-caption {
         bottom: 3em;
     }
-    h3.tittle-w3layouts {
+    h3.tittle-nikelayout {
         font-size: 1.8em;
     }
     .bottom-sub-grid {
@@ -2364,13 +2364,13 @@ ul.links li a:hover {
         font-size: 2em;
         letter-spacing: 1px;
     }
-    h3.tittle-w3layouts.two {
+    h3.tittle-nikelayout.two {
         letter-spacing:2px;
     }
-    h1.logo-w3layouts a.navbar-brand {
+    h1.logo-nikelayout a.navbar-brand {
         font-size: 1.2em;
     }
-    h3.tittle-w3layouts {
+    h3.tittle-nikelayout {
         font-size: 1.7em;
         letter-spacing: 0px;
     }
@@ -2416,7 +2416,7 @@ ul.links li a:hover {
     figure.effect-lexi h3 {
         font-size: 19px;
     }
-    h4.sub-tittle-w3layouts {
+    h4.sub-tittle-nikelayout {
         font-size: 1.3em;
     }
     header {
@@ -2428,16 +2428,16 @@ ul.links li a:hover {
 }
 
 @media(max-width:375px) {
-   h1.logo-w3layouts a.navbar-brand {
+   h1.logo-nikelayout a.navbar-brand {
         font-size: 1.1em;
     }
 }
 
 @media(max-width:320px) {
-    h1.logo-w3layouts a.navbar-brand {
+    h1.logo-nikelayout a.navbar-brand {
         font-size: 1em;
     }
-    h3.tittle-w3layouts {
+    h3.tittle-nikelayout {
         font-size: 1.5em;
         letter-spacing: 0px;
     }

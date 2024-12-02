@@ -521,6 +521,24 @@ const loadShoppage = async (req, res, next) => {
   }
 };
 
+const about = async (req, res,next)=>{
+  try{
+    let userId = req.user || req.session.user;
+    let userData = userId
+    res.locals.user = userData;
+
+    console.log("Home page rendering...");
+
+    // Render homepage with user, cart items, product data
+    return res.render("about", {
+      user: userData
+  });
+} catch (error) {
+  console.log("logout error", error);
+  next(error);
+  }
+}
+
 module.exports = {
     loadHomepage,
     loadShoppage,
@@ -532,4 +550,5 @@ module.exports = {
     loadLogin,
     login,
     logout,
+    about,
 }

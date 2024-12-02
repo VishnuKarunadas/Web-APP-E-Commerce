@@ -14,6 +14,7 @@ const userRatingController = require("../controllers/user/userRatingController")
 const userWishlistController = require("../controllers/user/userWishlistController")
 const userCouponController = require("../controllers/user/userCouponController");
 const userWalletController = require("../controllers/user/userWalletController");
+const userAccountController = require("../controllers/user/userAccountController");
 
 
 
@@ -33,6 +34,8 @@ router.get("/login",userController.loadLogin);
 router.post("/login",userController.login);
 router.get('/logout',userController.logout);
 
+//about
+router.get("/about" ,userController.about);
 
 //google auth
 router.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}));
@@ -54,7 +57,9 @@ router.post("/resend-forget-otp",userProfileController.resendOtp);
 router.post("/reset-password",userProfileController.postNewPassword);
 router.get("/userProfile",userAuth,setBreadcrumbs,userProfileController.userProfile);
 
-
+// user account management
+router.get("/user/account",userAuth,cartCount,setBreadcrumbs,userAccountController.userAccount);
+router.post("/user/account/edit-user/:id", userAuth,cartCount,userAccountController.editUser);
 
 
 // user address management
@@ -102,6 +107,7 @@ router.post('/user/my-order/return-order',userAuth, userOrderController.returnOr
 router.post('/user/my-order/return-order',userAuth, userOrderController.returnOrder);
 router.post("/user/my-order/order-details/re-checkout/:orderId", userAuth,userOrderController.confirmRePayment);
 router.post("/user/my-order/order-details", userAuth,cartCount,setBreadcrumbs,userOrderController.orderDetails);
+router.get("/user/my-order/:orderId/download-invoice/:itemId", userAuth, userOrderController.downloadInvoice);
 
 //ratings
 router.get("/user/my-order/order-details/rate-product/:productId", userAuth,cartCount,setBreadcrumbs,userRatingController.getRateProduct);
@@ -124,6 +130,10 @@ router.get("/user/my-coupons",userAuth,cartCount,userCouponController.myCoupons)
 
 router.get("/user/my-wallet",userAuth,cartCount,setBreadcrumbs,userWalletController.wallet);
 router.post('/user/check-wallet-balance', userAuth,userWalletController.checkWalletBalance);
+router.post('/user/add-to-wallet', userAuth,userWalletController.addToWallet);
+// router.post("/user/wallet/razorpay-checkout",userAuth,userWalletController.razorpayCheckoutForWallet);
+// router.post('/user/wallet/verify-razorpay-payment',userAuth,userWalletController.verifyRazorpayPaymentForWallet);
+
 
 
 

@@ -1,5 +1,5 @@
 
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.min.css">
 <style>
   .dashboard-content {
     padding: 20px;
@@ -91,6 +91,17 @@
                   <h3 class="text-success mb-0">₹<%= balance.toFixed(2) %></h3>
                 </div>
               </div>
+              <form action="/user/add-to-wallet"  method="post" id="wallet-form">
+                <div>
+                  <input type="text" placeholder="Enter Amount you Want to Add" name="amount2Walltet" id="amount2Walltet" class=" mb-2" style="display: none;">
+                  <button type="submit" class="btn btn-success mb-4" id="submitBtn" style="display: none;">Submit</button>
+                  <p id="error" style="color: red;"></p>
+                  <button class="btn btn-primary mb-4" id="addToWallet">Add To Wallet</button>
+                
+                </div>
+                
+              </form>
+              
               
               <h4 class="mb-3">Transactions</h4>
               <% if (transactions && transactions.length === 0) { %>
@@ -109,7 +120,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <% transactions.forEach(transaction => { %>
+                      <% transactions.reverse().forEach(transaction => { %>
                         <tr>
                           <td><%= new Date(transaction.date).toLocaleString('en-US', { 
                             year: 'numeric', 
@@ -165,5 +176,48 @@
       </div>
     </div>
 </div>
+<script>
+    const addToWalletButton = document.getElementById('addToWallet');
+    const amountInput = document.getElementById('amount2Walltet');
+    const submitButton = document.getElementById('submitBtn');
+    const errorMessage = document.getElementById('error')
 
+    addToWalletButton.addEventListener('click',function(){
+      amountInput.style.display ='block';
+      addToWalletButton.disabled =true;
+      submitButton.style.display = 'inline-block';
+      addToWalletButton.style.display = 'none';
+    })
+
+    submitButton.addEventListener('click',function(){
+      errorMessage.textContent = '';
+      const amount = parseFloat(amountInput.value);
+
+      if (isNaN(amount)) {
+        errorMessage.textContent = 'Please enter a valid amount.';
+        event.preventDefault();  // Prevent form submission
+        return;
+      }
+
+      if (amount <= 1000) {
+        errorMessage.textContent = 'The amount must be greater than 1000.';
+        event.preventDefault();  // Prevent form submission
+        return;
+      }
+
+      if (amount >= 50000) {
+        errorMessage.textContent = 'The amount must be less than 50000.';
+        event.preventDefault();  // Prevent form submission
+        return;
+      }
+    })
+
+
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <%- include("../../views/partials/user/footer") %>
+
+

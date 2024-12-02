@@ -19,6 +19,7 @@ const fs = require('fs');
 
 
 
+
 const placeOrder = async (req, res, next) => {
 console.log("--------------------place-Order-------------------")
   const userId = res.locals.user._id;
@@ -34,7 +35,13 @@ console.log("--------------------place-Order-------------------")
     })
     .exec();
     const user = await User.findById(userId).populate('address').exec();
-    const coupons = await Coupon.find().exec();
+    const currentDate = new Date();
+    const coupons =  await Coupon.find({
+      $and: [
+          { status: { $ne: "Inactive" } }, // Exclude inactive coupons
+          { endDate: { $gte: currentDate } } // Only include coupons that haven't expired
+      ]
+  }).exec();
     const addresses = user.address || [];
     console.log(cart)
 
@@ -107,6 +114,7 @@ console.log("--------------------place-Order-------------------")
 
 
 const addCoupon = async (req, res, next) => {
+  console.log('----------------addCoupon-----------------')
   try {
     const { couponId } = req.body; 
     const userId = req.session.user || req.user;
@@ -128,8 +136,12 @@ const addCoupon = async (req, res, next) => {
     }
 
   
-    const usedCoupon = await Order.findOne({ user: userId, coupon: couponId });
-    if (usedCoupon) {
+    const usedCoupon = await Order.find({ user: userId, coupon: couponId });
+    console.log(usedCoupon.length)
+    console.log('---------------------------------')
+    console.log(coupon.usageLimit)
+
+    if (usedCoupon.length >= coupon.usageLimit) {
       return res.status(400).json({ message: "Coupon has already been used. Please try another one." });
     }
 
@@ -955,7 +967,141 @@ const confirmRePayment = async (req, res, next) => {
   }
 };
 
+const downloadInvoice = async (req, res, next) => {
 
+  try {
+    const { orderId, itemId } = req.params;
+    
+
+    const order = await Order.findById(orderId)
+    .populate('user')
+    .populate('address')
+    .populate({
+      path: 'items.product',
+      populate: {
+        path: 'brand',
+        select: 'name' 
+      }
+    })
+    .exec();
+    console.log("-------------------- Download - oder invoice function  invock ayii")
+    console.log(order)
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    
+    const selectedItem = order.items.find(item => item.itemOrderId === itemId);
+
+    if (!selectedItem) {
+      return res.status(404).json({ message: 'Item not found in the order' });
+    }
+
+  
+    const doc = new PDFDocument();
+    const chunks = [];
+
+    
+    doc.on('data', chunk => chunks.push(chunk));
+    doc.on('end', () => {
+      const pdfData = Buffer.concat(chunks);
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=Invoice-${order.invoice.invoiceNo}.pdf`);
+      res.send(pdfData);
+    });
+
+    // Add the image (logo or any other image)
+    // const imageWidth = 100; // width of the image
+    // const imageHeight = 50; // height of the image
+
+
+    // doc.addImage("https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg", 'PNG', 200, 50, imageWidth, imageHeight);
+  
+    doc.fontSize(20).text('Tax Invoice - Nike.Just Do it. Nike IN', { align: 'center' });
+    doc.moveDown();
+    
+    
+    doc.fontSize(12);
+    
+    
+    let leftColumnX = 50;
+    let startY = 110;
+    
+    doc.text(`Sold by`, leftColumnX, startY, { underline: true }); 
+    doc.text(`Nike Clone-`, leftColumnX, startY + 20); 
+    doc.text(`No 6`, leftColumnX, startY + 40); 
+    doc.text(`India`, leftColumnX, startY + 60); 
+    doc.text(`Pin: 688888`, leftColumnX, startY + 80);
+    
+    
+    const rightColumnX = 300;
+    doc.text(`Order Id: ${order.orderId}`, rightColumnX, startY);
+    doc.text(`Invoice No: ${order.invoice.invoiceNo}`, rightColumnX, startY + 20);
+    doc.text(`Order Date: ${order.date.toLocaleString()}`, rightColumnX, startY + 40);
+    doc.text(`Invoice Date: ${order.invoice.invoiceDate.toLocaleString()}`, rightColumnX, startY + 80);
+    doc.text(`Payment method: ${order.payment[0].method}`, rightColumnX, startY + 100);
+    
+    
+    doc.moveDown(2);
+    
+    
+    let shippingAddressStartY = startY + 120; 
+    doc.text('Shipping Address:', leftColumnX, shippingAddressStartY, { underline: true });
+    doc.text(`${order.user.name}`, leftColumnX, shippingAddressStartY + 20);
+    doc.text(`${order.address.house}, ${order.address.place}`, leftColumnX, shippingAddressStartY + 40);
+    doc.text(`${order.address.city}, ${order.address.state} - ${order.address.pin}`, leftColumnX, shippingAddressStartY + 60);
+    doc.text(`Phone: ${order.address.contactNo}`, leftColumnX, shippingAddressStartY + 80);
+    
+    
+    doc.moveDown();
+
+    
+    const tableTop = 350;
+    doc.font('Helvetica-Bold');
+    doc.text('Name', 20, tableTop);
+
+    doc.text('Qty', 200, tableTop);
+    doc.text('Amount', 250, tableTop);
+    doc.text('Discount', 325, tableTop);
+    doc.text('Taxable Value', 400, tableTop);
+    doc.text('Total', 500, tableTop);
+
+    
+    doc.font('Helvetica');
+  
+    const nameColumnWidth = 180; // Set a max width for the product name column
+const tableRow = tableTop + 25; // Starting row for the table
+
+// Adjusting text to avoid overlap and allow wrapping
+doc.text(selectedItem.product.productName, 20, tableRow, {
+  width: nameColumnWidth, // Set a max width for name to wrap text
+  align: 'left' // Align the text to the left
+});
+    doc.text(selectedItem.quantity.toString(), 200, tableRow);
+    doc.text(selectedItem.regularPrice.toFixed(2), 250, tableRow);
+    doc.text((selectedItem.regularPrice - selectedItem.saledPrice).toFixed(0), 325, tableRow);
+    doc.text(selectedItem.saledPrice.toFixed(2), 400, tableRow);
+    doc.text((selectedItem.saledPrice * selectedItem.quantity).toFixed(0), 500, tableRow);
+
+    doc.moveDown();
+    const totalRow = tableRow + 30;
+    doc.font('Helvetica-Bold');
+    doc.text('Total:', 400, totalRow);
+    doc.text(` ${(selectedItem.saledPrice * selectedItem.quantity).toFixed(0)}`, 500, totalRow);
+
+    doc.moveDown();
+  
+
+    doc.text('Thank you for shopping with us!',{align : "center"});
+    doc.moveDown(1);
+    doc.fontSize(5).text("*ASSPL-Amazon Seller Services Pvt. Ltd., ARIPL-Amazon Retail India Pvt. Ltd. only where Amazon Retail India Pvt. Ltd. fulfillment center is co-located Customers desirous of availing input GST credit are requested to create a Business account and purchase on Amazon.in/business from Business eligible offers Please note that this invoice is not a demand for payment",{align : "center"})
+  
+    doc.end();
+
+  } catch (error) {
+    next(error);
+  }
+};
 
 
 module.exports = {
@@ -972,5 +1118,6 @@ module.exports = {
     razorpayCheckout,
     removeCoupon,
     confirmRePayment,
+    downloadInvoice
  
 }
