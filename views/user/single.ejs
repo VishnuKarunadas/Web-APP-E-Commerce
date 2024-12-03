@@ -586,7 +586,7 @@
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.log('Error:', error);
                 if (error.error === 'Please login to add items to cart') {
                     Swal.fire({
                         icon: 'warning',

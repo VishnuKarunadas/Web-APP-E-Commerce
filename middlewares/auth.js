@@ -2,38 +2,74 @@ const User = require("../models/userSchema");
 
 
 
+// const userAuth = async (req, res, next) => {
+//     try {
+        
+//         const userId = req.session.user || req.user;
+
+//         if (userId) {
+        
+//             const user = await User.findById(userId);
+
+//             if (user) {
+                
+//                 if (!user.isBlocked) {
+                    
+//                     res.locals.user = user; 
+//                     next();  
+//                 } else {
+//                     console.log("User is blocked:", userId);
+//                     res.render("login");  
+//                 }
+//             } else {
+//                 console.log("User not found in database:", userId);
+//                 res.redirect("/login");  
+//             }
+//         } else {
+//             res.redirect("/login");  
+//         }
+//     } catch (error) {
+//         console.error("Error in user auth middleware:", error);
+//         next(error);
+//     }
+// };
+
 const userAuth = async (req, res, next) => {
     try {
-        
         const userId = req.session.user || req.user;
 
         if (userId) {
-        
             const user = await User.findById(userId);
 
             if (user) {
                 
-                if (!user.isBlocked) {
-                
-                    res.locals.user = user; 
-                    next();  
-                } else {
+                if (user.isBlocked) {
                     console.log("User is blocked:", userId);
-                    res.render("login");  
+                  
+                    req.session.destroy((err) => {
+                        if (err) {
+                            console.error("Error destroying session:", err);
+                        }
+                        
+                        res.redirect("/login");
+                    });
+                } else {
+                    
+                    res.locals.user = user;
+                    next();
                 }
             } else {
                 console.log("User not found in database:", userId);
-                res.redirect("/login");  
+                res.redirect("/login");
             }
         } else {
-            res.redirect("/login");  
+            res.redirect("/login");
         }
     } catch (error) {
         console.error("Error in user auth middleware:", error);
         next(error);
     }
 };
-
 
 
 

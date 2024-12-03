@@ -39,10 +39,17 @@ router.get("/about" ,userController.about);
 
 //google auth
 router.get('/auth/google',passport.authenticate('google',{scope:['profile','email']}));
-router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/signup'}),(req,res)=>{
-    res.redirect('/')
-});
-
+// router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/signup'}),(req,res)=>{
+//     res.redirect('/')
+// });
+router.get('/auth/google/callback', passport.authenticate('google', {failureRedirect: '/signup'}), (req, res) => {
+    req.session.user = { 
+        _id: req.user._id, 
+        name: req.user.name, 
+        email: req.user.email 
+    };
+res.redirect('/');
+})
 // user product view 
 router.get('/product/:productId', productViewController.loadSingleProduct);
 
@@ -56,6 +63,9 @@ router.get("/reset-password",userProfileController.getResetPassPage);
 router.post("/resend-forget-otp",userProfileController.resendOtp);
 router.post("/reset-password",userProfileController.postNewPassword);
 router.get("/userProfile",userAuth,setBreadcrumbs,userProfileController.userProfile);
+router.post("/send-currentPassword", userProfileController.conformCurrentPassword);
+router.post("/verify-otp", userProfileController.verifyOtp);
+router.post("/update-password", userProfileController.updatePassword);
 
 // user account management
 router.get("/user/account",userAuth,cartCount,setBreadcrumbs,userAccountController.userAccount);
@@ -77,7 +87,7 @@ router.delete('/user/deleteAddress', userAuth, userAddressController.deleteAddre
 // user cart management
 
 router.get("/cart",userAuth,cartCount,userCartController.cart)
-router.post("/add-cart",userAuth,userCartController.addToCart)
+router.post("/add-cart",userCartController.addToCart)
 router.post("/cart/update-quantity",userAuth,userCartController.updateQuantity)
 router.delete("/cart/remove",userAuth,userCartController.removeFromCart)
 router.delete('/cart/remove-deleted-item',userAuth,userCartController.removeDeletedItem);
@@ -117,8 +127,8 @@ router.post("/user/my-order/order-details/rate-product/", userAuth,cartCount,set
 // wishlist management
 
 router.get("/wishlist",userAuth,cartCount,setBreadcrumbs,userWishlistController.loadWishlist);
-router.post("/add-wishlist",userAuth,userWishlistController.addToWishlist);
-router.post("/wishlist/remove-from-wishlist",userAuth,userWishlistController.removeFromWishlist);
+router.post("/add-wishlist",userWishlistController.addToWishlist);
+router.post("/wishlist/remove-from-wishlist",userWishlistController.removeFromWishlist);
 router.delete('/wishlist/remove-deleted-item',userAuth,userWishlistController.removeDeletedItem);
 
 

@@ -44,6 +44,7 @@ const loadWishlist = async (req, res, next) => {
 
 
 const addToWishlist = async (req, res, next) => {
+    console.log("----------------add to wishlist ..................")
     try {
         const userId = req.session.user || req.user;
         if (!userId) {

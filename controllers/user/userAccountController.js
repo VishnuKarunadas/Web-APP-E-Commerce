@@ -32,21 +32,13 @@ const editUser = async (req, res, next) => {
         if (!existingUser) {
             return res.status(400).json({ error: "User not found" });
         }
-       
-        // if (existingUser.googleId) {
-        //     console.log("habibi")
-        //     return res.status(400).json({ message: "You can update contact details from Google or update them in the address field." });
-            
-        // }
+
         console.log(phone)
        
         const phoneNumber = await User.findOne({ phone:phone });
         console.log(phoneNumber)
 
-        if (phoneNumber) {
-            console.log("habibi1");
-            return res.status(400).json({ message: "phone number already exists." });
-        }
+        
         
 
        

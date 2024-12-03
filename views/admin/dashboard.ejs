@@ -167,7 +167,7 @@
         paymentMethodChartCtx.fillText('No data available for the selected period', 10, 50);
     }
 
-    const categoryPieChartCtx = document.getElementById('categoryPieChart').getContext('2d');
+const categoryPieChartCtx = document.getElementById('categoryPieChart').getContext('2d');
 const categorySalesData = <%- JSON.stringify(categorySalesData) %>;
 
 if (categorySalesData && categorySalesData.length > 0) {

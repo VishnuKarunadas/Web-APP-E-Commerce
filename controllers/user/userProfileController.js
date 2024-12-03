@@ -66,18 +66,32 @@ const sendVerificationEmail = async (email, otp) => {
     }
 }
 
-const securePassword = async (passsword) => {
+
+
+const securePassword = async (password) => {
+    console.log("-------------------Secure Password ---------------------");
     try {
-        const passwordHash = await bcrypt.hash(password,10)
+        const passwordHash = await bcrypt.hash(password, 10); // Fix parameter typo
+        console.log("hashedpassword",passwordHash)
         return passwordHash;
     } catch (error) {
-        
+        console.error("Error hashing password:", error); // Log the error for debugging
+        throw new Error("Password hashing failed"); // Throw the error to handle it properly
     }
-}
-
+};
+// const securePassword = async (password) => {
+//     try {
+//       const passwordHash = await bcrypt.hash(password, 10);
+//       return passwordHash;
+//     } catch (error) {
+//       next(error);
+//     }
+//   };
 
 const forgetEmailValidation = async (req, res, next) => {
     try {
+        const userId = req.session.user || req.user;
+       
         const { email } = req.body;
         const findUser = await User.findOne({ email: email });
         if (findUser) {
@@ -86,7 +100,7 @@ const forgetEmailValidation = async (req, res, next) => {
             if (emailSent) {
                 req.session.userOtp = otp;
                 req.session.email = email;
-                res.render("forgetPass-otp");
+                res.render("forgetPass-otp",{userId});
                 console.log("OTP:", otp);
             } else {
                 res.json({ success: false, message: "Failed to send OTP. Please try again" });
@@ -101,6 +115,102 @@ const forgetEmailValidation = async (req, res, next) => {
         next(error);
     }
 }
+
+const changeUserPassword = async (req, res, next) => {
+    console.log("----------------Change User Password----------------");
+    try {
+        const userId = req.session.user || req.user;
+
+       
+        const findUser = await User.findById(userId);
+        console.log(findUser)
+        if (findUser) {
+            const otp = generateOtp();
+            const emailSent = await sendVerificationEmail(findUser.email, otp);
+            if (emailSent) {
+                req.session.userOtp = otp;
+                req.session.email = findUser.   email;
+                res.render("forgetPass-otp",{userId});
+                console.log("OTP:", otp);
+            } else {
+                res.json({ success: false, message: "Failed to send OTP. Please try again" });
+            }
+
+        } 
+    } catch (error) {
+        next(error);
+    }
+}
+
+const conformCurrentPassword = async (req, res, next) => {
+    try {
+        const userId = req.session.user || req.user;
+
+        const findUser = await User.findById(userId);
+        console.log(findUser);
+        const { currentPassword } = req.body;
+        console.log(currentPassword);
+
+      
+        const passwordMatch = await bcrypt.compare(currentPassword, findUser.password);
+
+        if (!passwordMatch) {
+            return res.json({ success: false, message: "Entered Password is wrong" });
+        }
+        res.json({ success: true, message: "OTP sent!" });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+const verifyOtp = async (req, res, next) => {
+    console.log("------------verify Otp-----------------");
+    try {
+        const { otp } = req.body;
+        console.log("otp from user", otp);
+        console.log("otp from session", req.session.otp);
+        
+        if (String(req.session.otp) === String(otp)) {
+            res.json({ success: true, message: "OTP verified!" });
+        } else {
+            res.json({ success: false, message: "Invalid OTP. Try again." });
+        }
+    } catch (error) {
+        next(error);
+    }
+};
+
+const updatePassword = async (req, res, next) => {
+    console.log("----------------update password---------------")
+    try {
+        const userId = req.session.user || req.user;
+
+        const findUser = await User.findById(userId);
+        console.log(findUser);
+        const {newPassword, confirmPassword } = req.body;
+        
+        console.log(findUser.email)
+        if(newPassword === confirmPassword) {
+            console.log("New Passwords:", newPassword, confirmPassword);
+            const passwordHash = await securePassword(newPassword);
+            console.log("New Passwords hashed:", passwordHash);
+            await User.updateOne(
+                { email: findUser.email },
+                {$set: { password: passwordHash}})
+                res.json({ success: true, message: "Password updated successfully!" });
+            }else{
+                res.json({ success: true, message: "Password updated failed!" });
+            }
+
+     
+
+    } catch (error) {
+        next(error);
+    }
+};
+
 
 const verifyForgetPassOtp = async (req, res, next) => {
 
@@ -131,12 +241,21 @@ const getResetPassPage = async (req, res, next) =>{
 }
 
 const resendOtp = async (req, res, next) =>{
-
+console.log("----------------resnd otp-----------------")
     try{
+
+        const userId = req.session.user || req.user;
+
+       
+        const userData = await User.findById(userId)
+            .populate('address')  
+            .exec();
 
     const otp = generateOtp();
     req.session.userOtp = otp;
-    const email = req.session.email;
+    const email = req.session.email || userData.email ;
+    console.log(userData)
+    console.log(email)
     console.log("Resending OTP to email:", email);
     const  emailSent = await sendVerificationEmail(email,otp);
     if(emailSent){
@@ -152,15 +271,18 @@ const resendOtp = async (req, res, next) =>{
     }
 }
 
-const postNewPassword = async (req, res, next) =>{
+const postNewPassword = async (req, res, next) => {
+    console.log("-----Pst new password--------------")
     try {
         const {newPass1, newPass2} = req.body;
         const email = req.session.email;
         if(newPass1 === newPass2) {
+            console.log("New Passwords:", newPass1, newPass2);
             const passwordHash = await securePassword(newPass1);
+            console.log("New Passwords hashed:", passwordHash);
             await User.updateOne(
-                { email:email },
-                {$set:{password:passwordHash}}
+                { email: email },
+                {$set: { password: passwordHash}}
             )
             res.redirect("/login");
         } else {
@@ -170,6 +292,7 @@ const postNewPassword = async (req, res, next) =>{
         next(error)
     }
 }
+
 
 
 const userProfile = async (req, res, next) => {
@@ -221,5 +344,9 @@ module.exports = {
     getResetPassPage,
     resendOtp,
     postNewPassword,
+    changeUserPassword,
+    updatePassword,
+    verifyOtp,
+    conformCurrentPassword,
 
 }

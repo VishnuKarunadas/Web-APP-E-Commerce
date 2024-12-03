@@ -24,6 +24,15 @@ async (accessToken, refreshToken, profile, done) => {
 
             // Check if the user is blocked
             if (user.isBlocked) {
+                console.log("User is blocked:", userId);
+                  
+                    req.session.destroy((err) => {
+                        if (err) {
+                            console.error("Error destroying session:", err);
+                        }
+                        
+                        res.redirect("/login");
+                    });
                 // If the user is blocked, prevent login and return an error via done
                 return done(null, false, { message: 'Your account has been blocked by the admin.' });
             }

@@ -69,9 +69,13 @@ function generateOtp() {
   
 const SignUp = async (req, res, next) => {
     try {
+
+      console.log("-----------------------Sign up -------------------------")
       const { name, phone, email, password, cPassword, refCode } = req.body;
-  
+      
+      console.log(password,cPassword)
       if (password !== cPassword) {
+        
         return res.render("signup", { message: "Passwords are not matching" });
       }
       const findUser = await User.findOne({ email });
@@ -272,7 +276,7 @@ const loadHomepage = async (req, res, next) => {
 
 const loadLogin = async(req,res)=>{
     try {
-        if(!req.session.user){
+        if(!req.session.user && !req.user ){
             console.log("Rendering the loginpage...");
             return res.render('login')
         }else{

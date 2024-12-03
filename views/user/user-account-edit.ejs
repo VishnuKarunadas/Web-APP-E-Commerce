@@ -50,14 +50,139 @@
                         <button type="button" id="cancelBtn" style="display:none;">Cancel</button>
                     </div>
                 </form>
-
+                
                 <br>
+
                 <!-- <div class="account-actions">
                     <a href="#" id="deactivateAccount">Deactivate Account</a>
                     <br>
                     <a href='/user/delete-account?id=<%= userId %>' id="deleteAccount" class="delete">Delete Account</a>
                 </div> -->
-            </div>
+                <h2>Manage Password</h2>
+                <form id="otpForm">
+                
+                    <input type="password" name="currentPassword" id="currentPassword" placeholder="Current Password" required>
+                    <button type="button" id="sendOtp">Change Password</button>
+                </form>
+            
+                <div id="alert-message" style="display:none; color: black;"></div>
+                <div id="passwordSection" style="display: none;">
+                    <input type="email" name="email" id="email" placeholder="Enter your email" value="<%= user.email %>" style="display: none; ">
+                    <input type="password" name="newPassword" id="newPassword" placeholder="New Password" required />
+                    <div id="error4" style="color: red; display: none;"></div>
+                    <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password" required />
+                    <div id="error5" style="color: red; display: none;"></div>
+                    <button type="button" id="updatePassword">Update Password</button>
+                    
+                </div>
+            </div> 
+
+            
+            <script>
+                const alertMssage = document.getElementById('alert-message')
+                document.getElementById("sendOtp").addEventListener("click", async () => {
+                    const currentPassword = document.getElementById("currentPassword").value;
+                    const response = await fetch("/send-currentPassword", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ currentPassword }),
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        document.getElementById('alert-message').style.display = "block";
+                        alertMssage.textContent = "current [password success]"
+                        alertMssage.style.color="green"
+                        document.getElementById("passwordSection").style.display = "block";
+                        document.getElementById("currentPassword").style.display = "none";
+                        document.getElementById("sendOtp").style.display = "none";
+                    } else {
+                        document.getElementById('alert-message').style.display = "block";
+                        alertMssage.textContent = result.message;
+                        alertMssage.style.color="red"
+                    }
+                });
+            
+            
+                function passValidateChecking(event) {
+                    const passval = document.getElementById("newPassword").value;
+                    const cpassval = document.getElementById("confirmPassword").value;
+                    const error4 = document.getElementById("error4");
+                    const error5 = document.getElementById("error5");
+
+                    const alpha = /[a-zA-Z]/;
+                    const digit = /\d/;
+
+                    // Check if password is at least 8 characters
+                    if (passval.length < 8) {
+                        error4.style.display = "block";
+                        error4.innerHTML = "Should contain at least 8 characters";
+                    } else if (!alpha.test(passval) || !digit.test(passval)) {
+                        // Check if password contains both letters and numbers
+                        error4.style.display = "block";
+                        error4.innerHTML = "Should contain both numbers and letters";
+                    } else {
+                        error4.style.display = "none";
+                        error4.innerHTML = "";
+                    }
+
+                    // Check if passwords match
+                    if (passval !== cpassval) {
+                        error5.style.display = "block";
+                        error5.innerHTML = "Passwords do not match";
+                    } else {
+                        error5.style.display = "none";
+                        error5.innerHTML = "";
+                    }
+                }
+
+      
+        document.getElementById("newPassword").addEventListener("input", passValidateChecking);
+        document.getElementById("confirmPassword").addEventListener("input", passValidateChecking);
+
+        
+        document.getElementById("updatePassword").addEventListener("click", async () => {
+            const newPassword = document.getElementById("newPassword").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+            const error4 = document.getElementById("error4");
+            const error5 = document.getElementById("error5");
+
+          
+            if (newPassword.length < 8 || !/[a-zA-Z]/.test(newPassword) || !/\d/.test(newPassword)) {
+                error4.style.display = "block";
+                error4.innerHTML = "Password must contain at least 8 characters, including both letters and numbers";
+                return;  
+            }
+
+            if (newPassword !== confirmPassword) {
+                error5.style.display = "block";
+                error5.innerHTML = "Passwords do not match";
+                return;  
+            }
+
+          
+            try {
+               
+                const response = await fetch("/update-password", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ newPassword, confirmPassword }),
+                });
+                
+                const result = await response.json();
+             
+                document.getElementById('alert-message').style.display = "block";
+                        alertMssage.textContent = result.message
+                        alertMssage.style.color="green"
+
+                        document.getElementById("passwordSection").style.display = "none";
+                
+            } catch (error) {
+                console.error("Error updating password:", error);
+                alert("Error updating password, please try again.");
+            }
+        });
+            </script>
+            
         </div>
     </div>
     <%- include("../../views/partials/user/footer") %>

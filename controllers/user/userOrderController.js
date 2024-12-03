@@ -1088,13 +1088,13 @@ doc.text(selectedItem.product.productName, 20, tableRow, {
     doc.font('Helvetica-Bold');
     doc.text('Total:', 400, totalRow);
     doc.text(` ${(selectedItem.saledPrice * selectedItem.quantity).toFixed(0)}`, 500, totalRow);
-
-    doc.moveDown();
+    
+    doc.moveDown(2);
   
 
     doc.text('Thank you for shopping with us!',{align : "center"});
-    doc.moveDown(1);
-    doc.fontSize(5).text("*ASSPL-Amazon Seller Services Pvt. Ltd., ARIPL-Amazon Retail India Pvt. Ltd. only where Amazon Retail India Pvt. Ltd. fulfillment center is co-located Customers desirous of availing input GST credit are requested to create a Business account and purchase on Amazon.in/business from Business eligible offers Please note that this invoice is not a demand for payment",{align : "center"})
+  
+    doc.fontSize(5).text("*ASSPL-Nike Seller Services Pvt. Ltd., ARIPL-Nike Retail India Pvt. Ltd. only where Amazon Retail India Pvt. Ltd. fulfillment center is co-located Customers desirous of availing input GST credit are requested to create a Business account and purchase on Amazon.in/business from Business eligible offers Please note that this invoice is not a demand for payment",{align : "center"})
   
     doc.end();
 
