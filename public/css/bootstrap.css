@@ -627,6 +627,13 @@ pre code {
   align-items: center;
   padding-right: 10px;
 }
+.cart-inner-info2 {
+  /* padding-left: 1000px; */
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  /* padding-right: 1000px; */
+}
 
 .cart-inner-info li {
   margin-left: 20px; /* Space between list items */

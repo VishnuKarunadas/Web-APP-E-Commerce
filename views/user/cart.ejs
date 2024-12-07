@@ -30,6 +30,12 @@
                                         <div class="details-container">
                                             <h5 class="product-name"> <%= item.product.brand ? item.product.brand.name : '' %><%= item.product.productName %></h5>
                                             <p class="product-description" id="product-description">Size :- <%= item.size %></p>
+                                           
+                                            <% if (item.product.quantity[item.size] >= item.quantity) { %>
+                                                <p class="product-description" id="product-description" style="color: green;">Available</p>
+                                                <% } else { %>
+                                                    <p class="product-description" id="product-description" style="color: red;"> Out of Stock</p>
+                                                    <% } %>
 
                                             <script>
                                                 document.addEventListener("DOMContentLoaded", function() {
@@ -103,26 +109,26 @@
                     <h4>PRICE DETAILS</h4>
                     <dl>
                         <dt>Price (<%= distinctProductCount %> items)</dt>
-                        <dd>$<%= totalPrice.toFixed(2) %></dd>
+                        <dd>₹<%= totalPrice.toFixed(2) %></dd>
                     </dl>
                     <dl>
                         <dt>Discount</dt>
-                        <dd>$<%= totalDiscount.toFixed(2) %></dd>  
+                        <dd>₹<%= totalDiscount.toFixed(2) %></dd>  
                     </dl>
                     <dl>
                         <dt>Platform Fee</dt>
-                        <dd>$<%= platformFee.toFixed(2) %></dd>
+                        <dd>₹<%= platformFee.toFixed(2) %></dd>
                     </dl>
                     <dl>
                         <dt>Delivery Charges</dt>
-                        <dd>$<%= deliveryCharges.toFixed(2) %></dd>
+                        <dd>₹<%= deliveryCharges.toFixed(2) %></dd>
                     </dl>
                     <hr>
                     <dl>
                         <dt>Total Amount</dt>
-                        <dd>$<%= totalAmount.toFixed(2) %></dd>
+                        <dd>₹<%= totalAmount.toFixed(2) %></dd>
                     </dl>
-                    <p class="text-success">You will save $<%= totalDiscount.toFixed(2) %> on this order</p>
+                    <p class="text-success">You will save ₹<%= totalDiscount.toFixed(2) %> on this order</p>
                     
                     <a href="/cart/place-order"><button type="button" class="btn btn-success">PLACE ORDER</button></a>
                 </div>

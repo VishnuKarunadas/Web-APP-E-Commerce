@@ -58,6 +58,24 @@ console.log("--------------------place-Order-------------------")
       cart.items.forEach(item => {
         const product = item.product;
 
+        if (product.isBlocked) {
+          return res.status(400).json({ error: `Product ${product.name} is blocked` });
+        }
+
+        // Check the stock availability for the selected size (if applicable)
+        if (item.size) {
+          if (!product.size || !product.size.includes(item.size)) {
+            return res.status(400).json({ error: `Size ${item.size} is not available for product ${product.name}` });
+          }
+          if (product.quantity[item.size] < item.quantity) {
+            return res.status(400).json({ error: `Size ${item.size} of product ${product.name} is out of stock` });
+          }
+        } else {
+          // If no size, check general stock
+          if (product.quantity < item.quantity) {
+            return res.status(400).json({ error: `Product ${product.name} is out of stock` });
+          }
+        }
     
         const price =
           product.offerPrice && product.offerPrice < product.salePrice
@@ -1089,12 +1107,12 @@ doc.text(selectedItem.product.productName, 20, tableRow, {
     doc.text('Total:', 400, totalRow);
     doc.text(` ${(selectedItem.saledPrice * selectedItem.quantity).toFixed(0)}`, 500, totalRow);
     
-    doc.moveDown(2);
-  
-
+    doc.moveDown();
+    doc.text('All values are in INR ₹', 50, 600);
+    doc.moveDown(3);
     doc.text('Thank you for shopping with us!',{align : "center"});
   
-    doc.fontSize(5).text("*ASSPL-Nike Seller Services Pvt. Ltd., ARIPL-Nike Retail India Pvt. Ltd. only where Amazon Retail India Pvt. Ltd. fulfillment center is co-located Customers desirous of availing input GST credit are requested to create a Business account and purchase on Amazon.in/business from Business eligible offers Please note that this invoice is not a demand for payment",{align : "center"})
+    doc.fontSize(5).text("*ASSPL-Nike Seller Services Pvt. Ltd., ARIPL-Nike Retail India Pvt. Ltd. only where Nike Retail India Pvt. Ltd. fulfillment center is co-located Customers desirous of availing input GST credit are requested to create a Business account and purchase on Nike.in/business from Business eligible offers Please note that this invoice is not a demand for payment",{align : "center"})
   
     doc.end();
 

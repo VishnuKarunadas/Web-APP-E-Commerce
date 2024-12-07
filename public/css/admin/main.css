@@ -76,9 +76,9 @@ body {
 
 .header h1 {
     margin: 0;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
-    color: #333;
+    color: #000000;
 }
 
 .header .logout-btn {

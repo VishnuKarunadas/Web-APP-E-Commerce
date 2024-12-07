@@ -122,7 +122,7 @@ z-index: 500;
 
 header {
     /* padding: 2em 2em 0 2em; */
-    background-color: #ffffff;
+    background-color:#ffffff;
 }
 
 header .navbar-brand {
@@ -285,8 +285,9 @@ h1.logo-nikelayout a.navbar-brand {
 }
 
 label.top-log {
-    width: 45%;
+    width: 30%;
     height: 1px;
+    padding-right: 5000px;
     background: #d7d7da;
     display: block;
     margin-bottom: 10px;

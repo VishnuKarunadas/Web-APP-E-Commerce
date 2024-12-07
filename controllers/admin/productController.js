@@ -267,9 +267,14 @@ const unblockProduct = async (req, res) => {
         
        
         product.isBlocked = false;
-        
+         
        
-        if (product.quantity > 0) {
+        const size_1 =product.size[0];
+        const size_2 =product.size[1];
+        const size_3 =product.size[2];
+
+       
+        if  (product.quantity[size_1] > 0 || product.quantity[size_2] > 0 || product.quantity[size_3] > 0) {
             product.status = "Available";
         } else {
             product.status = "Out of stock";

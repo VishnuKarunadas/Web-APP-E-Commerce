@@ -9,47 +9,6 @@ const Product = require("../../models/productSchema");
 const Address = require("../../models/addressSchema");
 
 
-// const userAddress = async (req, res, next) => {
-//     try {
-//         const userId = req.session.user || req.user;
-
-//         if (!userId) {
-//             return res.status(401).send('User not authenticated');
-//         }
-
-//         const user = await User.findById(userId).populate('address').exec();
-
-//         if (!user || user.address.length === 0) {
-//             console.log('No addresses found');
-//             return res.render('user-address', { 
-//                 address: [], 
-//                 currentPage: 1, 
-//                 totalPages: 1 
-//             });
-//         }
-
-//         const page = parseInt(req.query.page) || 1;
-//         const limit = 1; 
-//         const skip = (page - 1) * limit;
-
-//         const paginatedAddresses = await Address.find({ _id: { $in: user.address } })
-//             .sort({ createdAt: -1 })
-//             .skip(skip)
-//             .limit(limit);
-
-//         const totalAddress = user.address.length;  
-//         const totalPages = Math.ceil(totalAddress / limit);
-
-//         res.render('user-address', {
-//             address: paginatedAddresses,
-//             currentPage: page,
-//             totalPages: totalPages,
-//             totalAddress: totalAddress
-//         });
-//     } catch (error) {
-//         next(error);
-//     }
-// };
 
 const userAddress = async (req, res, next) => {
     try {
