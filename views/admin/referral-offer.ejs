@@ -168,11 +168,11 @@
 <%- include("../partials/admin/footer") %>
 
 <script>
-
 document.getElementById('referralOfferForm').addEventListener('submit', async function(event) {
   event.preventDefault();  
 
   var walletCredit = parseFloat(document.getElementById('walletCreditAmount').value) || 0;
+  console.log('Wallet Credit:', walletCredit);
 
   if (walletCredit === 0) {
     Swal.fire({
@@ -188,6 +188,8 @@ document.getElementById('referralOfferForm').addEventListener('submit', async fu
   var endDate = new Date(document.getElementById('endDate').value);
   var currentDate = new Date();  
 
+  console.log('Start Date:', startDate);
+  console.log('End Date:', endDate);
 
   if (endDate <= startDate) {
     Swal.fire({
@@ -199,7 +201,6 @@ document.getElementById('referralOfferForm').addEventListener('submit', async fu
     return false;
   }
 
-
   if (endDate <= currentDate) {
     Swal.fire({
       icon: 'warning',
@@ -210,15 +211,31 @@ document.getElementById('referralOfferForm').addEventListener('submit', async fu
     return false;
   }
 
-  const formData = new FormData(this);
+  // Collect data as JSON
+  const referralOfferData = {
+    offerCode: document.getElementById('offerCode').value,
+    title: document.getElementById('title').value,
+    description: document.getElementById('description').value,
+    referrerReward: document.getElementById('referrerReward').value,
+    refereeReward: document.getElementById('refereeReward').value,
+    walletCreditAmount: document.getElementById('walletCreditAmount').value,
+    startDate: startDate.toISOString(),  // Convert to ISO string for date
+    endDate: endDate.toISOString(),      // Convert to ISO string for date
+    status: document.getElementById('status').value
+  };
+
+  console.log(referralOfferData);  // Log the data to check
 
   try {
     const response = await fetch('/admin/referral-offer/create', {
       method: 'POST',
-      body: formData
+      headers: {
+        'Content-Type': 'application/json'  // Indicate that we're sending JSON
+      },
+      body: JSON.stringify(referralOfferData)  // Send the data as JSON
     });
 
-    const result = await response.json();  
+    const result = await response.json();
 
     if (result.success) {
       Swal.fire({
@@ -246,7 +263,6 @@ document.getElementById('referralOfferForm').addEventListener('submit', async fu
     });
   }
 });
-
 
 </script>
 

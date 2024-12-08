@@ -172,9 +172,9 @@ const SignUp = async (req, res, next) => {
   
       await saveUserData.save();
   
-    //   if (user.refCode) {
-    //     await applyReferralOffer(saveUserData._id, user.refCode);
-    //   }
+      if (user.refCode) {
+        await applyReferralOffer(saveUserData._id, user.refCode);
+      }
   
       req.session.user = saveUserData._id;
       sessionActive = true;

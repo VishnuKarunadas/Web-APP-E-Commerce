@@ -1,0 +1,114 @@
+<div class="container-fluid">
+    <%- include("../../views/partials/user/header") %>
+  
+    <div class="dashboard-container">
+      <%- include("../../views/partials/user/sidebar") %>
+  
+      <div class="dashboard-content" id="dashboardContent">
+        <div class="card mb-3">
+          <div class="card-header">
+            <h5 class="card-title">Invite and Earn</h5> 
+          </div>
+          <div class="card-body">
+            <% if (referralOffer) { %>
+              <h2 class="mb-4"><%= referralOffer.title %></h2>
+              <p class="lead mb-4" style="color: green;"><%= referralOffer.description %></p>
+              
+              <div id="referralCodeSection" class="mb-6">
+                <h4>Your Referral Code:</h4>
+                <div class="input-group">
+                  <input type="text" id="referralCodeInput" class="form-control" value="<%= user.referralCode %>" readonly>
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="copyCodeBtn">Copy</button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mt-6">
+                <h4>Your Referral Link:</h4>
+                <div class="input-group">
+                  <input type="text" id="referralLinkInput" class="form-control" value="<%= user.referralLink %>" readonly>
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="copyLinkBtn">Copy</button>
+                  </div>
+                </div>
+              </div>
+  
+              <div class="mt-4">
+                <h4>Referral Benefits:</h4>
+                <% if (referralOffer.referrerReward > 0) { %>
+                    <li>Referrer Reward: ₹<%= referralOffer.referrerReward %></li>
+                  <% } %>
+                  
+                  <% if (referralOffer.refereeReward > 0) { %>
+                    <li>Referee Reward: ₹<%= referralOffer.refereeReward %></li>
+                  <% } %>
+                  
+                  <% if (referralOffer.walletCreditAmount > 0) { %>
+                    <li>Wallet Credit: ₹<%= referralOffer.walletCreditAmount %></li>
+                  <% } %>
+              </div>
+            <% } else { %>
+              <div class="alert alert-info" role="alert">
+                <h4 class="alert-heading">No Active Referral Offer</h4>
+                <p>There are currently no active referral offers available. Please check back later for new opportunities to invite friends and earn rewards.</p>
+              </div>
+              <div id="referralCodeSection" class="mb-4">
+                <h4>Your Referral Code:</h4>
+                <div class="input-group">
+                  <input type="text" id="referralCodeInput" class="form-control" value="<%= user.referralCode %>" readonly>
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="copyCodeBtn">Copy</button>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-4">
+                <h4>Your Referral Link:</h4>
+                <div class="input-group">
+                  <input type="text" id="referralLinkInput" class="form-control" value="<%= user.referralLink %>" readonly>
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="copyLinkBtn">Copy</button>
+                  </div>
+                </div>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <%- include("../../views/partials/user/footer") %>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const copyCodeBtn = document.getElementById('copyCodeBtn');
+    const copyLinkBtn = document.getElementById('copyLinkBtn');
+    const referralCodeInput = document.getElementById('referralCodeInput');
+    const referralLinkInput = document.getElementById('referralLinkInput');
+  
+    function copyToClipboard(input, successMessage) {
+      input.select();
+      document.execCommand('copy');
+      Swal.fire({
+        title: 'Copied!',
+        text: successMessage,
+        icon: 'success',
+        confirmButtonText: 'OK'
+      });
+    }
+  
+    if (copyCodeBtn) {
+      copyCodeBtn.addEventListener('click', function() {
+        copyToClipboard(referralCodeInput, 'Referral code copied to clipboard.');
+      });
+    }
+  
+    if (copyLinkBtn) {
+      copyLinkBtn.addEventListener('click', function() {
+        copyToClipboard(referralLinkInput, 'Referral link copied to clipboard.');
+      });
+    }
+  });
+  </script>

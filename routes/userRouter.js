@@ -15,7 +15,7 @@ const userWishlistController = require("../controllers/user/userWishlistControll
 const userCouponController = require("../controllers/user/userCouponController");
 const userWalletController = require("../controllers/user/userWalletController");
 const userAccountController = require("../controllers/user/userAccountController");
-
+const userInviteController = require("../controllers/user/userInviteController");
 
 
 router.get("/pageNotFound",userController.pageNotFound);
@@ -144,7 +144,9 @@ router.post('/user/add-to-wallet', userAuth,userWalletController.addToWallet);
 // router.post("/user/wallet/razorpay-checkout",userAuth,userWalletController.razorpayCheckoutForWallet);
 // router.post('/user/wallet/verify-razorpay-payment',userAuth,userWalletController.verifyRazorpayPaymentForWallet);
 
+// invite friends
 
+router.get("/user/invite-friends",userAuth,cartCount,setBreadcrumbs,userInviteController.inviteFriends);
 
 
 module.exports =router;

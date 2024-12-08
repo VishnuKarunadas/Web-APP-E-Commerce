@@ -91,7 +91,7 @@ const userSchema = new Schema({
         unique: true,
         required: false,
         default: function() {
-            return `http://localhost:3000/signup/${this.referralCode}`;
+            return `http://localhost:8888/signup/${this.referralCode}`;
         }
     },
     referrals: [{ 

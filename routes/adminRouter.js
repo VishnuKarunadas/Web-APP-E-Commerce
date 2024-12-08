@@ -9,6 +9,7 @@ const couponController  = require("../controllers/admin/couponController");
 const offerController  = require("../controllers/admin/offerController");
 const salesReportController = require("../controllers/admin/salesReportController");
 const {userAuth,adminAuth} = require("../middlewares/auth");
+const referralOfferController = require("../controllers/admin/referralOfferController");
 const multer = require("multer");
 const storage = require("../helpers/multer");
 const upload = multer({storage:storage});
@@ -94,4 +95,11 @@ router.delete("/coupons/delete-coupon/:couponId",adminAuth,couponController.dele
 router.get('/sales-report',adminAuth, salesReportController.getSalesReport)
 router.post('/filter-sales',adminAuth, salesReportController.filterSalesReport);
 router.post('/download-report',adminAuth, salesReportController.downloadReport);
+
+// referral offer
+
+router.get("/referral-offer",adminAuth, referralOfferController.getReferralOffers)
+router.post("/referral-offer/create",adminAuth, referralOfferController.createReferralOffer)
+router.delete("/referral-offer/delete/:id", adminAuth, referralOfferController.deleteReferralOffer);
+
  module.exports= router;
