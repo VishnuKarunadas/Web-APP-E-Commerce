@@ -8,8 +8,7 @@ const db = require("./config/db");
 const userRouter = require("./routes/userRouter");
 const passport = require("./config/passport")
 const adminRouter = require("./routes/adminRouter")
-// Connect to the database
-db();
+
 
 // Set up the port (use the value from the .env file if available)
 const PORT = process.env.PORT || 7777;
@@ -55,7 +54,25 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', userRouter);
 app.use('/admin',adminRouter)
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+app.get('*', (req, res) => {
+  // const userId = req.session.user || req.user;
+  // if (userId) {
+  //   res.render("/")
+  // } else {
+      res.redirect('/login'); 
+  // }
 });
+
+
+// Start the server
+// Connect to the database
+db().then(()=>{
+  // Server listener
+  app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
+
+}).catch((err)=>{
+  console.log(err);
+  
+})

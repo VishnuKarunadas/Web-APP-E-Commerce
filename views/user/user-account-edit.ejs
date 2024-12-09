@@ -59,12 +59,15 @@
                     <a href='/user/delete-account?id=<%= userId %>' id="deleteAccount" class="delete">Delete Account</a>
                 </div> -->
                 <h2>Manage Password</h2>
+                <% if (user.password) { %>
                 <form id="otpForm">
                 
                     <input type="password" name="currentPassword" id="currentPassword" placeholder="Current Password" required>
-                    <button type="button" id="sendOtp">Change Password</button>
+                    <button type="submit" id="sendOtp">Change Password</button>
                 </form>
-            
+                <% } else { %>
+                    <a href="/login/forget-password">Create Password</a>
+                    <% } %>
                 <div id="alert-message" style="display:none; color: black;"></div>
                 <div id="passwordSection" style="display: none;">
                     <input type="email" name="email" id="email" placeholder="Enter your email" value="<%= user.email %>" style="display: none; ">
@@ -79,9 +82,11 @@
 
             
             <script>
+               
                 const alertMssage = document.getElementById('alert-message')
                 document.getElementById("sendOtp").addEventListener("click", async () => {
-                    const currentPassword = document.getElementById("currentPassword").value;
+                    event.preventDefault();
+                    const currentPassword =await document.getElementById("currentPassword").value;
                     const response = await fetch("/send-currentPassword", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -90,7 +95,7 @@
                     const result = await response.json();
                     if (result.success) {
                         document.getElementById('alert-message').style.display = "block";
-                        alertMssage.textContent = "current [password success]"
+                        alertMssage.textContent = "Current password success. Enter new Password"
                         alertMssage.style.color="green"
                         document.getElementById("passwordSection").style.display = "block";
                         document.getElementById("currentPassword").style.display = "none";
@@ -141,6 +146,7 @@
 
         
         document.getElementById("updatePassword").addEventListener("click", async () => {
+            event.preventDefault();
             const newPassword = document.getElementById("newPassword").value;
             const confirmPassword = document.getElementById("confirmPassword").value;
             const error4 = document.getElementById("error4");
@@ -186,6 +192,12 @@
         </div>
     </div>
     <%- include("../../views/partials/user/footer") %>
+    <script src="js/jquery-2.2.3.min.js"></script>
+    <!-- newsletter modal -->
+    <!--search jQuery-->
+    <script src="js/modernizr-2.6.2.min.js"></script>
+    <script src="js/classie-search.js"></script>
+    <script src="js/demo1-search.js"></script>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>

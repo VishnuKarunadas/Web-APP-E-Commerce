@@ -17,10 +17,20 @@ function generateOtp() {
 }
 
 const forgetPasswordPage = async (req, res, next) => {
-
+    const userId = req.session.user || req.user;
     try {
+        if (userId) {
+            const user = await User.findById(userId);
+            res.render("forget-password",{
+                user
+            });
+        }else{
+            const user = null
+            res.render("forget-password",{
+            user
+            });
+        }
         
-        res.render("forget-password");
 
     } catch (error) {
         next(error);
@@ -94,13 +104,14 @@ const forgetEmailValidation = async (req, res, next) => {
        
         const { email } = req.body;
         const findUser = await User.findOne({ email: email });
+        const user = findUser;
         if (findUser) {
             const otp = generateOtp();
             const emailSent = await sendVerificationEmail(email, otp);
             if (emailSent) {
                 req.session.userOtp = otp;
                 req.session.email = email;
-                res.render("forgetPass-otp",{userId});
+                res.render("forgetPass-otp",{userId,user});
                 console.log("OTP:", otp);
             } else {
                 res.json({ success: false, message: "Failed to send OTP. Please try again" });
@@ -123,6 +134,7 @@ const changeUserPassword = async (req, res, next) => {
 
        
         const findUser = await User.findById(userId);
+        const user = finduser;
         console.log(findUser)
         if (findUser) {
             const otp = generateOtp();

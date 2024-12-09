@@ -134,7 +134,7 @@ router.delete('/wishlist/remove-deleted-item',userAuth,userWishlistController.re
 
 // coupon management
 
-router.get("/user/my-coupons",userAuth,cartCount,userCouponController.myCoupons);
+// router.get("/user/my-coupons",userAuth,cartCount,userCouponController.myCoupons);
 
 // wallet management
 

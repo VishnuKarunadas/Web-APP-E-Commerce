@@ -41,6 +41,9 @@
                             <h5>Your Rewards in this item</h5>
                             <p  class="text-success" style="font-size: large;" ><span  class="coin-icon">&#9733;</span>  ₹<%= ((selectedItem.regularPrice - selectedItem.saledPrice)*selectedItem.quantity).toFixed() %> Saved </p>
                             <h6>Payment Method</h6> 
+                            <% if (order.coupon) {   %>
+                              <p> <span style="font-weight: bold; color: #007bff;">Coupon Applied </span></p>
+                              <% } %>
                             <% if (order.payment && order.payment.length > 0) { %>
                               <p><span><%= order.payment[0].method %></span></p>
                             <% } else { %>
