@@ -546,6 +546,7 @@ const finalizeOrder = async (order, userId, appliedCouponId) => {
   try {
     
     order.status = 'Processing';
+    //Online Payment
 
     if (order.payment[0].method === "Wallet Payment") {
       order.payment[0].status = 'completed';
@@ -675,6 +676,12 @@ const verifyRazorpayPayment = async (req, res) => {
       order.payment[0].status = 'completed';
       order.payment[0].razorpayPaymentId = razorpay_payment_id;
       order.status = 'Processing';
+      console.log("_______________ order varify--------------------")
+      console.log(order)
+      // order status bug fixed 
+      order.items.forEach(item => {
+        item.itemOrderStatus = 'Processing';
+      });
       await order.save();
 
       res.status(200).json({ success: true, message: 'Payment verified', orderId: order._id });
