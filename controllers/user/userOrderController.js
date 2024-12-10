@@ -702,6 +702,8 @@ const orderConfirmationPage = async (req,res,next) => {
 };
 
 const myOrder = async (req, res, next) => {
+
+  console.log("_____________myorder_______________")
     try {
       const userId = req.session.user || req.user;
       const searchQuery = req.query.searchQuery || '';
@@ -753,11 +755,14 @@ const myOrder = async (req, res, next) => {
               color: 'N/A'
             };
           }
+          console.log(item)
           return item;
         });
         return order;
       });
-  
+
+   console.log(orders.items)
+
       res.render("my-order", {
         orders,
         currentPage: page,

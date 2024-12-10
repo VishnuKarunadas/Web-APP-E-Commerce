@@ -63,13 +63,13 @@
                         <h5>Payment Information</h5>
                         <p><strong>Payment Method:</strong> <%= order.payment.length > 0 ? order.payment[0].method : 'N/A' %></p>
                         <p><strong>Payment Status:</strong> <%= order.payment.length > 0 ? order.payment[0].status : 'N/A' %></p>
-                        <p><strong>Total Amount:</strong> $<%= order.totalPrice %></p>
+                        <p><strong>Total Amount:</strong> ₹<%= order.totalPrice %></p>
                     </div>
                     <div class="col-md-3 col-sm-6 order-details-section">
                         <h5>Order Summary</h5>
-                        <p><strong>Subtotal:</strong> $<%= order.actualPrice %></p>
-                        <p><strong>Discount:</strong> $<%= order.discount %></p>
-                        <p><strong>Total:</strong> $<%= order.totalPrice %></p>
+                        <p><strong>Subtotal:</strong> ₹<%= order.actualPrice %></p>
+                        <p><strong>Discount:</strong> ₹<%= order.discount %></p>
+                        <p><strong>Total:</strong> ₹<%= order.totalPrice %></p>
                     </div>
                 </div>
                 <h4>Ordered Products</h4>
@@ -83,9 +83,10 @@
                                 <h5> <%= item.product.productName %></h5>
                                 <p>Color: <%= item.product.color %> | SKU: <%= item.product.skuNumber %></p>
                                 <p>Quantity: <%= item.quantity %></p>
-                                <p>Actual Price: $<%= item.regularPrice * item.quantity %></p>
-                                <p>Discount: $<%= ((item.regularPrice - item.saledPrice) * item.quantity).toString() %></p>
-                                <p>Saled Price: $<%= item.saledPrice * item.quantity %></p>
+                                <p>Size: <%= item.size %></p>
+                                <p>Actual Price: ₹<%= item.regularPrice * item.quantity %></p>
+                                <p>Discount: ₹<%= ((item.regularPrice - item.saledPrice) * item.quantity).toString() %></p>
+                                <p>Saled Price: ₹<%= item.saledPrice * item.quantity %></p>
                             </div>
                             <div class="col-md-4">
                                 <div class="order-status">
