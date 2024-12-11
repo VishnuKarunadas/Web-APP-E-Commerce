@@ -784,7 +784,7 @@ const cancelOrder = async (req, res, next) => {
     console.log('Cancelling item with ID:', itemOrderId);
 
     const order = await Order.findOne({ "items.itemOrderId": itemOrderId }).populate('user');
-
+    console.log(order)
     if (!order) {
       console.error('Order not found for ID:', itemOrderId);
       return res.status(404).send('Order not found');
@@ -844,11 +844,13 @@ const cancelOrder = async (req, res, next) => {
         return res.status(404).send('User not found');
       }
     }
-
+    const sizeOfProduct = order.items[itemIndex].size[0]
+    console.log(sizeOfProduct)
     const productId = order.items[itemIndex].product._id.toString();
+    console.log(quantity,productId)
     await Product.findOneAndUpdate(
       { _id: productId },
-      { $inc: { quantity: quantity } },
+      { $inc: { [`quantity.${sizeOfProduct}`]: quantity } },
       { new: true }
     );
 
